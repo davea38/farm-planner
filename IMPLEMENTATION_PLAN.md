@@ -19,14 +19,16 @@
   - WHY: Every component uses Tailwind for styling; must be in place before any UI work.
   - NOTE: Using Tailwind CSS v4 with native Vite plugin (no PostCSS config or tailwind.config.js needed).
 
-- [ ] **1.3** Initialize shadcn/ui (`npx shadcn-ui@latest init`) and create `components.json` config
+- [x] **1.3** Initialize shadcn/ui (`npx shadcn@latest init`) and create `components.json` config
   - WHY: shadcn/ui provides the accessible primitives (Tabs, Input, Card, Tooltip, Collapsible, Dialog, Select) used throughout.
+  - NOTE: Used shadcn v4 (base-nova style). Also added `@/` path alias to tsconfig.json, tsconfig.app.json, and vite.config.ts.
 
 - [ ] **1.4** Install required shadcn/ui components: `tabs`, `input`, `card`, `tooltip`, `collapsible`, `dialog`, `select`, `button`, `label`
   - WHY: Pre-installing all needed primitives avoids ad-hoc installs later.
 
-- [ ] **1.5** Create `src/lib/utils.ts` with the shadcn/ui `cn()` class-merge helper
+- [x] **1.5** Create `src/lib/utils.ts` with the shadcn/ui `cn()` class-merge helper
   - WHY: Used by every shadcn/ui component for conditional Tailwind class composition.
+  - NOTE: Created automatically by shadcn init (clsx + tailwind-merge).
 
 - [ ] **1.6** Set up custom Tailwind theme colors: primary green `#2E7D32`, accent blue `#1565C0`, traffic lights (`#2E7D32`/`#F9A825`/`#C62828`), background `#FAFAFA`, card `#FFFFFF`
   - WHY: Spec mandates specific farm-themed colors consistent across all components.
