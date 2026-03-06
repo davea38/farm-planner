@@ -23,8 +23,9 @@
   - WHY: shadcn/ui provides the accessible primitives (Tabs, Input, Card, Tooltip, Collapsible, Dialog, Select) used throughout.
   - NOTE: Used shadcn v4 (base-nova style). Also added `@/` path alias to tsconfig.json, tsconfig.app.json, and vite.config.ts.
 
-- [ ] **1.4** Install required shadcn/ui components: `tabs`, `input`, `card`, `tooltip`, `collapsible`, `dialog`, `select`, `button`, `label`
+- [x] **1.4** Install required shadcn/ui components: `tabs`, `input`, `card`, `tooltip`, `collapsible`, `dialog`, `select`, `button`, `label`
   - WHY: Pre-installing all needed primitives avoids ad-hoc installs later.
+  - NOTE: All 9 components installed. TooltipProvider needed at app root.
 
 - [x] **1.5** Create `src/lib/utils.ts` with the shadcn/ui `cn()` class-merge helper
   - WHY: Used by every shadcn/ui component for conditional Tailwind class composition.
