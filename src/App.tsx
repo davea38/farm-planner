@@ -1,7 +1,7 @@
 function App() {
   return (
-    <div>
-      <h1>Farm Machinery Planner</h1>
+    <div className="min-h-screen bg-gray-50">
+      <h1 className="text-2xl font-bold text-center py-8">Farm Machinery Planner</h1>
     </div>
   )
 }

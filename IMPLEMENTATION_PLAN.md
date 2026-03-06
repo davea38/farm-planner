@@ -15,8 +15,9 @@
 - [x] **1.1** Initialize a Vite + React + TypeScript project (`npm create vite@latest . -- --template react-ts`)
   - WHY: The entire app depends on a working build pipeline; nothing else can be developed without it.
 
-- [ ] **1.2** Install and configure Tailwind CSS (PostCSS plugin, `tailwind.config.js`, base directives in `src/index.css`)
+- [x] **1.2** Install and configure Tailwind CSS (`@tailwindcss/vite` plugin, `@import "tailwindcss"` in `src/index.css`)
   - WHY: Every component uses Tailwind for styling; must be in place before any UI work.
+  - NOTE: Using Tailwind CSS v4 with native Vite plugin (no PostCSS config or tailwind.config.js needed).
 
 - [ ] **1.3** Initialize shadcn/ui (`npx shadcn-ui@latest init`) and create `components.json` config
   - WHY: shadcn/ui provides the accessible primitives (Tabs, Input, Card, Tooltip, Collapsible, Dialog, Select) used throughout.
