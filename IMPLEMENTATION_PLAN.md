@@ -142,7 +142,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Enables unit conversion for Tab 1 inputs and results
 - [x] Modify `src/components/CostPerHour.tsx` — same `metricUnit` additions
   - **Why:** Tab 2 has the same area-based fields
-- [ ] Modify `src/components/CostBreakdown.tsx` — use `displayUnit()` for result row unit labels
+- [x] Modify `src/components/CostBreakdown.tsx` — use `displayUnit()` for result row unit labels
   - **Why:** Results must show £/acre when in acres mode
 - [ ] Modify `src/components/ResultBanner.tsx` — use converted unit text in saving messages
   - **Why:** Banner text should match chosen unit system
