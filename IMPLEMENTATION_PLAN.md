@@ -132,9 +132,9 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
 
 ### Part B: Apply Unit Conversion & Fix Labels
 
-- [ ] Modify `src/App.tsx` — wrap in `UnitContext.Provider`, add `<UnitToggle>` in header, store+persist `UnitPreferences`
+- [x] Modify `src/App.tsx` — wrap in `UnitContext.Provider`, add `<UnitToggle>` in header, store+persist `UnitPreferences`
   - **Why:** Global provider; preference survives reload
-- [ ] Modify `src/lib/storage.ts` — persist `UnitPreferences` in localStorage
+- [x] Modify `src/lib/storage.ts` — persist `UnitPreferences` in localStorage
   - **Why:** Unit preference must survive reloads without affecting saved metric data
 - [ ] Modify `src/components/InputField.tsx` — accept `metricUnit` prop; apply `toDisplay()`/`fromDisplay()`; use `displayUnit()`; add `whitespace-nowrap` to label+icon; change outer to `flex flex-wrap`; add `sm:ml-auto` to input wrapper
   - **Why:** Central fix point — all inputs flow through InputField; label fix prevents icon orphaning
@@ -154,7 +154,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Reference rates must match user's chosen unit
 - [ ] Modify `src/components/FuelConsumptionPanel.tsx` — show L/acre in perHectare mode when acres selected
   - **Why:** Fuel consumption per area unit must match preference
-- [ ] Update Tab 1 label in `src/App.tsx` — "Cost per Hectare" ↔ "Cost per Acre"
+- [x] Update Tab 1 label in `src/App.tsx` — "Cost per Hectare" ↔ "Cost per Acre"
   - **Why:** Most visible indicator that unit conversion is active
 
 ---

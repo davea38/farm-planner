@@ -6,13 +6,22 @@ import { CostPerHectare } from '@/components/CostPerHectare'
 import { CostPerHour } from '@/components/CostPerHour'
 import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
-import { loadState, useAutoSave, exportToFile, importFromFile } from '@/lib/storage'
+import { UnitToggle } from '@/components/UnitToggle'
+import { UnitContext } from '@/lib/UnitContext'
+import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
+import type { UnitPreferences } from '@/lib/units'
 import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState } from '@/lib/types'
 
 function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
+  const [unitPrefs, setUnitPrefs] = useState<UnitPreferences>(loadUnitPreferences)
 
   useAutoSave(appState)
+
+  const handleUnitsChange = useCallback((prefs: UnitPreferences) => {
+    setUnitPrefs(prefs)
+    saveUnitPreferences(prefs)
+  }, [])
 
   const onCostPerHectareChange = useCallback((inputs: CostPerHectareInputs) => {
     setAppState((prev) => ({
@@ -106,6 +115,7 @@ function App() {
   }, [])
 
   return (
+    <UnitContext.Provider value={{ units: unitPrefs, setUnits: handleUnitsChange }}>
     <TooltipProvider>
       <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-[800px] px-4 py-6">
@@ -113,20 +123,23 @@ function App() {
             <h1 className="text-xl sm:text-2xl font-bold">
               Farm Machinery Planner
             </h1>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleExport}>
-                Export JSON
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleImport}>
-                Import JSON
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={handleFileSelected}
-              />
+            <div className="flex flex-col items-end gap-2">
+              <UnitToggle units={unitPrefs} onChange={handleUnitsChange} />
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={handleExport}>
+                  Export JSON
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleImport}>
+                  Import JSON
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={handleFileSelected}
+                />
+              </div>
             </div>
           </div>
 
@@ -136,7 +149,7 @@ function App() {
                 value="cost-per-hectare"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Cost per Hectare
+                {unitPrefs.area === 'acres' ? 'Cost per Acre' : 'Cost per Hectare'}
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hour"
@@ -196,6 +209,7 @@ function App() {
         </div>
       </div>
     </TooltipProvider>
+    </UnitContext.Provider>
   )
 }
 

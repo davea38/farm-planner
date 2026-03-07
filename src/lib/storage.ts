@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { AppState } from "./types";
+import type { UnitPreferences } from "./units";
+import { DEFAULT_UNITS } from "./units";
 import {
   defaultCostPerHectare,
   defaultCostPerHour,
@@ -9,6 +11,7 @@ import {
 } from "./defaults";
 
 const STORAGE_KEY = "farmPlanner";
+const UNITS_STORAGE_KEY = "farmPlannerUnits";
 const CURRENT_VERSION = 1;
 
 function createDefaultState(): AppState {
@@ -161,6 +164,31 @@ export function useAutoSave(data: AppState, delayMs = 1000): void {
       }
     };
   }, [data, delayMs]);
+}
+
+export function loadUnitPreferences(): UnitPreferences {
+  try {
+    const raw = localStorage.getItem(UNITS_STORAGE_KEY);
+    if (!raw) return DEFAULT_UNITS;
+    const parsed: unknown = JSON.parse(raw);
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "area" in parsed &&
+      "speed" in parsed &&
+      (parsed.area === "ha" || parsed.area === "acres") &&
+      (parsed.speed === "km" || parsed.speed === "miles")
+    ) {
+      return parsed as UnitPreferences;
+    }
+    return DEFAULT_UNITS;
+  } catch {
+    return DEFAULT_UNITS;
+  }
+}
+
+export function saveUnitPreferences(prefs: UnitPreferences): void {
+  localStorage.setItem(UNITS_STORAGE_KEY, JSON.stringify(prefs));
 }
 
 export function importFromFile(file: File): Promise<AppState> {
