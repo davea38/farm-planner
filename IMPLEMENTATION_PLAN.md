@@ -336,8 +336,9 @@
   - WHY: Core persistence requirement.
   - NOTE: Verified programmatically with 44 assertions. Tests cover: (1) loadState returns correct defaults from empty localStorage, (2) saveState→loadState roundtrip preserves modified values across all 4 tabs including saved machines, (3) unchanged fields preserved alongside changes, (4) corrupt/invalid/future-version data falls back to defaults gracefully, (5) v0→v1 migration preserves data, (6) multiple save/load cycles maintain integrity, (7) simulated browser refresh (save then fresh loadState) restores all values. React wiring also verified: all 4 tab components use useRef-guarded useEffect to call onChange on state changes (skipping initial render), App.tsx assembles full AppState and useAutoSave debounces to saveState. TypeScript compiles clean.
 
-- [ ] **12.6** Test export/import cycle: export, clear localStorage, import, confirm restored
+- [x] **12.6** Test export/import cycle: export, clear localStorage, import, confirm restored
   - WHY: End-to-end backup/restore validation.
+  - NOTE: Verified programmatically with 54 assertions. Tests cover: (1) full roundtrip — save state, export to JSON, clear storage, import JSON, verify all 4 tabs restored with correct values including saved machines, (2) unversioned v0 data imports and migrates to v1 correctly, (3) invalid data rejected (non-JSON, missing structure, future version), (4) double export/import cycle preserves modifications across both cycles, (5) export format is pretty-printed JSON with version/lastSaved/all sections. All fields verified: CostPerHectare current + saved machines, CostPerHour current + saved machines, CompareMachines A+B, ReplacementPlanner machines + farmIncome.
 
 - [x] **12.7** Test zero-value edge cases: hectares=0, hours=0, work rate=0, application rate=0 show friendly messages (no Infinity/NaN)
   - WHY: Spec explicitly requires graceful zero handling.
