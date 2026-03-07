@@ -9,7 +9,7 @@
 ## Commands
 
 - Build: `npx tsc -b && npx vite build`
-- Test: (no test framework yet)
+- Test: `npm test` (vitest run) or `npm run test:watch` (vitest)
 - Lint: `npx eslint .`
 - Dev: `npm run dev`
 
