@@ -2,11 +2,13 @@
 
 ## What This Is
 
-A locally-hosted web app that helps a farmer answer three big questions:
+A locally-hosted web app that helps a farmer answer five big questions:
 
 1. **"What does this machine actually cost me?"** - per hectare or per hour
 2. **"Should I buy it or hire a contractor?"** - clear yes/no with the numbers
 3. **"When should I replace my machines?"** - a whole-farm timeline planner
+4. **"If I offer contracting services, will it make money?"** - per-service profitability with NAAC benchmarks
+5. **"Overall, is owning all this machinery profitable?"** - combined income vs costs dashboard
 
 Based on the AHDB Machinery Costing Calculator spreadsheet and the AHDB Machinery Replacement Planner (2025).
 
@@ -36,16 +38,19 @@ Based on the AHDB Machinery Costing Calculator spreadsheet and the AHDB Machiner
 
 ## Application Structure
 
-The app has **4 tabs** across the top, matching the 4 tools in the AHDB spreadsheet, plus a replacement planner from the PDF:
+The app has **7 tabs** across the top:
 
 | Tab | Purpose |
 |-----|---------|
 | **Cost per Hectare** | "What does this machine cost me for every hectare it works?" |
 | **Cost per Hour** | "What does this machine cost me for every hour it runs?" |
+| **Depreciation** | "How fast does my machine lose value, and when's the sweet spot to sell?" |
 | **Compare Two Machines** | "Which of these two machines gets more work done?" |
 | **Replacement Planner** | "When do I need to replace each machine on my farm?" |
+| **Contracting Income** | "If I offer my machinery as a service, will it make money?" (SPEC-10) |
+| **Profitability** | "Overall, is owning all this machinery profitable or loss-making?" (SPEC-11) |
 
-A fifth **Repair Budget** mini-tool is embedded as a helper within the Cost tabs (not a separate tab).
+A **Repair Budget** mini-tool is embedded as a helper within the Cost tabs (not a separate tab).
 
 ---
 
@@ -427,7 +432,7 @@ Note: Tractors use hour brackets 500/750/1000/1500 while other machinery uses 50
 ```json
 {
   "farmPlanner": {
-    "version": 1,
+    "version": 2,
     "lastSaved": "2025-03-06T10:30:00Z",
     "costPerHectare": {
       "savedMachines": [
@@ -458,6 +463,20 @@ Note: Tractors use hour brackets 500/750/1000/1500 while other machinery uses 50
     "replacementPlanner": {
       "machines": [ ... ],
       "farmIncome": 350000
+    },
+    "contractingIncome": {
+      "services": [
+        {
+          "id": "abc-123",
+          "name": "Combining cereals",
+          "chargeRate": 119.34,
+          "chargeUnit": "ha",
+          "annualVolume": 400,
+          "ownCostPerUnit": 85,
+          "additionalCosts": 2000,
+          "linkedMachineSource": "hectare:0"
+        }
+      ]
     }
   }
 }
@@ -541,20 +560,27 @@ farm-planner/
     App.tsx                    -- top-level layout, tab routing
     lib/
       utils.ts                 -- shadcn/ui cn() helper
-      calculations.ts          -- all AHDB formulas (pure functions, no UI)
+      calculations.ts          -- all AHDB formulas + contracting + profitability (pure functions, no UI)
       repair-data.ts           -- AHDB repair cost lookup table
-      storage.ts               -- localStorage read/write, JSON export/import
+      contractor-data.ts       -- NAAC contractor rates data (SPEC-04, SPEC-09)
+      depreciation-data.ts     -- depreciation profiles by machine category (SPEC-07)
+      storage.ts               -- localStorage read/write, JSON export/import, version migrations
     components/
       ui/                      -- shadcn/ui primitives (tabs, input, card, tooltip, etc.)
       CostPerHectare.tsx       -- Tab 1
       CostPerHour.tsx          -- Tab 2
-      CompareMachines.tsx      -- Tab 3
-      ReplacementPlanner.tsx   -- Tab 4
+      DepreciationPanel.tsx    -- Tab 3 (SPEC-07)
+      CompareMachines.tsx      -- Tab 4
+      ReplacementPlanner.tsx   -- Tab 5
+      ContractingIncomePlanner.tsx  -- Tab 6 (SPEC-10)
+      ProfitabilityOverview.tsx    -- Tab 7 (SPEC-11)
       RepairEstimator.tsx      -- pop-up helper used by Tabs 1 & 2
+      ContractorRatesPanel.tsx -- NAAC rate browser (SPEC-04, SPEC-09), used by Tabs 1, 2 & 6
       ResultBanner.tsx         -- green/amber/red verdict banner (shared)
       CostBreakdown.tsx        -- breakdown table used by Tabs 1 & 2
       TimelineChart.tsx        -- Gantt-style replacement timeline
-      WorkrateBar.tsx          -- stacked horizontal bar for Tab 3
+      WorkrateBar.tsx          -- stacked horizontal bar for Tab 4
+      DepreciationCurve.tsx    -- SVG depreciation chart (SPEC-07)
 ```
 
 ---

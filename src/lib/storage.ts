@@ -12,7 +12,7 @@ import {
 
 const STORAGE_KEY = "farmPlanner";
 const UNITS_STORAGE_KEY = "farmPlannerUnits";
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
 function createDefaultState(): AppState {
   return {
@@ -33,6 +33,9 @@ function createDefaultState(): AppState {
     replacementPlanner: {
       machines: createDefaultReplacementMachines(),
       farmIncome: 350000,
+    },
+    contractingIncome: {
+      services: [],
     },
   };
 }
@@ -70,6 +73,12 @@ const migrations: Migration[] = [
     ...state,
     version: 1,
     lastSaved: state.lastSaved ?? new Date().toISOString(),
+  }),
+  // v1 → v2: Add contractingIncome field
+  (state) => ({
+    ...state,
+    version: 2,
+    contractingIncome: { services: [] },
   }),
 ];
 

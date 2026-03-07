@@ -1,7 +1,7 @@
 # Implementation Plan — Farm Machinery Planner
 
 **Date:** 2026-03-07
-**Current state:** 5 tabs, storage version 1, 121 NAAC rates across 12 categories
+**Current state:** 6 tabs, storage version 2, 121 NAAC rates across 12 categories
 **Target state:** 7 tabs, 130+ NAAC rates across 12 categories, storage version 2
 
 ## Spec Status Summary
@@ -17,7 +17,7 @@
 | 07 | Depreciation Planner | **Partial** — panel exists on Tab 3 only; spec requires embedding on Tabs 1, 2, 5 with prop-driven mode |
 | 08 | Machine Profile Loading | [x] Done |
 | 09 | Complete NAAC Data | [x] Done — 121 entries across 12 categories, 6 dual-rate ops, 3 new unit types |
-| 10 | Contracting Income | **Not started** — Tab 6 does not exist |
+| 10 | Contracting Income | [x] Done |
 | 11 | Profitability Overview | **Not started** — Tab 7 does not exist |
 
 ## Dependency Graph
@@ -109,70 +109,15 @@ _Was implemented then reverted (commit 9f1d5dc). Must be re-implemented per spec
 
 _Depends on SPEC-09 for extended unit types and 12-category NAAC data. Blocks SPEC-11._
 
-### D1: Add types
+### D1–D7: All complete
 
-- [ ] Add `ChargeUnit` type to `types.ts`: `"ha" | "hr" | "bale" | "tonne" | "head" | "m"`
-  - **Why:** Contracting services can charge in any NAAC unit
-- [ ] Add `ContractingService` interface to `types.ts`: id, name, chargeRate, chargeUnit, annualVolume, ownCostPerUnit, additionalCosts, linkedMachineSource
-  - **Why:** Core data model for each contracting service the farmer offers
-- [ ] Add `ContractingIncomeState` interface: `{ services: ContractingService[] }`
-  - **Why:** Top-level state container for the tab
-- [ ] Extend `AppState` with `contractingIncome: ContractingIncomeState`
-  - **Why:** Tab 6 state must persist with the rest of the app state
-
-### D2: Add calculation functions
-
-- [ ] Implement `calculateContractingService(chargeRate, annualVolume, ownCostPerUnit, additionalCosts)` in `calculations.ts` returning grossIncome, totalOwnCost, profitPerUnit, annualProfit, marginPct
-  - **Why:** Per-service profit calculation — pure function for testability
-- [ ] Implement `calculateContractingSummary(services[])` in `calculations.ts` returning totalGrossIncome, totalCosts, totalProfit, overallMarginPct
-  - **Why:** Aggregates across all services for the summary section
-- [ ] Create `src/lib/__tests__/contracting-calculations.test.ts` with tests for: gross income, costs, profit, margin %, zero volume, negative margin, summary aggregation, empty array
-  - **Why:** Pure functions need thorough test coverage before building UI
-
-### D3: Storage migration v1 → v2
-
-- [ ] Bump `CURRENT_VERSION` from 1 to 2 in `storage.ts`
-  - **Why:** New AppState field requires a version bump
-- [ ] Add migration function: v1→v2 adds `contractingIncome: { services: [] }` to existing state
-  - **Why:** Existing users' localStorage must gain the new field automatically
-- [ ] Update default state creation to include `contractingIncome: { services: [] }`
-  - **Why:** New installs get the correct default state
-- [ ] Add storage migration tests: verify v1 data migrates to v2 with empty contractingIncome
-  - **Why:** Migration correctness is critical for not losing existing users' data
-
-### D4: Build ContractingIncomePlanner component
-
-- [ ] Create `src/components/ContractingIncomePlanner.tsx` with: intro text, "Add Service" button, per-service cards (name, charge rate, charge unit dropdown, annual volume, own cost/unit, additional costs), delete button per service
-  - **Why:** Core Tab 6 UI structure per SPEC-10
-- [ ] Add "Pull from saved machine" dropdown per service card (grouped by Tab 1/Tab 2 machines, auto-fills ownCostPerUnit and chargeUnit)
-  - **Why:** Lets farmer link contracting costs to their actual machinery ownership costs calculated on Tabs 1/2
-- [ ] Embed `ContractorRatesPanel` per card (collapsed, onApply wires to chargeRate)
-  - **Why:** Reuses NAAC reference data so farmers can set competitive charge rates
-- [ ] Add per-service results display: gross income, total costs, profit/unit, annual profit, margin %
-  - **Why:** Immediate feedback on whether each service is profitable
-- [ ] Add traffic-light banners per service: green (>20% margin), amber (0-20%), red (<0%)
-  - **Why:** Visual decision aid for service viability
-- [ ] Add overall contracting summary section (when ≥1 service exists)
-  - **Why:** Aggregate view of total contracting income and profitability
-
-### D5: Wire into App.tsx
-
-- [ ] Add Tab 6 trigger ("Contracting Income") to TabsList in `App.tsx`
-  - **Why:** New tab must be visible in navigation
-- [ ] Add TabsContent rendering `<ContractingIncomePlanner>` with props: initialState, onChange, savedHectareMachines, savedHourMachines
-  - **Why:** Tab content wired to app state and saved machine data from Tabs 1/2
-- [ ] Update TabsList layout (grid-cols) to accommodate 7 tabs
-  - **Why:** Navigation must fit additional tabs without overflow
-
-### D6: Component tests
-
-- [ ] Create `src/components/__tests__/ContractingIncomePlanner.test.tsx` testing: renders, add/delete service, inputs, pull from saved machine, results display, traffic-light banners, summary
-  - **Why:** Component behavior coverage per SPEC-10
-
-### D7: Verify
-
-- [ ] Run `npm test` and `npm run build`
-  - **Why:** Regression check after adding a major new tab
+- [x] Added `ChargeUnit`, `ContractingService`, `ContractingIncomeState` types and extended `AppState` in `types.ts`
+- [x] Added `calculateContractingService()` and `calculateContractingSummary()` pure functions in `calculations.ts`
+- [x] Bumped `CURRENT_VERSION` to 2, added v1→v2 migration, updated `createDefaultState` in `storage.ts`
+- [x] Built `ContractingIncomePlanner.tsx` with service cards, pull-from-saved-machine dropdown, NAAC rates panel, results display, traffic-light banners, and overall summary
+- [x] Wired Tab 6 ("Contracting Income") into `App.tsx` with state callbacks and saved machine props
+- [x] Created calculation tests (10 tests) and component tests (9 tests)
+- [x] Updated storage tests for version 2; all 348 tests pass, `vite build` succeeds
 
 **Files:** `src/lib/types.ts`, `src/lib/calculations.ts`, `src/lib/storage.ts`, `src/components/ContractingIncomePlanner.tsx`, `src/components/__tests__/ContractingIncomePlanner.test.tsx`, `src/lib/__tests__/contracting-calculations.test.ts`, `src/App.tsx`
 

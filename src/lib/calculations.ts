@@ -9,6 +9,56 @@ import type {
   WorkrateResults,
 } from "./types";
 
+export interface ContractingServiceResults {
+  grossIncome: number;
+  totalOwnCost: number;
+  profitPerUnit: number;
+  annualProfit: number;
+  marginPct: number;
+}
+
+export interface ContractingSummary {
+  totalGrossIncome: number;
+  totalCosts: number;
+  totalProfit: number;
+  overallMarginPct: number;
+  serviceCount: number;
+}
+
+export function calculateContractingService(
+  chargeRate: number,
+  annualVolume: number,
+  ownCostPerUnit: number,
+  additionalCosts: number,
+): ContractingServiceResults {
+  const grossIncome = chargeRate * annualVolume;
+  const totalOwnCost = ownCostPerUnit * annualVolume + additionalCosts;
+  const annualProfit = grossIncome - totalOwnCost;
+  const profitPerUnit =
+    annualVolume > 0
+      ? chargeRate - ownCostPerUnit - additionalCosts / annualVolume
+      : 0;
+  const marginPct = grossIncome > 0 ? (annualProfit / grossIncome) * 100 : 0;
+  return { grossIncome, totalOwnCost, profitPerUnit, annualProfit, marginPct };
+}
+
+export function calculateContractingSummary(
+  services: ContractingServiceResults[],
+): ContractingSummary {
+  const totalGrossIncome = services.reduce((sum, s) => sum + s.grossIncome, 0);
+  const totalCosts = services.reduce((sum, s) => sum + s.totalOwnCost, 0);
+  const totalProfit = totalGrossIncome - totalCosts;
+  const overallMarginPct =
+    totalGrossIncome > 0 ? (totalProfit / totalGrossIncome) * 100 : 0;
+  return {
+    totalGrossIncome,
+    totalCosts,
+    totalProfit,
+    overallMarginPct,
+    serviceCount: services.length,
+  };
+}
+
 export function calcCostPerHectare(inputs: CostPerHectareInputs): CostPerHectareResults {
   const {
     purchasePrice,

@@ -127,6 +127,23 @@ export interface SavedMachine<T> {
   inputs: T;
 }
 
+export type ChargeUnit = "ha" | "hr" | "bale" | "tonne" | "head" | "m";
+
+export interface ContractingService {
+  id: string;
+  name: string;
+  chargeRate: number;
+  chargeUnit: ChargeUnit;
+  annualVolume: number;
+  ownCostPerUnit: number;
+  additionalCosts: number;
+  linkedMachineSource: string | null;
+}
+
+export interface ContractingIncomeState {
+  services: ContractingService[];
+}
+
 export interface AppState {
   version: number;
   lastSaved: string;
@@ -143,4 +160,5 @@ export interface AppState {
     machineB: WorkrateInputs;
   };
   replacementPlanner: ReplacementPlannerState;
+  contractingIncome: ContractingIncomeState;
 }

@@ -7,11 +7,12 @@ import { CostPerHour } from '@/components/CostPerHour'
 import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
 import { DepreciationPanel } from '@/components/DepreciationPanel'
+import { ContractingIncomePlanner } from '@/components/ContractingIncomePlanner'
 import { UnitToggle } from '@/components/UnitToggle'
 import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
 import type { UnitPreferences } from '@/lib/units'
-import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState } from '@/lib/types'
+import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState, ContractingIncomeState } from '@/lib/types'
 
 function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
@@ -114,6 +115,13 @@ function App() {
     }))
   }, [])
 
+  const onContractingIncomeChange = useCallback((state: ContractingIncomeState) => {
+    setAppState((prev) => ({
+      ...prev,
+      contractingIncome: state,
+    }))
+  }, [])
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleExport = useCallback(() => {
@@ -167,7 +175,7 @@ function App() {
           </div>
 
           <Tabs defaultValue="cost-per-hectare">
-            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 h-auto gap-1">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto gap-1">
               <TabsTrigger
                 value="cost-per-hectare"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
@@ -197,6 +205,12 @@ function App() {
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
                 Replacement Planner
+              </TabsTrigger>
+              <TabsTrigger
+                value="contracting-income"
+                className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
+              >
+                Contracting Income
               </TabsTrigger>
             </TabsList>
 
@@ -238,6 +252,15 @@ function App() {
               <ReplacementPlanner
                 initialState={appState.replacementPlanner}
                 onChange={onReplacementPlannerChange}
+              />
+            </TabsContent>
+
+            <TabsContent value="contracting-income" className="mt-4">
+              <ContractingIncomePlanner
+                initialState={appState.contractingIncome}
+                onChange={onContractingIncomeChange}
+                savedHectareMachines={appState.costPerHectare.savedMachines}
+                savedHourMachines={appState.costPerHour.savedMachines}
               />
             </TabsContent>
           </Tabs>
