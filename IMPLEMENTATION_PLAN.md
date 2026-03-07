@@ -72,8 +72,9 @@
 - [ ] **2.7** Create `src/lib/repair-data.ts` with AHDB repair cost lookup table and `lookupRepairPct(machineType, annualHours)` interpolation function (tractors use 500/750/1000/1500 brackets; others use 50/100/150/200)
   - WHY: Repair Cost Estimator pop-up depends on this data and interpolation logic.
 
-- [ ] **2.8** Create `src/lib/format.ts` with `formatGBP()` (£ + commas), `formatPct()` (1 decimal), `formatNumber()`
+- [x] **2.8** Create `src/lib/format.ts` with `formatGBP()` (£ + commas), `formatPct()` (1 decimal), `formatNumber()`
   - WHY: Spec requires consistent GBP and percentage formatting across every tab.
+  - NOTE: formatGBP rounds to integer for values >= £1,000, shows 2 decimals below. All functions handle non-finite values gracefully (show "—"). formatNumber supports optional decimal places via toLocaleString("en-GB").
 
 - [ ] **2.9** Create `src/lib/storage.ts` with `loadState()`, `saveState(data)`, `exportToFile()`, `importFromFile(file)` using localStorage key `farmPlanner` with version field
   - WHY: All four tabs auto-save to localStorage and share export/import.
