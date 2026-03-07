@@ -144,11 +144,11 @@ function MachineRow({
           min={0}
         />
         <InputField
-          label="Cost to replace"
+          label="Replacement price"
           value={machine.priceToChange}
           onChange={(v) => update("priceToChange")(v)}
           unit="£"
-          tooltip="What the replacement will cost"
+          tooltip="What the replacement machine will cost to buy (before deducting trade-in value)"
           min={0}
         />
         <InputField

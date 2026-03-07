@@ -51,7 +51,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 
 ## Tier 2: Should Fix — Significant UX Improvements
 
-- [ ] **2.1** Change "Cost to replace" label to "Replacement price" with tooltip "What the replacement machine will cost to buy (before deducting trade-in value)" in `ReplacementPlanner.tsx` line 147 (finding #6).
+- [x] **2.1** Change "Cost to replace" label to "Replacement price" with tooltip "What the replacement machine will cost to buy (before deducting trade-in value)" in `ReplacementPlanner.tsx` line 147 (finding #6).
   **WHY:** "Cost to replace" is ambiguous — a farmer might enter the net cost instead of the gross purchase price.
   **Files:** `src/components/ReplacementPlanner.tsx`, `src/components/__tests__/ReplacementPlanner.full.test.tsx`.
 
@@ -147,7 +147,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 |------|-------|------|-----------|
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
-| 2 — Should Fix | 6 | 5 | 1 |
+| 2 — Should Fix | 6 | 2 | 4 |
 | 3 — Nice to Have | 8 | 0 | 8 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **14** | **12** |
+| **Total** | **26** | **11** | **15** |

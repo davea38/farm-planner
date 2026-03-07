@@ -122,7 +122,7 @@ describe("ReplacementPlanner – MachineRow interactions", () => {
     await user.clear(hoursInput)
     await user.type(hoursInput, "2500")
 
-    // Cost to replace field (value=150000)
+    // Replacement price field (value=150000)
     const costInput = screen.getByDisplayValue("150000")
     await user.clear(costInput)
     await user.type(costInput, "160000")
