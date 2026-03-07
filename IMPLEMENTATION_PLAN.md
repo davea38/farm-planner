@@ -98,8 +98,9 @@
   - WHY: Both cost tabs display an itemized breakdown below the main result.
   - NOTE: Takes array of CostRow objects ({label, value, unit, bold?}). Bold rows for totals, indented muted rows for line items. Uses formatGBP for values and appends /unit suffix.
 
-- [ ] **3.4** Create `src/components/CollapsibleSection.tsx` - wrapper using shadcn Collapsible with title, subtitle, `defaultOpen` prop
+- [x] **3.4** Create `src/components/CollapsibleSection.tsx` - wrapper using shadcn Collapsible with title, subtitle, `defaultOpen` prop
   - WHY: "Overheads" on Tabs 1 & 2 must be collapsed by default with a note.
+  - NOTE: Uses @base-ui/react Collapsible primitives. Props: title, subtitle, defaultOpen (false by default), children. Chevron icon rotates on open. 44px min tap target on trigger. Inline SVG chevron avoids extra icon dependency.
 
 - [ ] **3.5** Create `src/components/SaveLoadToolbar.tsx` - name input, Save, dropdown Select to load, Delete button
   - WHY: Both cost tabs need identical save/load for named machines.
