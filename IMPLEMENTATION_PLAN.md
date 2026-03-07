@@ -81,7 +81,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Unexplained magic number makes the formula unauditable.
   **Files:** `src/lib/calculations.ts`.
 
-- [ ] **3.2** Improve interest rate tooltip: "The return you could earn if you invested the money instead. Usually 2-4%. If you borrowed, use your loan rate instead." (finding #14).
+- [x] **3.2** Improve interest rate tooltip: "The return you could earn if you invested the money instead. Usually 2-4%. If you borrowed, use your loan rate instead." (finding #14).
   **WHY:** Conflating savings rate (2-4%) with loan rate (6-8%) significantly changes results.
 
 - [ ] **3.3** Add a note on the Contracting Income tab about shared machine cost-base (finding #5).
@@ -148,6 +148,6 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
-| 3 — Nice to Have | 8 | 1 | 7 |
+| 3 — Nice to Have | 8 | 2 | 6 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **16** | **10** |
+| **Total** | **26** | **17** | **9** |

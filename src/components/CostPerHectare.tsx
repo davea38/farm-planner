@@ -218,7 +218,7 @@ export function CostPerHectare({
               value={inputs.interestRate}
               onChange={update("interestRate")}
               unit="%"
-              tooltip="The rate you'd earn if the money was in the bank (or your loan rate)"
+              tooltip="The return you could earn if you invested the money instead. Usually 2–4%. If you borrowed, use your loan rate instead."
               min={0}
             />
             <InputField
