@@ -283,8 +283,9 @@
   - WHY: Completes the backup/restore cycle; validation prevents corrupt data.
   - NOTE: Implemented as part of 4.4 — Import JSON button triggers hidden file input, calls importFromFile(), updates appState on success, shows error alert on failure.
 
-- [ ] **10.4** Add version field handling in `loadState()` for future schema migration
+- [x] **10.4** Add version field handling in `loadState()` for future schema migration
   - WHY: Without versioning, future schema changes would corrupt saved data.
+  - NOTE: Implemented sequential migration framework in storage.ts. `migrateState()` applies migrations from detected version to CURRENT_VERSION. Handles unversioned data (version 0→1), future versions (rejected gracefully), and re-persists migrated data. `importFromFile()` also runs migration so imported older exports are upgraded. To add a future migration: increment CURRENT_VERSION and push a v(N)→v(N+1) function to the migrations array.
 
 ---
 

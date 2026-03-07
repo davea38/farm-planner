@@ -34,12 +34,10 @@ function createDefaultState(): AppState {
   };
 }
 
-function isValidState(data: unknown): data is AppState {
+function hasValidStructure(data: unknown): data is Record<string, unknown> {
   if (typeof data !== "object" || data === null) return false;
   const obj = data as Record<string, unknown>;
   return (
-    typeof obj.version === "number" &&
-    typeof obj.lastSaved === "string" &&
     typeof obj.costPerHectare === "object" &&
     obj.costPerHectare !== null &&
     typeof obj.costPerHour === "object" &&
@@ -51,18 +49,60 @@ function isValidState(data: unknown): data is AppState {
   );
 }
 
+function isValidState(data: unknown): data is AppState {
+  if (!hasValidStructure(data)) return false;
+  return (
+    typeof data.version === "number" &&
+    typeof data.lastSaved === "string"
+  );
+}
+
+type Migration = (state: Record<string, unknown>) => Record<string, unknown>;
+
+// Sequential migrations: index 0 migrates from version 0 (unversioned) to version 1, etc.
+// To add a new migration: push a function that transforms version N to N+1.
+const migrations: Migration[] = [
+  // v0 → v1: Add version and lastSaved fields to unversioned data
+  (state) => ({
+    ...state,
+    version: 1,
+    lastSaved: state.lastSaved ?? new Date().toISOString(),
+  }),
+];
+
+function migrateState(data: Record<string, unknown>): AppState | null {
+  const fromVersion = typeof data.version === "number" ? data.version : 0;
+
+  if (fromVersion > CURRENT_VERSION) return null;
+  if (fromVersion === CURRENT_VERSION) return data as unknown as AppState;
+
+  let migrated = { ...data };
+  for (let v = fromVersion; v < CURRENT_VERSION; v++) {
+    const migrate = migrations[v];
+    if (!migrate) return null;
+    migrated = migrate(migrated);
+  }
+
+  return isValidState(migrated) ? migrated : null;
+}
+
 export function loadState(): AppState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return createDefaultState();
 
     const parsed: unknown = JSON.parse(raw);
-    if (!isValidState(parsed)) return createDefaultState();
+    if (!hasValidStructure(parsed)) return createDefaultState();
 
-    // Future: handle version migration here
-    // if (parsed.version < CURRENT_VERSION) { migrate(parsed); }
+    const migrated = migrateState(parsed);
+    if (!migrated) return createDefaultState();
 
-    return parsed;
+    // Persist migrated data so future loads don't re-migrate
+    if (typeof parsed.version !== "number" || parsed.version < CURRENT_VERSION) {
+      saveState(migrated);
+    }
+
+    return migrated;
   } catch {
     return createDefaultState();
   }
@@ -129,12 +169,17 @@ export function importFromFile(file: File): Promise<AppState> {
     reader.onload = () => {
       try {
         const parsed: unknown = JSON.parse(reader.result as string);
-        if (!isValidState(parsed)) {
+        if (!hasValidStructure(parsed)) {
           reject(new Error("Invalid farm planner data file"));
           return;
         }
-        saveState(parsed);
-        resolve(parsed);
+        const migrated = migrateState(parsed);
+        if (!migrated) {
+          reject(new Error("Unsupported data version — cannot import this file"));
+          return;
+        }
+        saveState(migrated);
+        resolve(migrated);
       } catch {
         reject(new Error("Could not read file — is it a valid JSON export?"));
       }
