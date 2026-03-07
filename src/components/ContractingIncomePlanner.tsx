@@ -168,6 +168,11 @@ export function ContractingIncomePlanner({
         <p className="text-sm text-muted-foreground">
           Model income from offering your machinery to others.
         </p>
+        <p className="text-xs text-muted-foreground italic">
+          Note: Own cost per unit is based on your farm's usage alone. If the
+          machine does significant additional work for contracting, your true
+          cost per unit may be lower — and your margin higher.
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <Button onClick={addService} variant="outline">
