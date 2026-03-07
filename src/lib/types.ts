@@ -53,6 +53,7 @@ export interface CostPerHourResults {
   annualStorage: number;
   totalFixedCostPerYear: number;
   fixedCostPerHr: number;
+  labourPerHr: number;
   fuelPerHr: number;
   repairsPerHr: number;
   totalCostPerHr: number;

@@ -58,8 +58,9 @@
   - WHY: Tab 1 depends on these AHDB formulas. Pure functions are testable and reusable.
   - NOTE: Verified against AHDB defaults: £30.27/ha total, -£54,880 annual saving. Handles zero division for hectaresPerYear, workRate, and yearsOwned.
 
-- [ ] **2.4** Add `calcCostPerHour(inputs)` to `calculations.ts` returning fixed/hr, fuel/hr, repairs/hr, total/hr, annual saving
+- [x] **2.4** Add `calcCostPerHour(inputs)` to `calculations.ts` returning fixed/hr, fuel/hr, repairs/hr, total/hr, annual saving
   - WHY: Tab 2 uses the same structure but with hour-based formulas.
+  - NOTE: Verified against AHDB defaults: £65.56/hr total, £14,393.41 annual saving. Added missing labourPerHr field to CostPerHourResults interface. Handles zero division for hoursPerYear and yearsOwned.
 
 - [ ] **2.5** Add `calcWorkrate(machineInputs)` to `calculations.ts` returning area/load, spot rate, application time, total time/load, overall work rate, overall efficiency, time-breakdown percentages
   - WHY: Tab 3 needs these for each machine plus derived comparison values.
