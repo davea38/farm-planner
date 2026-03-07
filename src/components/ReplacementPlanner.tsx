@@ -171,9 +171,15 @@ function MachineRow({
         />
         <div className="flex items-center justify-between min-h-[44px] px-1">
           <span className="text-sm text-muted-foreground">Cost to budget</span>
-          <span className={`text-sm font-medium tabular-nums ${costToBudget > 0 ? "" : "text-muted-foreground"}`}>
-            {formatGBP(costToBudget)}
-          </span>
+          {costToBudget < 0 ? (
+            <span className="text-sm font-medium tabular-nums text-green-700">
+              You&apos;ll receive {formatGBP(Math.abs(costToBudget))}
+            </span>
+          ) : (
+            <span className={`text-sm font-medium tabular-nums ${costToBudget > 0 ? "" : "text-muted-foreground"}`}>
+              {formatGBP(costToBudget)}
+            </span>
+          )}
         </div>
       </div>
     </div>

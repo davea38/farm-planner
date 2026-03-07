@@ -115,7 +115,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 - [ ] **4.1** Add a note that insurance is calculated on purchase price, not current value, per AHDB methodology (finding #21).
   **WHY:** Known simplification that could mislead farmers with older machines.
 
-- [ ] **4.2** When "Cost to Budget" is negative, show "You'll receive £X when you swap" instead of a confusing negative number (finding #22).
+- [x] **4.2** When "Cost to Budget" is negative, show "You'll receive £X when you swap" instead of a confusing negative number (finding #22).
   **WHY:** Negative values look like errors without explanation.
   **Files:** `src/components/ReplacementPlanner.tsx`.
 
@@ -149,5 +149,5 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
 | 3 — Nice to Have | 8 | 8 | 0 |
-| 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **23** | **3** |
+| 4 — Observations | 3 | 1 | 2 |
+| **Total** | **26** | **24** | **2** |

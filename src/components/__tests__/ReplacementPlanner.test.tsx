@@ -168,6 +168,31 @@ describe("ReplacementPlanner", () => {
     expect(screen.getByText(/eating your profits/)).toBeInTheDocument()
   })
 
+  it("shows friendly message when cost to budget is negative (downsizing)", () => {
+    const downsizeState: ReplacementPlannerState = {
+      machines: [
+        {
+          id: "m1",
+          name: "Downsize tractor",
+          category: "tractor",
+          condition: "used",
+          yearOfManufacture: null,
+          purchaseDate: null,
+          usePerYear: 500,
+          timeToChange: 2,
+          currentHours: 1000,
+          priceToChange: 30000,
+          currentValue: 80000,
+        },
+      ],
+      farmIncome: 350000,
+    }
+    renderWithUnits(<ReplacementPlanner initialState={downsizeState} />)
+    // Should show "You'll receive £50,000" instead of "£-50,000"
+    expect(screen.getByText(/You'll receive/)).toBeInTheDocument()
+    expect(screen.getByText(/£50,000/)).toBeInTheDocument()
+  })
+
   it("shows empty timeline message when all timeToChange are 0", () => {
     const noReplacementState: ReplacementPlannerState = {
       machines: [
