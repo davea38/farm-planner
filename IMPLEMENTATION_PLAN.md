@@ -290,20 +290,24 @@
 
 ## Phase 11: Polish & Responsive Design
 
-- [ ] **11.1** Audit all inputs for consistent styling: label left, value center, unit right, `[?]` tooltip, 44px min tap target
+- [x] **11.1** Audit all inputs for consistent styling: label left, value center, unit right, `[?]` tooltip, 44px min tap target
   - WHY: Spec requires large touch targets for tablet use.
+  - NOTE: Full audit completed. All numeric inputs use InputField consistently: label left (flex-1 text-sm font-medium), value right-aligned (w-28 text-right tabular-nums), unit right (w-12 shrink-0), tooltip via [?] icon, 44px min-h on all rows. Text inputs (machine names) intentionally use distinct styling. SaveLoadToolbar, RepairEstimator also audited — all tap targets meet 44px minimum.
 
-- [ ] **11.2** Ensure Overheads sections on Tabs 1 & 2 collapse by default with note "Most farmers leave these as they are"
+- [x] **11.2** Ensure Overheads sections on Tabs 1 & 2 collapse by default with note "Most farmers leave these as they are"
   - WHY: Spec explicitly requires this to reduce cognitive load.
+  - NOTE: Already implemented during Phase 5/6. Both CostPerHectare and CostPerHour use `<CollapsibleSection title="Overheads" subtitle="Most farmers leave these as they are" defaultOpen={false}>`. Verified correct.
 
 - [ ] **11.3** Test and fix responsive layout at 320px, 768px, and 1280px across all tabs
   - WHY: Spec lists these breakpoints as verification targets.
 
-- [ ] **11.4** Add card shadows and section separators: white cards on `#FAFAFA`, grey background for Results sections
+- [x] **11.4** Add card shadows and section separators: white cards on `#FAFAFA`, grey background for Results sections
   - WHY: Visual separation between inputs and outputs.
+  - NOTE: Already implemented during Phase 5-9. Cards use `rounded-lg bg-card p-4 shadow-sm` (white with subtle shadow). Results sections use `rounded-lg bg-muted/50 p-4` (grey background). App background is `bg-background` (#FAFAFA). Verified consistent across all tabs.
 
-- [ ] **11.5** Ensure all currency values show £ + commas, all percentages show 1 decimal place
+- [x] **11.5** Ensure all currency values show £ + commas, all percentages show 1 decimal place
   - WHY: Consistent formatting is critical for financial readability.
+  - NOTE: Already implemented via format.ts. formatGBP() adds £ prefix with commas (rounds to integer >= £1,000, 2 decimals below). formatPct() always shows 1 decimal place. Both used consistently across CostPerHectare, CostPerHour, ReplacementPlanner, and CostBreakdown. Handles non-finite values with "—".
 
 ---
 
