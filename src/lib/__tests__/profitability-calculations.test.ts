@@ -27,9 +27,17 @@ describe("calculateProfitability", () => {
     expect(r.netPosition).toBe(432500 - 230916);
   });
 
-  it("calculates machinery cost as % of income", () => {
+  it("calculates all costs as % of total income", () => {
     const r = calculateProfitability(baseInputs);
+    // 230916 / 432500 * 100 = 53.4%
     expect(r.machineryCostPctOfIncome).toBeCloseTo(53.4, 0);
+  });
+
+  it("calculates machinery costs as % of farm income", () => {
+    const r = calculateProfitability(baseInputs);
+    // costsWithoutContracting = 87500 + 36324 + 45892 = 169716
+    // 169716 / 350000 * 100 = 48.5%
+    expect(r.machineryCostPctOfFarmIncome).toBeCloseTo(48.5, 0);
   });
 
   it("calculates contracting offset %", () => {
@@ -59,6 +67,7 @@ describe("calculateProfitability", () => {
     const r = calculateProfitability({ ...baseInputs, farmIncome: 0 });
     expect(r.totalIncome).toBe(82500);
     expect(r.machineryCostPctOfIncome).toBeGreaterThan(0);
+    expect(r.machineryCostPctOfFarmIncome).toBe(0);
   });
 
   it("handles zero contracting", () => {

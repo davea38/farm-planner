@@ -142,6 +142,12 @@ describe("ProfitabilityOverview", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows both profitability percentages", () => {
+    render(<ProfitabilityOverview appState={createTestState()} />);
+    expect(screen.getByText(/Machinery costs as % of farm income/)).toBeInTheDocument();
+    expect(screen.getByText(/All costs as % of total income/)).toBeInTheDocument();
+  });
+
   it("shows contracting offset percentage when contracting exists", () => {
     const state = createTestState({
       contractingIncome: {

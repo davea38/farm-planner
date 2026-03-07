@@ -28,6 +28,7 @@ export interface ProfitabilityResults {
   contractingCosts: number;
   netPosition: number;
   machineryCostPctOfIncome: number;
+  machineryCostPctOfFarmIncome: number;
   contractingOffsetPct: number;
   netWithoutContracting: number;
   netWithContracting: number;
@@ -51,6 +52,8 @@ export function calculateProfitability(
 
   const costsWithoutContracting =
     inputs.replacementAnnualCost + totalRunningCosts;
+  const machineryCostPctOfFarmIncome =
+    inputs.farmIncome > 0 ? (costsWithoutContracting / inputs.farmIncome) * 100 : 0;
   const netWithoutContracting = inputs.farmIncome - costsWithoutContracting;
   const netWithContracting = netPosition;
   const contractingNetContribution =
@@ -66,6 +69,7 @@ export function calculateProfitability(
     contractingCosts: inputs.contractingCosts,
     netPosition,
     machineryCostPctOfIncome,
+    machineryCostPctOfFarmIncome,
     contractingOffsetPct,
     netWithoutContracting,
     netWithContracting,

@@ -104,9 +104,9 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Editable fields that affect nothing feel broken to a farmer.
   **Files:** `src/components/ReplacementPlanner.tsx`.
 
-- [ ] **3.8** Show two profitability percentages: "Machinery costs as % of farm income" and "All costs as % of total income" (finding #11).
+- [x] **3.8** Show two profitability percentages: "Machinery costs as % of farm income" and "All costs as % of total income" (finding #11).
   **WHY:** Same thresholds but different income bases cause confusing discrepancies between tabs.
-  **Files:** `src/components/ProfitabilityOverview.tsx`.
+  **Files:** `src/lib/calculations.ts`, `src/components/ProfitabilityOverview.tsx`.
 
 ---
 
@@ -148,6 +148,6 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
-| 3 — Nice to Have | 8 | 7 | 1 |
+| 3 — Nice to Have | 8 | 8 | 0 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **22** | **4** |
+| **Total** | **26** | **23** | **3** |

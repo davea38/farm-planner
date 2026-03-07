@@ -114,7 +114,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
     };
   }, [appState, hasCurrentHaMachine, hasCurrentHrMachine]);
 
-  const trafficLight = getTrafficLight(results.machineryCostPctOfIncome);
+  const trafficLight = getTrafficLight(results.machineryCostPctOfFarmIncome);
   const haCountLabel = appState.costPerHectare.savedMachines.length;
   const hrCountLabel = appState.costPerHour.savedMachines.length;
 
@@ -240,7 +240,13 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
               </p>
               <div className="grid grid-cols-2 gap-2 text-sm max-w-md mx-auto">
                 <span className="text-muted-foreground text-right">
-                  Machinery cost as % of total income:
+                  Machinery costs as % of farm income:
+                </span>
+                <span className="font-medium text-left">
+                  {formatPct(results.machineryCostPctOfFarmIncome)}
+                </span>
+                <span className="text-muted-foreground text-right">
+                  All costs as % of total income:
                 </span>
                 <span className="font-medium text-left">
                   {formatPct(results.machineryCostPctOfIncome)}
@@ -314,13 +320,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
                       Machinery % income
                     </td>
                     <td className="text-right py-2 px-4">
-                      {formatPct(
-                        results.farmIncomeAmount > 0
-                          ? ((results.totalCosts - results.contractingCosts) /
-                              results.farmIncomeAmount) *
-                              100
-                          : 0,
-                      )}
+                      {formatPct(results.machineryCostPctOfFarmIncome)}
                     </td>
                     <td className="text-right py-2 pl-4">
                       {formatPct(results.machineryCostPctOfIncome)}
