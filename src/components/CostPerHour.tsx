@@ -3,6 +3,8 @@ import type { CostPerHourInputs, SavedMachine } from "@/lib/types"
 import { defaultCostPerHour } from "@/lib/defaults"
 import { calcCostPerHour } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
+import { useUnits } from "@/lib/UnitContext"
+import { displayUnit } from "@/lib/units"
 import { InputField } from "./InputField"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
@@ -43,6 +45,8 @@ export function CostPerHour({
     }
     onChange?.(inputs)
   }, [inputs, onChange])
+
+  const { units } = useUnits()
 
   const results = useMemo(() => calcCostPerHour(inputs), [inputs])
 
@@ -140,10 +144,10 @@ export function CostPerHour({
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">Running Costs</h2>
         <InputField
-          label="Ha covered per hour"
+          label={`${displayUnit("ha", units) === "acres" ? "Acres" : "Ha"} covered per hour`}
           value={inputs.haPerHr}
           onChange={update("haPerHr")}
-          unit="ha/hr"
+          metricUnit="ha/hr"
           tooltip="Area covered per hour (if applicable)"
           min={0}
         />

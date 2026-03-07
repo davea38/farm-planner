@@ -140,7 +140,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Central fix point — all inputs flow through InputField; label fix prevents icon orphaning
 - [x] Modify `src/components/CostPerHectare.tsx` — pass `metricUnit` to each InputField; update tab label via `displayUnit()`
   - **Why:** Enables unit conversion for Tab 1 inputs and results
-- [ ] Modify `src/components/CostPerHour.tsx` — same `metricUnit` additions
+- [x] Modify `src/components/CostPerHour.tsx` — same `metricUnit` additions
   - **Why:** Tab 2 has the same area-based fields
 - [ ] Modify `src/components/CostBreakdown.tsx` — use `displayUnit()` for result row unit labels
   - **Why:** Results must show £/acre when in acres mode
