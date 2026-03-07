@@ -154,6 +154,7 @@ export function calcCostPerHectare(inputs: CostPerHectareInputs): CostPerHectare
   const repairsPerHa = hectaresPerYear > 0 ? (purchasePrice * repairsPct / 100) / hectaresPerYear : 0;
 
   const totalCostPerHa = fixedCostPerHa + labourPerHa + fuelPerHa + repairsPerHa;
+  const totalAnnualCost = totalCostPerHa * hectaresPerYear;
 
   // Negative saving means owning is cheaper (farmer saves money by owning)
   const annualSaving = (totalCostPerHa - contractorCharge) * hectaresPerYear;
@@ -170,6 +171,7 @@ export function calcCostPerHectare(inputs: CostPerHectareInputs): CostPerHectare
     fuelPerHa,
     repairsPerHa,
     totalCostPerHa,
+    totalAnnualCost,
     annualSaving,
   };
 }
@@ -183,7 +185,6 @@ export function calcCostPerHour(inputs: CostPerHourInputs): CostPerHourResults {
     interestRate,
     insuranceRate,
     storageRate,
-    haPerHr,
     fuelConsumptionPerHr,
     fuelPrice,
     repairsPct,
@@ -205,6 +206,7 @@ export function calcCostPerHour(inputs: CostPerHourInputs): CostPerHourResults {
   const repairsPerHr = hoursPerYear > 0 ? (purchasePrice * repairsPct / 100) / hoursPerYear : 0;
 
   const totalCostPerHr = fixedCostPerHr + labourPerHr + fuelPerHr + repairsPerHr;
+  const totalAnnualCost = totalCostPerHr * hoursPerYear;
 
   // Positive saving means contractor is cheaper (farmer saves by using contractor)
   const annualSaving = (totalCostPerHr - contractorCharge) * hoursPerYear;
@@ -221,6 +223,7 @@ export function calcCostPerHour(inputs: CostPerHourInputs): CostPerHourResults {
     fuelPerHr,
     repairsPerHr,
     totalCostPerHr,
+    totalAnnualCost,
     annualSaving,
   };
 }

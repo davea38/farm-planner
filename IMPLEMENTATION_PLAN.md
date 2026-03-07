@@ -63,7 +63,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Without filtering, a farmer charging per bale sees 130+ irrelevant per-ha and per-hr rates.
   **Files:** `src/components/ContractingIncomePlanner.tsx`, `src/components/__tests__/ContractingIncomePlanner.test.tsx`.
 
-- [ ] **2.4** Add "Total annual cost: £X/year" line to the results section on both CostPerHectare and CostPerHour tabs (finding #9).
+- [x] **2.4** Add "Total annual cost: £X/year" line to the results section on both CostPerHectare and CostPerHour tabs (finding #9).
   **WHY:** Farmers think in annual budgets. Only showing per-unit cost forces mental arithmetic.
   **Files:** `src/lib/types.ts` (add `totalAnnualCost` to result interfaces), `src/lib/calculations.ts`, `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`, related test files.
 
@@ -147,7 +147,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 |------|-------|------|-----------|
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
-| 2 — Should Fix | 6 | 4 | 2 |
+| 2 — Should Fix | 6 | 5 | 1 |
 | 3 — Nice to Have | 8 | 0 | 8 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **13** | **13** |
+| **Total** | **26** | **14** | **12** |

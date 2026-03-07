@@ -277,6 +277,11 @@ export function CostPerHectare({
               ]}
             />
 
+            <div className="flex items-baseline justify-between gap-2 sm:gap-4 font-semibold text-base">
+              <span>Total annual cost</span>
+              <span className="tabular-nums whitespace-nowrap">{formatGBP(results.totalAnnualCost)}/year</span>
+            </div>
+
             <CostBreakdown
               rows={[
                 { label: "Contractor cost", value: inputs.contractorCharge, unit: "ha", bold: true },

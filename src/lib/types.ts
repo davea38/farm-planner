@@ -26,6 +26,7 @@ export interface CostPerHectareResults {
   fuelPerHa: number;
   repairsPerHa: number;
   totalCostPerHa: number;
+  totalAnnualCost: number;
   annualSaving: number;
 }
 
@@ -37,7 +38,6 @@ export interface CostPerHourInputs {
   interestRate: number;
   insuranceRate: number;
   storageRate: number;
-  haPerHr: number;
   fuelConsumptionPerHr: number;
   fuelPrice: number;
   repairsPct: number;
@@ -57,6 +57,7 @@ export interface CostPerHourResults {
   fuelPerHr: number;
   repairsPerHr: number;
   totalCostPerHr: number;
+  totalAnnualCost: number;
   annualSaving: number;
 }
 
