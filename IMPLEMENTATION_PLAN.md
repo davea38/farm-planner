@@ -54,8 +54,9 @@
   - WHY: Every field must be pre-filled with sensible UK farming defaults so the farmer only changes what they know.
   - NOTE: Exports defaultCostPerHectare, defaultCostPerHour, defaultMachineA/B, defaultReplacementPlanner, and createDefaultReplacementMachines() factory for unique IDs.
 
-- [ ] **2.3** Create `src/lib/calculations.ts` with `calcCostPerHectare(inputs)` returning all intermediate and final values (average value, interest, depreciation, insurance, storage, fixed/ha, labour/ha, fuel/ha, repairs/ha, total/ha, annual saving)
+- [x] **2.3** Create `src/lib/calculations.ts` with `calcCostPerHectare(inputs)` returning all intermediate and final values (average value, interest, depreciation, insurance, storage, fixed/ha, labour/ha, fuel/ha, repairs/ha, total/ha, annual saving)
   - WHY: Tab 1 depends on these AHDB formulas. Pure functions are testable and reusable.
+  - NOTE: Verified against AHDB defaults: £30.27/ha total, -£54,880 annual saving. Handles zero division for hectaresPerYear, workRate, and yearsOwned.
 
 - [ ] **2.4** Add `calcCostPerHour(inputs)` to `calculations.ts` returning fixed/hr, fuel/hr, repairs/hr, total/hr, annual saving
   - WHY: Tab 2 uses the same structure but with hour-based formulas.
