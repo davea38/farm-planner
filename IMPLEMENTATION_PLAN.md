@@ -160,11 +160,13 @@
 
 ## Phase 6: Tab 2 - Cost per Hour
 
-- [ ] **6.1** Create `src/components/CostPerHour.tsx` with inputs per spec: purchase price (92,751), sell after (7), sale price (40,000), hours/year (700), ha/hr (4), fuel/hr (14 L/hr), fuel price (0.60), repairs (1%), labour (14/hr), collapsed Overheads
+- [x] **6.1** Create `src/components/CostPerHour.tsx` with inputs per spec: purchase price (92,751), sell after (7), sale price (40,000), hours/year (700), ha/hr (4), fuel/hr (14 L/hr), fuel price (0.60), repairs (1%), labour (14/hr), collapsed Overheads
   - WHY: Same pattern as Tab 1 but hour-based; validates reusable components.
+  - NOTE: Follows identical pattern to CostPerHectare. All input sections: "What Did You Pay", "Running Costs", collapsed "Overheads", "Contractor Comparison". Units changed to /hr throughout.
 
-- [ ] **6.2** Wire inputs to state, call `calcCostPerHour()` for live results, render total/hr, breakdown, contractor comparison (45/hr), traffic-light `ResultBanner`
+- [x] **6.2** Wire inputs to state, call `calcCostPerHour()` for live results, render total/hr, breakdown, contractor comparison (45/hr), traffic-light `ResultBanner`
   - WHY: Live-update pattern using per-hour formulas.
+  - NOTE: useState + useMemo for live calculation. CostBreakdown shows total/hr, fixed/hr, running/hr. Traffic-light: green if owning cheaper, red if contractor cheaper, amber within 10% of contractor annual cost. Default £65.56/hr total, £14,393/year saving.
 
 - [ ] **6.3** Add "Help me estimate repairs" link opening RepairEstimator
   - WHY: Spec states repair estimator is available on both cost tabs.
