@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react"
 import { NAAC_RATES, NAAC_SOURCE, getRatesByUnit } from "@/lib/contractor-data"
-import type { ContractorRate } from "@/lib/contractor-data"
+import { useUnits } from "@/lib/UnitContext"
+import { toDisplay, displayUnit } from "@/lib/units"
 import { CollapsibleSection } from "./CollapsibleSection"
 
 interface ContractorRatesPanelProps {
@@ -31,11 +32,10 @@ const tierStyles = {
   high: "bg-red-50 dark:bg-red-950/30",
 }
 
-function formatRate(rate: ContractorRate): string {
+function formatRateValue(displayRate: number, unitLabel: string): string {
   const prefix = "\u00a3"
-  const unitLabel = rate.unit === "ha" ? "/ha" : rate.unit === "hr" ? "/hr" : "/bale"
-  if (rate.rate < 10) return `${prefix}${rate.rate.toFixed(2)}${unitLabel}`
-  return `${prefix}${Math.round(rate.rate)}${unitLabel}`
+  if (displayRate < 10) return `${prefix}${displayRate.toFixed(2)}${unitLabel}`
+  return `${prefix}${Math.round(displayRate)}${unitLabel}`
 }
 
 export function ContractorRatesPanel({
@@ -44,6 +44,8 @@ export function ContractorRatesPanel({
   defaultCategory,
   unitFilter,
 }: ContractorRatesPanelProps) {
+  const { units } = useUnits()
+
   const availableCategories = useMemo(() => {
     if (!unitFilter) return CATEGORIES
     const filtered = getRatesByUnit(unitFilter)
@@ -65,11 +67,27 @@ export function ContractorRatesPanel({
     return rates
   }, [activeCategory, unitFilter])
 
-  const rangeMin = visibleRates.length > 0 ? Math.min(...visibleRates.map(r => r.rate)) : 0
-  const rangeMax = visibleRates.length > 0 ? Math.max(...visibleRates.map(r => r.rate)) : 100
+  // Convert rate for display based on unit preferences (£/ha → £/acre)
+  const convertRate = (rate: number, rateUnit: string): number => {
+    if (rateUnit === "ha") return toDisplay(rate, "£/ha", units)
+    return rate
+  }
 
-  const rangeIndicatorPct = currentRate !== undefined && rangeMax > rangeMin
-    ? Math.min(100, Math.max(0, ((currentRate - rangeMin) / (rangeMax - rangeMin)) * 100))
+  const getUnitLabel = (rateUnit: string): string => {
+    if (rateUnit === "ha") return "/" + displayUnit("ha", units)
+    if (rateUnit === "hr") return "/hr"
+    return "/bale"
+  }
+
+  const rangeMin = visibleRates.length > 0 ? Math.min(...visibleRates.map(r => convertRate(r.rate, r.unit))) : 0
+  const rangeMax = visibleRates.length > 0 ? Math.max(...visibleRates.map(r => convertRate(r.rate, r.unit))) : 100
+
+  const displayCurrentRate = currentRate !== undefined && unitFilter === "ha"
+    ? toDisplay(currentRate, "£/ha", units)
+    : currentRate
+
+  const rangeIndicatorPct = displayCurrentRate !== undefined && rangeMax > rangeMin
+    ? Math.min(100, Math.max(0, ((displayCurrentRate - rangeMin) / (rangeMax - rangeMin)) * 100))
     : null
 
   return (
@@ -110,6 +128,8 @@ export function ContractorRatesPanel({
               <tbody>
                 {visibleRates.map(r => {
                   const tier = rateTier(r.rate)
+                  const displayRate = convertRate(r.rate, r.unit)
+                  const unitLabel = getUnitLabel(r.unit)
                   return (
                     <tr
                       key={r.operation}
@@ -118,7 +138,7 @@ export function ContractorRatesPanel({
                     >
                       <td className="px-3 py-2">{r.operation}</td>
                       <td className="px-3 py-2 text-right font-medium whitespace-nowrap">
-                        {formatRate(r)}
+                        {formatRateValue(displayRate, unitLabel)}
                       </td>
                       <td className="px-3 py-1.5 text-right">
                         <button
@@ -141,8 +161,8 @@ export function ContractorRatesPanel({
           {rangeIndicatorPct !== null && (
             <div className="space-y-1">
               <div className="text-xs text-muted-foreground">
-                Your current rate: {"\u00a3"}{currentRate}/
-                {unitFilter === "hr" ? "hr" : visibleRates[0]?.unit === "bale" ? "bale" : "ha"}
+                Your current rate: {"\u00a3"}{displayCurrentRate !== undefined && displayCurrentRate < 10 ? displayCurrentRate.toFixed(2) : displayCurrentRate !== undefined ? Math.round(displayCurrentRate) : currentRate}/
+                {unitFilter === "hr" ? "hr" : visibleRates[0]?.unit === "bale" ? "bale" : displayUnit("ha", units)}
               </div>
               <div className="relative h-2 rounded-full bg-muted overflow-hidden">
                 <div
