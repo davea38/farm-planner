@@ -77,8 +77,9 @@
   - WHY: Spec requires consistent GBP and percentage formatting across every tab.
   - NOTE: formatGBP rounds to integer for values >= £1,000, shows 2 decimals below. All functions handle non-finite values gracefully (show "—"). formatNumber supports optional decimal places via toLocaleString("en-GB").
 
-- [ ] **2.9** Create `src/lib/storage.ts` with `loadState()`, `saveState(data)`, `exportToFile()`, `importFromFile(file)` using localStorage key `farmPlanner` with version field
+- [x] **2.9** Create `src/lib/storage.ts` with `loadState()`, `saveState(data)`, `exportToFile()`, `importFromFile(file)` using localStorage key `farmPlanner` with version field
   - WHY: All four tabs auto-save to localStorage and share export/import.
+  - NOTE: Uses STORAGE_KEY="farmPlanner", CURRENT_VERSION=1. loadState() returns defaults on missing/invalid data. saveState() stamps version+lastSaved. exportToFile() creates downloadable .json via Blob URL. importFromFile() validates, saves to localStorage, and returns parsed state. isValidState() performs structural validation.
 
 - [ ] **2.10** Add debounced auto-save hook `useAutoSave(data, delayMs=1000)` in storage module
   - WHY: Spec requires auto-save on every change, debounced to 1 second.
