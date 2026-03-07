@@ -197,7 +197,7 @@ Annual storage cost     = purchase_price * storage_rate / 100
 Total fixed cost/year   = interest + depreciation + insurance + storage
 Fixed cost per hour     = total_fixed_cost / hours_per_year
 
-Fuel per hour           = fuel_consumption_L_per_hr * ha_per_hr * fuel_price
+Fuel per hour           = fuel_consumption_L_per_hr * fuel_price
 Repairs per hour        = (purchase_price * repairs_pct / 100) / hours_per_year
 
 TOTAL COST PER HOUR     = fixed_cost_per_hr + fuel_per_hr + repairs_per_hr + labour_per_hr
@@ -209,7 +209,99 @@ Same traffic-light banner as Tab 1.
 
 ---
 
-## Tab 3: Compare Two Machines (Workrate)
+## Tab 3: Depreciation
+
+### Purpose
+A standalone depreciation reference tool that shows farmers how fast their machine loses value over time, based on ASAE D497 depreciation curves. Helps answer: "How fast does my machine lose value, and when's the sweet spot to sell?"
+
+This tab provides the same `DepreciationPanel` component that is embedded (collapsed) within the Cost per Hectare, Cost per Hour, and Replacement Planner tabs — but presented as a full standalone tab for independent research without needing to be in a costing context.
+
+### Screen Layout
+
+```
++----------------------------------------------------------+
+|  DEPRECIATION                                    [?] Help  |
++----------------------------------------------------------+
+|                                                            |
+|  Machine type:  [Tractors (150+ HP)          ▼]           |
+|  Purchase price: [£100,000]                                |
+|                                                            |
+|  ┌──────────────────────────────────────────────────┐     |
+|  │  £100k ●                                         │     |
+|  │         \                                        │     |
+|  │          ·─·─·                                   │     |
+|  │               ·─·─·─●── 5 yrs: £45k (45%)       │     |
+|  │                      ·─·─·─·─·                   │     |
+|  │                               ·─·─·──            │     |
+|  │  Yr 0   2    4    6    8   10   12               │     |
+|  └──────────────────────────────────────────────────┘     |
+|                                                            |
+|  Age (years): [=====●===============] 5                    |
+|                                                            |
+|  ┌──────────────────────────────────────────────┐         |
+|  │  AFTER 5 YEARS                                │         |
+|  │                                               │         |
+|  │  Estimated value     £45,000                  │         |
+|  │  Value lost          £55,000  (55%)           │         |
+|  │  Avg depreciation    £11,000 / year           │         |
+|  │                                               │         |
+|  │  ███████████████████░░░░░░░░░░░░░░░░░░        │         |
+|  │  55% lost ──────────────── 45% remaining      │         |
+|  └──────────────────────────────────────────────┘         |
+|                                                            |
+|  Sweet spot: Year 5 — after this, annual                  |
+|  depreciation slows below average. Consider               |
+|  keeping the machine longer past this point.              |
+|                                                            |
+|  Source: ASAE D497 / Mississippi State Extension           |
+|  Note: Based on auction values. Actual value varies.      |
++----------------------------------------------------------+
+```
+
+### Inputs
+
+| Field | Default | Unit | Help tooltip |
+|-------|---------|------|--------------|
+| Machine type | Tractors (150+ HP) | dropdown | 8 categories: Tractors (80–149 HP), Tractors (150+ HP), Combine Harvesters, Forage Harvesters & Balers, Sprayers, Tillage Equipment, Drills & Planters, Other Equipment |
+| Purchase price | 100,000 | £ | "What you paid (or would pay) for this machine" |
+| Age slider | 5 | years (0–12) | Scrubs through the depreciation curve in real time |
+
+### Visual Elements
+
+1. **SVG depreciation curve** — line graph showing machine value (£) over 12 years with:
+   - Filled area below the line (gradient)
+   - Dot markers at each year
+   - Shaded "steep zone" highlighting the years of fastest depreciation
+   - Crosshair lines at the current age showing the "you are here" position
+   - Y-axis: value in £; X-axis: age in years
+
+2. **Summary card** — estimated value (£), value lost (£ and %), and average annual depreciation (£/year)
+
+3. **Percentage bar** — horizontal split bar showing % lost (red) vs % remaining (green)
+
+4. **Sweet spot callout** — identifies the year where marginal annual depreciation drops below the average annual depreciation, indicating the optimal hold period
+
+5. **Source attribution** — ASAE D497 / Mississippi State Extension with caveat about actual values
+
+### Standalone vs Embedded Behaviour
+
+| Aspect | Standalone (this tab) | Embedded (Tabs 1, 2, 5) |
+|--------|----------------------|--------------------------|
+| Purchase price input | Visible, user-editable | Hidden (uses parent form's value) |
+| "Use as sale price" button | Not shown | Shown — fills the parent form's expected sale price |
+| Machine category | User-selectable | Can be pre-selected from parent context |
+| Age/years | Slider with internal state | Synced with parent form's "years owned" |
+
+### Data Source
+
+Remaining value percentages from ASAE D497 via Mississippi State Extension (P3543), cross-referenced with Farmers Weekly UK tractor auction data. See `src/lib/depreciation-data.ts` for the full dataset and SPEC-07 for detailed methodology.
+
+### Live update
+All results recalculate instantly as the user changes the machine type, purchase price, or age slider.
+
+---
+
+## Tab 4: Compare Two Machines (Workrate)
 
 ### Purpose
 Compare the actual field performance of two machines side-by-side. Answers: "Is the bigger/newer one really faster once you count filling, transport, and efficiency?"
@@ -288,7 +380,7 @@ Time breakdown percentages:
 
 ---
 
-## Tab 4: Replacement Planner
+## Tab 5: Replacement Planner
 
 ### Purpose
 A whole-farm view of all major machines, when they need replacing, and what it will cost. Based on the AHDB Replacement Planner PDF.
@@ -494,7 +586,7 @@ Note: Tractors use hour brackets 500/750/1000/1500 while other machinery uses 50
 
 ### Layout
 - **Max width 800px**, centred. Comfortable on a laptop, readable on a tablet.
-- **Tab bar** across the top with 4 clearly-labelled tabs.
+- **Tab bar** across the top with 7 clearly-labelled tabs.
 - Active tab highlighted in green.
 
 ### Typography

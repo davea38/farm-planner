@@ -21,7 +21,7 @@
 | 09 | Complete NAAC Data | [x] Done |
 | 10 | Contracting Income | [x] Done |
 | 11 | Profitability Overview | [x] Done |
-| 12 | UX & Logic Review | Partially done — must-fix complete, should-fix/nice-to-have remain |
+| 12 | UX & Logic Review | [x] Done |
 
 ---
 
@@ -120,7 +120,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Negative values look like errors without explanation.
   **Files:** `src/components/ReplacementPlanner.tsx`.
 
-- [ ] **4.3** Update SPECS.md to document the standalone Depreciation Tab 3 (finding #23).
+- [x] **4.3** Update SPECS.md to document the standalone Depreciation Tab 3 (finding #23).
   **WHY:** Spec should reflect what was built.
   **Files:** `specs/SPECS.md`.
 
@@ -150,5 +150,5 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
 | 3 — Nice to Have | 8 | 8 | 0 |
-| 4 — Observations | 3 | 2 | 1 |
-| **Total** | **26** | **25** | **1** |
+| 4 — Observations | 3 | 3 | 0 |
+| **Total** | **26** | **26** | **0** |
