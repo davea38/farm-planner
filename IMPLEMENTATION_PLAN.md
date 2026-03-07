@@ -67,7 +67,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Farmers think in annual budgets. Only showing per-unit cost forces mental arithmetic.
   **Files:** `src/lib/types.ts` (add `totalAnnualCost` to result interfaces), `src/lib/calculations.ts`, `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`, related test files.
 
-- [ ] **2.5** Add a transient "Saved! This machine's costs now appear on the Profitability tab" notification after saving a machine profile (finding #16).
+- [x] **2.5** Add a transient "Saved! This machine's costs now appear on the Profitability tab" notification after saving a machine profile (finding #16).
   **WHY:** Farmers don't understand the save-then-view-profitability workflow.
   **Files:** `src/components/SaveLoadToolbar.tsx`.
 
@@ -77,7 +77,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 
 ## Tier 3: Nice to Have — Polish
 
-- [ ] **3.1** Add comment documenting the `6000` constant in the workrate formula: `// 6000 = 60 min/hr × 100 (efficiency is %, not decimal)` (finding #24).
+- [x] **3.1** Add comment documenting the `6000` constant in the workrate formula: `// 6000 = 60 min/hr × 100 (efficiency is %, not decimal)` (finding #24).
   **WHY:** Unexplained magic number makes the formula unauditable.
   **Files:** `src/lib/calculations.ts`.
 
@@ -147,7 +147,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 |------|-------|------|-----------|
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
-| 2 — Should Fix | 6 | 5 | 1 |
-| 3 — Nice to Have | 8 | 0 | 8 |
+| 2 — Should Fix | 6 | 6 | 0 |
+| 3 — Nice to Have | 8 | 1 | 7 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **14** | **12** |
+| **Total** | **26** | **16** | **10** |

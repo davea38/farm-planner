@@ -245,7 +245,7 @@ export function calcWorkrate(inputs: WorkrateInputs): WorkrateResults {
 
   const spotTimesEff = spotRate * fieldEfficiency;
   const applicationTime = spotTimesEff > 0
-    ? (6000 * areaPerLoad) / spotTimesEff
+    ? (6000 * areaPerLoad) / spotTimesEff // 6000 = 60 min/hr × 100 (efficiency is %, not decimal)
     : 0;
 
   const totalTimePerLoad = fillingTime + (2 * transportTime) + applicationTime;
