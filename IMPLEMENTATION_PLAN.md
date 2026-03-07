@@ -128,17 +128,21 @@
 
 ## Phase 5: Tab 1 - Cost per Hectare
 
-- [ ] **5.1** Create `src/components/CostPerHectare.tsx` with three input sections: "What Did You Pay?" (purchase price, sell after, sale price, hectares/year), "Running Costs" (work rate, labour, fuel price, fuel use, spares & repairs), "Overheads" (interest, insurance, storage - collapsed by default)
+- [x] **5.1** Create `src/components/CostPerHectare.tsx` with three input sections: "What Did You Pay?" (purchase price, sell after, sale price, hectares/year), "Running Costs" (work rate, labour, fuel price, fuel use, spares & repairs), "Overheads" (interest, insurance, storage - collapsed by default)
   - WHY: Primary tab and simplest calculator; validates shared components and calculation engine.
+  - NOTE: All three sections implemented with InputField components inside white cards. Overheads collapsed by default with "Most farmers leave these as they are" subtitle. Wired into App.tsx replacing placeholder.
 
-- [ ] **5.2** Wire inputs to React state (initialized from defaults) and call `calcCostPerHectare()` on every change for live results
+- [x] **5.2** Wire inputs to React state (initialized from defaults) and call `calcCostPerHectare()` on every change for live results
   - WHY: Spec requires instant recalculation with no "Calculate" button.
+  - NOTE: useState initialized from defaultCostPerHectare, useMemo calls calcCostPerHectare on every input change. Generic update helper avoids repetitive handlers.
 
-- [ ] **5.3** Add "Contractor Comparison" section with contractor charge field
+- [x] **5.3** Add "Contractor Comparison" section with contractor charge field
   - WHY: Own-vs-contractor comparison is the primary decision output.
+  - NOTE: Separate card section with contractor charge input (default £76/ha).
 
-- [ ] **5.4** Render Results: total cost/ha, fixed/running breakdown via `CostBreakdown`, contractor cost, `ResultBanner` with traffic-light (green if owning cheaper, red if contractor cheaper, amber if within 10%)
+- [x] **5.4** Render Results: total cost/ha, fixed/running breakdown via `CostBreakdown`, contractor cost, `ResultBanner` with traffic-light (green if owning cheaper, red if contractor cheaper, amber if within 10%)
   - WHY: This is the answer the farmer came for.
+  - NOTE: Results in muted background section. CostBreakdown shows your cost (total, fixed, running) and contractor cost. Traffic-light banner: green when owning saves money, red when contractor cheaper, amber within 10% threshold of contractor total annual cost.
 
 - [ ] **5.5** Add "Help me estimate repairs" link next to Spares & Repairs field that opens RepairEstimator dialog
   - WHY: Spec places this helper inline for farmers who don't know their repair percentage.

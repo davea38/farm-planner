@@ -1,5 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { CostPerHectare } from '@/components/CostPerHectare'
 
 function App() {
   return (
@@ -39,9 +40,7 @@ function App() {
             </TabsList>
 
             <TabsContent value="cost-per-hectare" className="mt-4">
-              <p className="text-muted-foreground text-center py-12">
-                Cost per Hectare calculator coming soon.
-              </p>
+              <CostPerHectare />
             </TabsContent>
 
             <TabsContent value="cost-per-hour" className="mt-4">
