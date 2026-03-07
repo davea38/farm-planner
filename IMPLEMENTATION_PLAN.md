@@ -181,8 +181,9 @@
   - WHY: Spec states repair estimator is available on both cost tabs.
   - NOTE: Same pattern as 5.5 — RepairEstimator component below Spares & repairs field with onApply callback.
 
-- [ ] **6.4** Integrate `SaveLoadToolbar` for named machine save/load
+- [x] **6.4** Integrate `SaveLoadToolbar` for named machine save/load
   - WHY: Same save/load requirement as Tab 1 with its own machine list.
+  - NOTE: Mirrored CostPerHectare pattern. Added onSaveCostPerHourMachine/onDeleteCostPerHourMachine callbacks in App.tsx, passed savedMachines + callbacks as props. CostPerHour renders SaveLoadToolbar with handleLoad updating local inputs state.
 
 - [x] **6.5** Connect to auto-save and handle zero-division edge cases (hours/year = 0)
   - WHY: Same persistence and safety requirements as Tab 1.

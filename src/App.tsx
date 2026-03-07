@@ -47,6 +47,26 @@ function App() {
     }))
   }, [])
 
+  const onSaveCostPerHourMachine = useCallback((name: string, inputs: CostPerHourInputs) => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHour: {
+        ...prev.costPerHour,
+        savedMachines: [...prev.costPerHour.savedMachines, { name, inputs }],
+      },
+    }))
+  }, [])
+
+  const onDeleteCostPerHourMachine = useCallback((index: number) => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHour: {
+        ...prev.costPerHour,
+        savedMachines: prev.costPerHour.savedMachines.filter((_, i) => i !== index),
+      },
+    }))
+  }, [])
+
   const onCompareMachinesChange = useCallback((machineA: WorkrateInputs, machineB: WorkrateInputs) => {
     setAppState((prev) => ({
       ...prev,
@@ -111,6 +131,9 @@ function App() {
               <CostPerHour
                 initialInputs={appState.costPerHour.current}
                 onChange={onCostPerHourChange}
+                savedMachines={appState.costPerHour.savedMachines}
+                onSaveMachine={onSaveCostPerHourMachine}
+                onDeleteMachine={onDeleteCostPerHourMachine}
               />
             </TabsContent>
 
