@@ -8,6 +8,7 @@ import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
+import { FuelPricePanel } from "./FuelPricePanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHectare({
@@ -152,6 +153,7 @@ export function CostPerHectare({
           tooltip="Current red diesel price per litre"
           min={0}
         />
+        <FuelPricePanel onApply={update("fuelPrice")} />
         <InputField
           label="Fuel use"
           value={inputs.fuelUse}

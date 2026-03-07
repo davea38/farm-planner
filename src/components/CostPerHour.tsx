@@ -8,6 +8,7 @@ import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
+import { FuelPricePanel } from "./FuelPricePanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHour({
@@ -152,6 +153,7 @@ export function CostPerHour({
           min={0}
           step={0.01}
         />
+        <FuelPricePanel onApply={update("fuelPrice")} />
         <InputField
           label="Spares & repairs"
           value={inputs.repairsPct}

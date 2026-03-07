@@ -35,19 +35,19 @@ _Blocks all other specs. No tests can run until this is done._
 
 _Depends on: SPEC-01_
 
-- [ ] Create `src/lib/fuel-data.ts` with `FUEL_PRICES` constant (red diesel 74.91 ppl, pump diesel 141.22 ppl, 5-year historical array 2022–2026)
+- [x] Create `src/lib/fuel-data.ts` with `FUEL_PRICES` constant (red diesel 74.91 ppl, pump diesel 141.22 ppl, 5-year historical array 2022–2026)
   - **Why:** Pure data module consumed by the panel and tests; no UI logic
-- [ ] Create `src/lib/__tests__/fuel-data.test.ts` — validate current price, historical array length, chronological order
+- [x] Create `src/lib/__tests__/fuel-data.test.ts` — validate current price, historical array length, chronological order
   - **Why:** Data integrity guards; RED tests first
-- [ ] Create `src/components/Sparkline.tsx` — pure SVG `<polyline>` with gradient fill, dot markers, x-axis labels
+- [x] Create `src/components/Sparkline.tsx` — pure SVG `<polyline>` with gradient fill, dot markers, x-axis labels
   - **Why:** Reusable charting primitive; no external dependencies
-- [ ] Create `src/components/FuelPricePanel.tsx` — collapsible panel with two price cards, year-on-year % change, Sparkline, "Use red diesel price" button (calls `onApply(0.7491)`), source footer
+- [x] Create `src/components/FuelPricePanel.tsx` — collapsible panel with two price cards, year-on-year % change, Sparkline, "Use red diesel price" button (calls `onApply(0.7491)`), source footer
   - **Why:** Converts ppl to £/L; gives farmers AHDB reference data inline
-- [ ] Create `src/components/__tests__/FuelPricePanel.test.tsx` — test price rendering, SVG presence, onApply callback with 0.7491, source attribution
+- [x] Create `src/components/__tests__/FuelPricePanel.test.tsx` — test price rendering, SVG presence, onApply callback with 0.7491, source attribution
   - **Why:** Component behavior tests per spec
-- [ ] Modify `src/components/CostPerHectare.tsx` — add `<FuelPricePanel>` below "Fuel price" input
+- [x] Modify `src/components/CostPerHectare.tsx` — add `<FuelPricePanel>` below "Fuel price" input
   - **Why:** Clicking "Use red diesel price" fills the fuel price input on Tab 1
-- [ ] Modify `src/components/CostPerHour.tsx` — add `<FuelPricePanel>` below "Fuel price" input
+- [x] Modify `src/components/CostPerHour.tsx` — add `<FuelPricePanel>` below "Fuel price" input
   - **Why:** Same integration on Tab 2
 
 ---
