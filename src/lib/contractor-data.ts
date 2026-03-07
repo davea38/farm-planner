@@ -40,6 +40,8 @@ export const NAAC_RATES: ContractorRate[] = [
   { category: "Application", operation: "Fertiliser (liquid)", rate: 16.48, unit: "ha" },
   { category: "Application", operation: "Spraying (arable)", rate: 16.52, unit: "ha" },
   { category: "Application", operation: "Spraying (grassland)", rate: 24.24, unit: "ha" },
+  { category: "Application", operation: "Lime spreading", rate: 19.85, unit: "ha" },
+  { category: "Application", operation: "Slug pelleting", rate: 11.42, unit: "ha" },
 
   // Harvesting (£/ha)
   { category: "Harvesting", operation: "Combining cereals", rate: 119.34, unit: "ha" },

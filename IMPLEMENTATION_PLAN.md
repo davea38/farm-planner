@@ -2,9 +2,9 @@
 
 **Priority order:** SPEC-01 → SPEC-02 → SPEC-03 → SPEC-04 → SPEC-07 → SPEC-06 → SPEC-05 → SPEC-08
 
-## Gap Analysis Summary
+## Gap Analysis Summary (updated 2026-03-07)
 
-The core application is fully built: all 4 tabs, calculations, persistence, save/load, export/import, responsive layout, and repair estimator. What remains are 7 new feature specs — all currently **not started**.
+All 8 specs are implemented. 135/135 tests pass, `npm run build` succeeds. No deviations remain.
 
 ---
 
@@ -260,3 +260,22 @@ _Depends on: SPEC-01._
 | `src/components/ReplacementPlanner.tsx` | 06, 07 |
 | `src/components/CollapsibleSection.tsx` | 05 |
 | `src/lib/storage.ts` | 06 |
+
+---
+
+## Remaining Tasks (Priority Order)
+
+_No remaining tasks._
+
+### Already Complete
+
+- [x] SPEC-01: Test infrastructure bootstrap (vitest + testing-library + jsdom)
+- [x] SPEC-02: Fuel price reference panel (AHDB data, sparkline, "Use red diesel" button)
+- [x] SPEC-03: Fuel consumption estimator (HP slider, 0.244 × HP formula, reference table)
+- [x] SPEC-04: Contractor rates panel (6 categories, traffic-light rows, "Use" buttons) — 40 rates across 6 categories
+- [x] SPEC-05: Integration tests & visual polish (4 e2e flows, accessibility, responsive)
+- [x] SPEC-06: UK unit toggle & label fixes (ha/acres, km/miles, whitespace-nowrap)
+- [x] SPEC-07: Depreciation curve planner (8 categories, SVG chart, sweet spot, slider)
+- [x] SPEC-08: Machine profile loading bug fix (parent state callbacks, controlled Select)
+- [x] Select `value` fallback verified: `null` is correct for Base UI (controlled mode, no selection); `""` would try to match a non-existent item
+- [x] NAAC rates expanded from 38 to 40 (added Lime spreading and Slug pelleting to Application category)
