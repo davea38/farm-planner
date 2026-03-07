@@ -1,255 +1,310 @@
 # Implementation Plan — Farm Machinery Planner
 
-**Priority order:** SPEC-01 → SPEC-02 → SPEC-03 → SPEC-04 → SPEC-07 → SPEC-06 → SPEC-05 → SPEC-08
+**Date:** 2026-03-07
+**Current state:** 5 tabs, storage version 1, 39 NAAC rates across 6 categories
+**Target state:** 7 tabs, 130+ NAAC rates across 12 categories, storage version 2
 
-## Gap Analysis Summary (updated 2026-03-07)
+## Spec Status Summary
 
-All 8 specs are implemented. 135/135 tests pass, `npm run build` succeeds. No deviations remain.
+| Spec | Title | Status |
+|------|-------|--------|
+| 01 | Test Infrastructure | [x] Done |
+| 02 | Fuel Price Panel | [x] Done |
+| 03 | Fuel Consumption Panel | [x] Done |
+| 04 | Contractor Rates Panel | [x] Done |
+| 05 | Integration & Polish | [x] Done |
+| 06 | UK Units & Labels | [x] Done |
+| 07 | Depreciation Planner | **Partial** — panel exists on Tab 3 only; spec requires embedding on Tabs 1, 2, 5 with prop-driven mode |
+| 08 | Machine Profile Loading | [x] Done |
+| 09 | Complete NAAC Data | **Reverted** — code was implemented then reverted (commit 9f1d5dc); only 39 entries/6 categories remain |
+| 10 | Contracting Income | **Not started** — Tab 6 does not exist |
+| 11 | Profitability Overview | **Not started** — Tab 7 does not exist |
 
----
+## Dependency Graph
 
-## Phase A: SPEC-01 — Test Infrastructure Bootstrap
-
-_Blocks all other specs. No tests can run until this is done._
-
-- [x] Install `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, and `jsdom` as devDependencies
-  - **Why:** Test runner, DOM utilities, custom matchers, and browser environment needed for all future tests
-- [x] Add `"test": "vitest run"` and `"test:watch": "vitest"` scripts to `package.json`
-  - **Why:** CLI entry points for running tests in CI and during development
-- [x] Create `vitest.config.ts` with jsdom environment and `@/` path alias matching `vite.config.ts`
-  - **Why:** Vitest needs its own config to resolve the `@/` alias and use jsdom for DOM APIs
-- [x] Create `src/setupTests.ts` that imports `@testing-library/jest-dom/vitest`
-  - **Why:** Adds `.toBeInTheDocument()` and other DOM matchers to every test file automatically
-- [x] Add `"vitest/globals"` to `types` array in `tsconfig.app.json`
-  - **Why:** Gives TypeScript awareness of `describe`, `it`, `expect` globals
-- [x] Create `src/lib/__tests__/calculations.test.ts` — test `calcCostPerHectare` with defaults produces ~£30.27/ha and ~-£54,880 annual saving
-  - **Why:** First pure-function smoke test validates the test pipeline end-to-end
-- [x] Create `src/components/__tests__/ResultBanner.test.tsx` — render `ResultBanner` and assert text appears in DOM
-  - **Why:** First component render test validates jsdom + React Testing Library integration
-- [x] Verify `npm test` runs and passes with 0 failures
-  - **Why:** Gate check before any other spec begins
-
----
-
-## Phase B: SPEC-02 — Fuel Price Reference Panel
-
-_Depends on: SPEC-01_
-
-- [x] Create `src/lib/fuel-data.ts` with `FUEL_PRICES` constant (red diesel 74.91 ppl, pump diesel 141.22 ppl, 5-year historical array 2022–2026)
-  - **Why:** Pure data module consumed by the panel and tests; no UI logic
-- [x] Create `src/lib/__tests__/fuel-data.test.ts` — validate current price, historical array length, chronological order
-  - **Why:** Data integrity guards; RED tests first
-- [x] Create `src/components/Sparkline.tsx` — pure SVG `<polyline>` with gradient fill, dot markers, x-axis labels
-  - **Why:** Reusable charting primitive; no external dependencies
-- [x] Create `src/components/FuelPricePanel.tsx` — collapsible panel with two price cards, year-on-year % change, Sparkline, "Use red diesel price" button (calls `onApply(0.7491)`), source footer
-  - **Why:** Converts ppl to £/L; gives farmers AHDB reference data inline
-- [x] Create `src/components/__tests__/FuelPricePanel.test.tsx` — test price rendering, SVG presence, onApply callback with 0.7491, source attribution
-  - **Why:** Component behavior tests per spec
-- [x] Modify `src/components/CostPerHectare.tsx` — add `<FuelPricePanel>` below "Fuel price" input
-  - **Why:** Clicking "Use red diesel price" fills the fuel price input on Tab 1
-- [x] Modify `src/components/CostPerHour.tsx` — add `<FuelPricePanel>` below "Fuel price" input
-  - **Why:** Same integration on Tab 2
+```
+SPEC-08 (bug fix)        ──── independent, do first
+SPEC-07 (embed panels)   ──── independent, do first
+SPEC-09 (NAAC data)      ──── blocks SPEC-10
+SPEC-10 (Tab 6)          ──── blocks SPEC-11
+SPEC-11 (Tab 7)          ──── final
+```
 
 ---
 
-## Phase C: SPEC-03 — Fuel Consumption Estimator Panel
+## Phase A: SPEC-08 — SaveLoadToolbar Select Value Fix
 
-_Depends on: SPEC-01_
+- [x] Verify Select `value` prop edge case: select index 0, delete it, select new index 0 — confirmed `null` is correct for Base UI (keeps controlled mode, renders placeholder)
+- [x] Fix: Use `value={null}` (not `""`) for no-selection state + `placeholder` prop on SelectValue instead of children — Base UI renders placeholder when value is null
+- [x] Remove unused `selectedLabel` variable
+- [x] Run `npm test` — all 320 tests pass, including re-selection after delete test
 
-- [x] Create `src/lib/fuel-consumption-data.ts` with `FUEL_CONSUMPTION_FACTOR` (0.244), `estimateFuelConsumption(hp)`, and `HP_REFERENCE_POINTS` (6 entries, 75–300 HP)
-  - **Why:** Pure estimation logic; formula 0.244 × HP = L/hr
-- [x] Create `src/lib/__tests__/fuel-consumption-data.test.ts` — test 100 HP → 24.4, 200 HP → 48.8, 0 HP → 0, reference table has 6 entries
-  - **Why:** RED tests for estimation function and data constants
-- [x] Create `src/components/FuelConsumptionPanel.tsx` — collapsible panel with HP slider (75–400), gauge bar, 6-column reference table, "Use this estimate" button, source footer; `mode` prop switches L/hr vs L/ha
-  - **Why:** Interactive panel; perHectare mode divides L/hr by workRate to get L/ha
-- [x] Create `src/components/__tests__/FuelConsumptionPanel.test.tsx` — test title, default estimate (36.6), onApply in both modes, L/ha display with workRate
-  - **Why:** Component behavior tests for both mode variants
-- [x] Modify `src/components/CostPerHectare.tsx` — add `<FuelConsumptionPanel mode="perHectare">` below "Fuel use" input
-  - **Why:** Tab 1 needs L/ha output, derived from L/hr ÷ work rate
-- [x] Modify `src/components/CostPerHour.tsx` — add `<FuelConsumptionPanel mode="perHour">` below fuel consumption input
-  - **Why:** Tab 2 needs raw L/hr output
+**Files:** `src/components/SaveLoadToolbar.tsx`
 
 ---
 
-## Phase D: SPEC-04 — Contractor Rates Reference Panel
+## Phase B: SPEC-07 — Embed DepreciationPanel on Tabs 1, 2, and 5
 
-_Depends on: SPEC-01_
+_Currently DepreciationPanel lives only on Tab 3 with zero props (fully internal state). Spec requires it embedded on Tabs 1, 2, and 5 with optional prop-driven mode._
 
-- [x] Create `src/lib/contractor-data.ts` with `NAAC_SOURCE`, `NAAC_RATES` (35+ rates, 6 categories), `getRatesByCategory()`, `getRatesByUnit()`
-  - **Why:** Static NAAC 2025-26 rate data across Soil Prep, Drilling, Application, Harvesting, Baling, Tractor Hire
-- [x] Create `src/lib/__tests__/contractor-data.test.ts` — test rate count ≥ 30, specific values, category/unit filter functions, all rates > 0
-  - **Why:** Data integrity and filter function tests
-- [x] Create `src/components/ContractorRatesPanel.tsx` — collapsible panel with 6 category pill tabs, traffic-light table (green < £40, amber £40–100, red > £100), "Use" button per row, range indicator, source footer
-  - **Why:** Most complex reference panel; `unitFilter` and `defaultCategory` props tailor it per tab
-- [x] Create `src/components/__tests__/ContractorRatesPanel.test.tsx` — test title, category tabs, rate rows, onApply, traffic-light attributes, unit filtering, source
-  - **Why:** Component tests for navigation, selection, and visual classification
-- [x] Modify `src/components/CostPerHectare.tsx` — add `<ContractorRatesPanel unitFilter="ha">` below "Contractor charges" input
-  - **Why:** Tab 1 shows per-hectare contractor rates
-- [x] Modify `src/components/CostPerHour.tsx` — add `<ContractorRatesPanel unitFilter="hr" defaultCategory="Tractor Hire">` below contractor charges input
-  - **Why:** Tab 2 defaults to hourly Tractor Hire rates
+### B1: Refactor DepreciationPanel to accept optional props
 
----
+- [ ] Add optional props to DepreciationPanel: `purchasePrice?: number`, `yearsOwned?: number`, `onApplySalePrice?: (value: number) => void`, `onYearsChange?: (years: number) => void`
+  - **Why:** When embedded in other tabs, the panel should read from and write to the parent form's state; when standalone on Tab 3, it continues using internal state
+- [ ] When `purchasePrice` prop is provided, use it instead of internal state (controlled mode)
+  - **Why:** On Tabs 1/2, the purchase price already exists on the form — the depreciation panel should reflect it
+- [ ] When `yearsOwned` prop is provided, sync the year slider bidirectionally
+  - **Why:** Changing the slider calls `onYearsChange`; changing yearsOwned on the parent form updates the slider
+- [ ] Show "Use as sale price" button only when `onApplySalePrice` is provided
+  - **Why:** Button fills the parent form's expected sale price with the depreciation-estimated value
+- [ ] Add tests for prop-driven mode in `DepreciationPanel.test.tsx`: test `onApplySalePrice` callback, controlled `purchasePrice`, controlled `yearsOwned`, `onYearsChange` callback
+  - **Why:** Both standalone (Tab 3) and embedded (Tabs 1/2/5) modes need test coverage
 
-## Phase E: SPEC-07 — Depreciation Curve Planner
+### B2: Embed in CostPerHectare (Tab 1)
 
-_Depends on: SPEC-01. Before SPEC-06 so unit support can be applied in one pass._
+- [ ] Add `<CollapsibleSection title="Depreciation Curve">` with `<DepreciationPanel>` below the purchase/sale section in `CostPerHectare.tsx`
+  - **Why:** Helps farmers set a realistic expected sale price based on ASAE depreciation curves
+- [ ] Wire `onApplySalePrice` to update `salePrice` input, pass `purchasePrice` and `yearsOwned` from form inputs
+  - **Why:** Connects the embedded panel to the form's data flow
 
-- [x] Create `src/lib/depreciation-data.ts` with 8 `DEPRECIATION_PROFILES`, `getRemainingValuePct()`, `getEstimatedValue()`, `getDepreciationLoss()`, `getAnnualDepreciation()`, `findSweetSpot()`
-  - **Why:** Core ASAE D497 depreciation data; 8 machine categories with 13-entry curves (years 0–12)
-- [x] Create `src/lib/__tests__/depreciation-data.test.ts` — test 8 categories, all start at 100%, 13 entries, monotonically decreasing, specific lookups, clamping, estimated values, loss, annual depreciation, sweet spot range
-  - **Why:** Extensive data integrity and calculation function tests
-- [x] Create `src/components/DepreciationCurve.tsx` — pure SVG line chart with gradient fill, dot markers, steep-zone shading, "you are here" marker, dashed value line, axis labels
-  - **Why:** Reusable SVG chart; separated from panel logic
-- [x] Create `src/components/DepreciationPanel.tsx` — collapsible panel with category dropdown, DepreciationCurve SVG, summary card, percentage bar, sweet spot callout, year slider (0–12), "Use as sale price" button, source footer
-  - **Why:** Interactive panel; year slider syncs bidirectionally with parent form
-- [x] Create `src/components/__tests__/DepreciationPanel.test.tsx` — test title, dropdown, SVG, values, percentage, sweet spot, onApplySalePrice, source, slider, slider change
-  - **Why:** Component interaction and display tests
-- [x] Modify `src/components/CostPerHectare.tsx` — add `<DepreciationPanel>` below "What Did You Pay" section
-  - **Why:** Helps farmers set a realistic expected sale price
-- [x] Modify `src/components/CostPerHour.tsx` — same DepreciationPanel integration
-  - **Why:** Tab 2 has the same purchase/sale inputs
-- [x] Modify `src/components/ReplacementPlanner.tsx` — add `<DepreciationPanel>` as a reference helper at the bottom
-  - **Why:** Complements "when to replace" with "how much value is lost" data
+### B3: Embed in CostPerHour (Tab 2)
 
----
+- [ ] Add same CollapsibleSection + DepreciationPanel integration as Tab 1 in `CostPerHour.tsx`
+  - **Why:** Tab 2 has the same purchase/sale price inputs and benefits from the same depreciation helper
 
-## Phase F: SPEC-06 — UK Unit Toggle & Label Fixes
+### B4: Embed in ReplacementPlanner (Tab 5)
 
-_After SPEC-02/03/04/07 so all new panels get unit support in one pass._
+- [ ] Add `<CollapsibleSection title="Depreciation Curve">` with standalone `<DepreciationPanel>` (no form wiring) in `ReplacementPlanner.tsx`
+  - **Why:** Reference helper for replacement timing decisions; no need to wire to individual machine rows
 
-### Part A: Unit Conversion System
+### B5: Verify
 
-- [x] Create `src/lib/units.ts` with `CONVERSIONS`, types (`AreaUnit`, `SpeedUnit`, `UnitPreferences`), `DEFAULT_UNITS`, `toDisplay()`/`fromDisplay()`/`displayUnit()`
-  - **Why:** Display-layer-only conversion; internal state stays metric
-- [x] Create `src/lib/__tests__/units.test.ts` — test ha↔acres, ha/hr↔acres/hr, L/ha↔L/acre, £/ha↔£/acre, km/hr↔mph, passthrough, round-trip, displayUnit strings
-  - **Why:** Conversion correctness is critical; errors silently produce wrong cost numbers
-- [x] Create `UnitContext` (React context + `useUnits()` hook)
-  - **Why:** Avoids prop drilling; all components read preferences via hook
-- [x] Create `src/components/UnitToggle.tsx` — two segmented pill toggles: [ha | acres] and [km | miles], with `aria-pressed`
-  - **Why:** Global toggle; compact pill design
-- [x] Create `src/components/__tests__/UnitToggle.test.tsx` — test both toggles render, active state, onChange callback
-  - **Why:** Accessibility and callback verification
+- [ ] Run `npm test` and `npm run build`
+  - **Why:** Regression check after refactoring a shared component used across 4 tabs
 
-### Part B: Apply Unit Conversion & Fix Labels
-
-- [x] Modify `src/App.tsx` — wrap in `UnitContext.Provider`, add `<UnitToggle>` in header, store+persist `UnitPreferences`
-  - **Why:** Global provider; preference survives reload
-- [x] Modify `src/lib/storage.ts` — persist `UnitPreferences` in localStorage
-  - **Why:** Unit preference must survive reloads without affecting saved metric data
-- [x] Modify `src/components/InputField.tsx` — accept `metricUnit` prop; apply `toDisplay()`/`fromDisplay()`; use `displayUnit()`; add `whitespace-nowrap` to label+icon; change outer to `flex flex-wrap`; add `sm:ml-auto` to input wrapper
-  - **Why:** Central fix point — all inputs flow through InputField; label fix prevents icon orphaning
-- [x] Modify `src/components/CostPerHectare.tsx` — pass `metricUnit` to each InputField; update tab label via `displayUnit()`
-  - **Why:** Enables unit conversion for Tab 1 inputs and results
-- [x] Modify `src/components/CostPerHour.tsx` — same `metricUnit` additions
-  - **Why:** Tab 2 has the same area-based fields
-- [x] Modify `src/components/CostBreakdown.tsx` — use `displayUnit()` for result row unit labels
-  - **Why:** Results must show £/acre when in acres mode
-- [x] Modify `src/components/ResultBanner.tsx` — use converted unit text in saving messages
-  - **Why:** Banner text should match chosen unit system
-- [x] Modify `src/components/CompareMachines.tsx` — convert speed (km/hr ↔ mph) and area units
-  - **Why:** Compare tab has speed and work rate fields affected by both toggles
-- [x] Modify `src/components/ReplacementPlanner.tsx` — shorten "5-year average farm income" to "5-yr avg. farm income"
-  - **Why:** Fixes label wrapping on narrow viewports
-- [x] Modify `src/components/ContractorRatesPanel.tsx` — convert NAAC rates £/ha ↔ £/acre
-  - **Why:** Reference rates must match user's chosen unit
-- [x] Modify `src/components/FuelConsumptionPanel.tsx` — show L/acre in perHectare mode when acres selected
-  - **Why:** Fuel consumption per area unit must match preference
-- [x] Update Tab 1 label in `src/App.tsx` — "Cost per Hectare" ↔ "Cost per Acre"
-  - **Why:** Most visible indicator that unit conversion is active
+**Files:** `src/components/DepreciationPanel.tsx`, `src/components/__tests__/DepreciationPanel.test.tsx`, `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`, `src/components/ReplacementPlanner.tsx`
 
 ---
 
-## Phase G: SPEC-05 — Integration Tests & Visual Polish
+## Phase C: SPEC-09 — Complete NAAC 2025 Contractor Rates Data
 
-_Must be last. Depends on SPEC-01 through SPEC-04 (and ideally SPEC-06/07)._
+_Was implemented then reverted (commit 9f1d5dc). Must be re-implemented per spec. Blocks SPEC-10._
 
-### Integration Tests
+### C1: Extend data types
 
-- [x] Create `src/components/__tests__/CostPerHectare.integration.test.tsx` — test fuel price → input fill, contractor rates → input fill, panel presence, source attributions
-  - **Why:** End-to-end flows validate reference panels wire through to form inputs
-- [x] Create `src/components/__tests__/CostPerHour.integration.test.tsx` — test fuel consumption slider → input fill, tractor hire rate → input fill, L/hr mode, default category
-  - **Why:** Tab 2 integration flows; validates mode-specific behavior
-- [x] Add accessibility tests — sparkline `role="img"` + `aria-label`, "Use" buttons with descriptive `aria-label`, HP slider `aria-label`, CollapsibleSection `aria-expanded`
-  - **Why:** Screen reader and keyboard navigation compliance
+- [ ] Extend `ContractorRate.unit` type from `"ha" | "bale" | "hr"` to `"ha" | "bale" | "hr" | "tonne" | "head" | "m"` in `contractor-data.ts`
+  - **Why:** New categories (Slurry & Manure, Livestock Services, Hedges & Boundaries) use tonne, head, and metre units
 
-### Visual Polish
+### C2: Apply data corrections
 
-- [x] Ensure all reference panels use same `CollapsibleSection` wrapper with consistent padding, font sizes, button styles
-  - **Why:** Visual consistency; users should perceive them as one design system
-  - **Changes:** DepreciationPanel button/slider/callout changed from blue to green theme; ContractorRatesPanel inline buttons changed to `rounded-lg`; DepreciationPanel source footer aligned to single-line format; FuelPricePanel price cards made responsive (`grid-cols-1 sm:grid-cols-2`); ContractorRatesPanel table wrapper changed to `overflow-x-auto` for mobile scroll
-- [x] Add `aria-expanded` to `CollapsibleSection` trigger in `src/components/CollapsibleSection.tsx`
-  - **Why:** Base UI's Collapsible.Trigger already adds `aria-expanded` automatically; verified via accessibility tests
-- [x] Verify responsive layout at 320px, 768px, 1280px
-  - **Why:** Three breakpoints that must not show visual breakage
-  - **Changes:** FuelPricePanel responsive grid, ContractorRatesPanel horizontal scroll on mobile
-- [x] Verify `npm run build` succeeds with zero TypeScript errors
-  - **Why:** Final type-safety gate check
-  - **Note:** All production and test code clean
-- [x] Verify all tests pass (unit + integration) with `npm test`
-  - **Why:** Complete regression check
-  - **Note:** All 135 tests pass
+- [ ] Fix slug pelleting rate: `11.42` → `11.35` in NAAC_RATES
+  - **Why:** Data error in original entry per NAAC PDF
+- [ ] Fix lime spreading: change from `19.85 £/ha` to `9.53 £/tonne` (both rate and unit wrong)
+  - **Why:** Wrong rate AND wrong unit in original data per NAAC PDF
+
+### C3: Add ~95 missing operations to existing categories
+
+- [ ] Add ~8 operations to Soil Prep (furrow press, rotovating, mole-ploughing, stubble raking, pressing, bed tilling, chain harrowing)
+  - **Why:** Completing the full NAAC Soil Prep section
+- [ ] Add ~4 operations to Drilling (potato planting, carrot/parsnip/onion, maize under plastic, grass cross drilling)
+  - **Why:** Completing the full NAAC Drilling section
+- [ ] Add ~6 operations + 1 dual-rate to Application (variable rate, drone spreading, Avadex, ATV spraying, weed wiping, grassland spraying /hr)
+  - **Why:** Completing the full NAAC Application section
+- [ ] Add ~19 operations + 3 dual-rate entries to Harvesting (straw chopper, OSR windrow, swathing, grain carting, potato/sugar beet/grass ops, forage /hr, whole crop, maize, extra trailer, forage wagon)
+  - **Why:** Harvesting section was heavily incomplete
+- [ ] Add ~2 operations to Baling (Square 120x70cm, Square 120x130cm)
+  - **Why:** Two bale sizes missing from original data
+- [ ] Add ~6 operations to Tractor Hire (post knocker, ditching 180/360, drain jetting, trailer charge, forklift)
+  - **Why:** Tractor Hire had only 4 entries, should have ~10
+
+### C4: Add 6 new categories
+
+- [ ] Add "Bale Wrapping" category (9 entries: round/square wrapping, combi baling, bale chasing)
+  - **Why:** Common contracting area not previously covered
+- [ ] Add "Slurry & Manure" category (13 entries: FYM, chicken litter, compost, digestate, slurry ops)
+  - **Why:** Significant contracting area, uses tonne and hr units
+- [ ] Add "Hedges & Boundaries" category (9 entries: hedge cutting/laying, verge mowing, fence erection)
+  - **Why:** Common contracting services using metre units
+- [ ] Add "Mobile Feed" category (2 entries: feed mixing, crimping)
+  - **Why:** Livestock-related contracting services
+- [ ] Add "Livestock Services" category (4 entries: sheep shearing, dipping)
+  - **Why:** Head-based pricing for livestock work
+- [ ] Add "Specialist" category (3 entries: snow ploughing, labour only, chainsawing)
+  - **Why:** Miscellaneous hourly-rate services
+
+### C5: Handle dual-rate operations
+
+- [ ] Store operations with both £/ha and £/hr (or £/tonne and £/hr) rates as two separate entries in NAAC_RATES
+  - **Why:** 6 operations in the NAAC PDF have dual rates; each gets its own entry for independent selection
+
+### C6: Update ContractorRatesPanel UI
+
+- [ ] Add 6 new category pills to CATEGORIES array in `ContractorRatesPanel.tsx`
+  - **Why:** UI must show all 12 categories
+- [ ] Update `getUnitLabel()` to handle tonne (`/tonne`), head (`/head`), m (`/m`)
+  - **Why:** New units need display labels
+- [ ] Update `rateTier()` with per-unit-type thresholds (ha/hr: 40/100, bale/head: 5/10, tonne: 6/15, m: 12/20)
+  - **Why:** Traffic-light thresholds must be unit-appropriate — a £5/bale rate is "mid" but £5/ha is "low"
+- [ ] Change table row keys to `${operation}-${unit}-${idx}` for dual-rate entries
+  - **Why:** React needs unique keys when same operation appears twice with different units
+
+### C7: Update tests
+
+- [ ] Update `contractor-data.test.ts` assertions for 130+ rates, 12 categories, new unit types, corrected values (slug pelleting 11.35, lime spreading 9.53/tonne)
+  - **Why:** Data integrity tests must match the expanded dataset
+- [ ] Update `ContractorRatesPanel.test.tsx` for 12 category tabs and new unit display (tonne, head, m)
+  - **Why:** UI tests must cover the expanded category set
+
+### C8: Verify
+
+- [ ] Run `npm test` and `npm run build`
+  - **Why:** Regression check after major data expansion
+
+**Files:** `src/lib/contractor-data.ts`, `src/components/ContractorRatesPanel.tsx`, `src/lib/__tests__/contractor-data.test.ts`, `src/components/__tests__/ContractorRatesPanel.test.tsx`
 
 ---
 
-## Phase H: SPEC-08 — Machine Profile Loading Bug Fix
+## Phase D: SPEC-10 — Contracting Income Planner (Tab 6)
 
-_Depends on: SPEC-01._
+_Depends on SPEC-09 for extended unit types and 12-category NAAC data. Blocks SPEC-11._
 
-- [x] Create `src/components/__tests__/SaveLoadToolbar.test.tsx` — test onLoad callback with correct index, re-fire after delete
-  - **Why:** RED tests to verify Select controlled mode and callback behavior
-- [x] Create `src/components/__tests__/machineProfileLoading.test.tsx` — integration tests for profile load across both tabs
-  - **Why:** RED tests to verify parent state updates when profiles are loaded
-- [x] Modify `src/components/SaveLoadToolbar.tsx` — fix Select `value` prop from `undefined` to `null` (Base UI controlled mode)
-  - **Why:** `undefined` makes Base UI Select uncontrolled; `null` keeps it controlled with no selection, preventing missed `onValueChange` fires when re-selecting the same index after delete
-- [x] Modify `src/App.tsx` — add `onLoadCostPerHectareMachine` and `onLoadCostPerHourMachine` callbacks; pass as `onLoadMachine` prop
-  - **Why:** Without these, child components' local state updates on profile load but parent `appState` never updates, causing stale state to overwrite on next re-render
-- [x] Verify all 135 tests pass and build succeeds with zero TypeScript errors
-  - **Why:** Full regression and type-safety check
+### D1: Add types
+
+- [ ] Add `ChargeUnit` type to `types.ts`: `"ha" | "hr" | "bale" | "tonne" | "head" | "m"`
+  - **Why:** Contracting services can charge in any NAAC unit
+- [ ] Add `ContractingService` interface to `types.ts`: id, name, chargeRate, chargeUnit, annualVolume, ownCostPerUnit, additionalCosts, linkedMachineSource
+  - **Why:** Core data model for each contracting service the farmer offers
+- [ ] Add `ContractingIncomeState` interface: `{ services: ContractingService[] }`
+  - **Why:** Top-level state container for the tab
+- [ ] Extend `AppState` with `contractingIncome: ContractingIncomeState`
+  - **Why:** Tab 6 state must persist with the rest of the app state
+
+### D2: Add calculation functions
+
+- [ ] Implement `calculateContractingService(chargeRate, annualVolume, ownCostPerUnit, additionalCosts)` in `calculations.ts` returning grossIncome, totalOwnCost, profitPerUnit, annualProfit, marginPct
+  - **Why:** Per-service profit calculation — pure function for testability
+- [ ] Implement `calculateContractingSummary(services[])` in `calculations.ts` returning totalGrossIncome, totalCosts, totalProfit, overallMarginPct
+  - **Why:** Aggregates across all services for the summary section
+- [ ] Create `src/lib/__tests__/contracting-calculations.test.ts` with tests for: gross income, costs, profit, margin %, zero volume, negative margin, summary aggregation, empty array
+  - **Why:** Pure functions need thorough test coverage before building UI
+
+### D3: Storage migration v1 → v2
+
+- [ ] Bump `CURRENT_VERSION` from 1 to 2 in `storage.ts`
+  - **Why:** New AppState field requires a version bump
+- [ ] Add migration function: v1→v2 adds `contractingIncome: { services: [] }` to existing state
+  - **Why:** Existing users' localStorage must gain the new field automatically
+- [ ] Update default state creation to include `contractingIncome: { services: [] }`
+  - **Why:** New installs get the correct default state
+- [ ] Add storage migration tests: verify v1 data migrates to v2 with empty contractingIncome
+  - **Why:** Migration correctness is critical for not losing existing users' data
+
+### D4: Build ContractingIncomePlanner component
+
+- [ ] Create `src/components/ContractingIncomePlanner.tsx` with: intro text, "Add Service" button, per-service cards (name, charge rate, charge unit dropdown, annual volume, own cost/unit, additional costs), delete button per service
+  - **Why:** Core Tab 6 UI structure per SPEC-10
+- [ ] Add "Pull from saved machine" dropdown per service card (grouped by Tab 1/Tab 2 machines, auto-fills ownCostPerUnit and chargeUnit)
+  - **Why:** Lets farmer link contracting costs to their actual machinery ownership costs calculated on Tabs 1/2
+- [ ] Embed `ContractorRatesPanel` per card (collapsed, onApply wires to chargeRate)
+  - **Why:** Reuses NAAC reference data so farmers can set competitive charge rates
+- [ ] Add per-service results display: gross income, total costs, profit/unit, annual profit, margin %
+  - **Why:** Immediate feedback on whether each service is profitable
+- [ ] Add traffic-light banners per service: green (>20% margin), amber (0-20%), red (<0%)
+  - **Why:** Visual decision aid for service viability
+- [ ] Add overall contracting summary section (when ≥1 service exists)
+  - **Why:** Aggregate view of total contracting income and profitability
+
+### D5: Wire into App.tsx
+
+- [ ] Add Tab 6 trigger ("Contracting Income") to TabsList in `App.tsx`
+  - **Why:** New tab must be visible in navigation
+- [ ] Add TabsContent rendering `<ContractingIncomePlanner>` with props: initialState, onChange, savedHectareMachines, savedHourMachines
+  - **Why:** Tab content wired to app state and saved machine data from Tabs 1/2
+- [ ] Update TabsList layout (grid-cols) to accommodate 7 tabs
+  - **Why:** Navigation must fit additional tabs without overflow
+
+### D6: Component tests
+
+- [ ] Create `src/components/__tests__/ContractingIncomePlanner.test.tsx` testing: renders, add/delete service, inputs, pull from saved machine, results display, traffic-light banners, summary
+  - **Why:** Component behavior coverage per SPEC-10
+
+### D7: Verify
+
+- [ ] Run `npm test` and `npm run build`
+  - **Why:** Regression check after adding a major new tab
+
+**Files:** `src/lib/types.ts`, `src/lib/calculations.ts`, `src/lib/storage.ts`, `src/components/ContractingIncomePlanner.tsx`, `src/components/__tests__/ContractingIncomePlanner.test.tsx`, `src/lib/__tests__/contracting-calculations.test.ts`, `src/App.tsx`
 
 ---
 
-## New Files (30)
+## Phase E: SPEC-11 — Profitability Overview (Tab 7)
 
-| File | Spec | Type |
-|------|------|------|
-| `vitest.config.ts` | 01 | Config |
-| `src/setupTests.ts` | 01 | Config |
-| `src/lib/__tests__/calculations.test.ts` | 01 | Test |
-| `src/components/__tests__/ResultBanner.test.tsx` | 01 | Test |
-| `src/components/__tests__/SaveLoadToolbar.test.tsx` | 08 | Test |
-| `src/components/__tests__/machineProfileLoading.test.tsx` | 08 | Test |
-| `src/lib/fuel-data.ts` | 02 | Data |
-| `src/lib/__tests__/fuel-data.test.ts` | 02 | Test |
-| `src/components/Sparkline.tsx` | 02 | Component |
-| `src/components/FuelPricePanel.tsx` | 02 | Component |
-| `src/components/__tests__/FuelPricePanel.test.tsx` | 02 | Test |
-| `src/lib/fuel-consumption-data.ts` | 03 | Data |
-| `src/lib/__tests__/fuel-consumption-data.test.ts` | 03 | Test |
-| `src/components/FuelConsumptionPanel.tsx` | 03 | Component |
-| `src/components/__tests__/FuelConsumptionPanel.test.tsx` | 03 | Test |
-| `src/lib/contractor-data.ts` | 04 | Data |
-| `src/lib/__tests__/contractor-data.test.ts` | 04 | Test |
-| `src/components/ContractorRatesPanel.tsx` | 04 | Component |
-| `src/components/__tests__/ContractorRatesPanel.test.tsx` | 04 | Test |
-| `src/lib/depreciation-data.ts` | 07 | Data |
-| `src/lib/__tests__/depreciation-data.test.ts` | 07 | Test |
-| `src/components/DepreciationCurve.tsx` | 07 | Component |
-| `src/components/DepreciationPanel.tsx` | 07 | Component |
-| `src/components/__tests__/DepreciationPanel.test.tsx` | 07 | Test |
-| `src/lib/units.ts` | 06 | Lib |
-| `src/lib/__tests__/units.test.ts` | 06 | Test |
-| `src/components/UnitToggle.tsx` | 06 | Component |
-| `src/components/__tests__/UnitToggle.test.tsx` | 06 | Test |
-| `src/components/__tests__/CostPerHectare.integration.test.tsx` | 05 | Test |
-| `src/components/__tests__/CostPerHour.integration.test.tsx` | 05 | Test |
+_Depends on SPEC-10 for contracting income data in AppState._
 
-## Modified Files (14)
+### E1: Add calculation function
 
-| File | Modified By Specs |
-|------|-------------------|
-| `package.json` | 01 |
-| `tsconfig.app.json` | 01 |
-| `src/App.tsx` | 06, 08 |
+- [ ] Add `ProfitabilityResults` interface to `calculations.ts` with: totalIncome, farmIncomeAmount, contractingIncomeAmount, totalCosts, replacementCosts, totalRunningCosts, contractingCosts, netPosition, machineryCostPctOfIncome, contractingOffsetPct, netWithoutContracting, netWithContracting, contractingNetContribution
+  - **Why:** Comprehensive output type for the read-only profitability dashboard
+- [ ] Implement `calculateProfitability(appState)` pure function that aggregates income/costs from all tabs
+  - **Why:** Core aggregation logic — derives running costs from saved machines (calcCostPerHectare/Hour), contracting from services (calculateContractingService), replacement from planner (calcReplacementSummary)
+- [ ] Create `src/lib/__tests__/profitability-calculations.test.ts` testing: total income, total costs, net position, machinery cost %, contracting offset %, with/without contracting comparison, zero/edge cases
+  - **Why:** Pure function tests before building UI
+
+### E2: Build ProfitabilityOverview component
+
+- [ ] Create `src/components/ProfitabilityOverview.tsx` (read-only, prop: `appState: AppState`) with Income section (farm + contracting = total) and Costs section (replacement + running per-ha + running per-hr + contracting = total)
+  - **Why:** Consolidated view of all income and cost streams across the app
+- [ ] Add Net Position card with large display, machinery cost as % of income, contracting offset %
+  - **Why:** The key "bottom line" metric the farmer needs to see prominently
+- [ ] Add traffic-light banner: green (<20%), amber (20-35%), red (>35%) based on machinery cost % of income
+  - **Why:** Quick visual indicator of whether machinery costs are sustainable relative to farm income
+- [ ] Add "With vs Without Contracting" comparison table and contracting net contribution callout
+  - **Why:** Shows the financial impact of offering contracting services — the key insight of the tool
+- [ ] Add key/legend explaining traffic-light thresholds
+  - **Why:** Context for the color coding so farmers understand the benchmarks
+- [ ] Add empty state message when no saved machines or services exist
+  - **Why:** Guide user to populate other tabs first rather than showing zeros
+
+### E3: Wire into App.tsx
+
+- [ ] Add Tab 7 trigger ("Profitability") to TabsList in `App.tsx`
+  - **Why:** New tab must be visible in navigation
+- [ ] Add TabsContent rendering `<ProfitabilityOverview appState={appState} />`
+  - **Why:** Pass entire appState since this tab reads from all other tabs (farm income, saved machines, contracting services, replacement planner)
+
+### E4: Component tests
+
+- [ ] Create `src/components/__tests__/ProfitabilityOverview.test.tsx` testing: renders, income/costs/net sections, traffic-light banner, with/without contracting comparison, empty state, contracting offset
+  - **Why:** Component display and state-driven rendering tests
+
+### E5: Final verification
+
+- [ ] Run `npm test` — all tests pass
+  - **Why:** Full regression check across all 7 tabs
+- [ ] Run `npm run build` — no TypeScript errors
+  - **Why:** Final type-safety gate
+
+**Files:** `src/lib/calculations.ts`, `src/components/ProfitabilityOverview.tsx`, `src/components/__tests__/ProfitabilityOverview.test.tsx`, `src/lib/__tests__/profitability-calculations.test.ts`, `src/App.tsx`
+
+---
+
+## File Change Summary
+
+### New Files (6)
+
+| File | Spec |
+|------|------|
+| `src/components/ContractingIncomePlanner.tsx` | 10 |
+| `src/components/__tests__/ContractingIncomePlanner.test.tsx` | 10 |
+| `src/lib/__tests__/contracting-calculations.test.ts` | 10 |
+| `src/components/ProfitabilityOverview.tsx` | 11 |
+| `src/components/__tests__/ProfitabilityOverview.test.tsx` | 11 |
+| `src/lib/__tests__/profitability-calculations.test.ts` | 11 |
+
+### Modified Files (14)
+
+| File | Specs |
+|------|-------|
 | `src/components/SaveLoadToolbar.tsx` | 08 |
 | `src/components/CostPerHectare.tsx` | 02, 03, 04, 06, 07 |
 | `src/components/CostPerHour.tsx` | 02, 03, 04, 06, 07 |
@@ -259,7 +314,16 @@ _Depends on: SPEC-01._
 | `src/components/CompareMachines.tsx` | 06 |
 | `src/components/ReplacementPlanner.tsx` | 06, 07 |
 | `src/components/CollapsibleSection.tsx` | 05 |
-| `src/lib/storage.ts` | 06 |
+| `src/components/DepreciationPanel.tsx` | 07 |
+| `src/components/__tests__/DepreciationPanel.test.tsx` | 07 |
+| `src/lib/contractor-data.ts` | 09 |
+| `src/components/ContractorRatesPanel.tsx` | 09 |
+| `src/lib/__tests__/contractor-data.test.ts` | 09 |
+| `src/components/__tests__/ContractorRatesPanel.test.tsx` | 09 |
+| `src/lib/types.ts` | 10 |
+| `src/lib/calculations.ts` | 10, 11 |
+| `src/lib/storage.ts` | 06, 10 |
+| `src/App.tsx` | 10, 11 |
 
 ---
 
@@ -277,4 +341,3 @@ _No remaining tasks._
 - [x] SPEC-06: UK unit toggle & label fixes (ha/acres, km/miles, whitespace-nowrap)
 - [x] SPEC-07: Depreciation curve planner (8 categories, SVG chart, sweet spot, slider)
 - [x] SPEC-08: Machine profile loading bug fix (parent state callbacks, controlled Select)
-

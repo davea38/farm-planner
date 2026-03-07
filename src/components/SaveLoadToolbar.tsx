@@ -26,11 +26,6 @@ export function SaveLoadToolbar<T>({
   const [name, setName] = useState("")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  const selectedLabel =
-    selectedIndex !== null && savedMachines[selectedIndex]
-      ? savedMachines[selectedIndex].name
-      : null
-
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
       <h2 className="text-sm font-semibold">Saved Machines</h2>
@@ -70,9 +65,7 @@ export function SaveLoadToolbar<T>({
             }}
           >
             <SelectTrigger className="flex-1 min-h-[44px]">
-              <SelectValue>
-                {selectedLabel ?? "Load a saved machine..."}
-              </SelectValue>
+              <SelectValue placeholder="Load a saved machine..." />
             </SelectTrigger>
             <SelectContent>
               {savedMachines.map((machine, idx) => (
