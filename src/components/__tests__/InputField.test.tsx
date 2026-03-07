@@ -105,4 +105,31 @@ describe("InputField", () => {
     const spans = container.querySelectorAll("span.text-sm.text-muted-foreground.w-12")
     expect(spans.length).toBe(0)
   })
+
+  it("displays clean integer when round-trip conversion yields floating point noise (acres mode)", () => {
+    // Simulate a value that was stored via fromDisplay(500, "ha", acres)
+    // fromDisplay: 500 / 2.47105 = 202.3428...
+    // toDisplay: 202.3428... * 2.47105 should display as 500, not 499.9999999...
+    const storedMetric = 500 / 2.47105 // what fromDisplay would store
+    renderWithUnits(
+      <InputField label="Area" value={storedMetric} onChange={() => {}} metricUnit="ha" />,
+      imperialUnits
+    )
+    const input = screen.getByRole("spinbutton") as HTMLInputElement
+    // The displayed value should be 500, not 499.99999999...
+    expect(Number(input.value)).toBe(500)
+  })
+
+  it("displays clean decimal for per-unit rates after round-trip conversion (acres mode)", () => {
+    // Simulate a value stored via fromDisplay(10, "L/ha", acres)
+    // fromDisplay: 10 * 2.47105 = 24.7105
+    // toDisplay: 24.7105 / 2.47105 should display as 10, not 9.9999999...
+    const storedMetric = 10 * 2.47105
+    renderWithUnits(
+      <InputField label="Fuel" value={storedMetric} onChange={() => {}} metricUnit="L/ha" />,
+      imperialUnits
+    )
+    const input = screen.getByRole("spinbutton") as HTMLInputElement
+    expect(Number(input.value)).toBe(10)
+  })
 })

@@ -14,7 +14,7 @@ interface FuelConsumptionPanelProps {
 }
 
 const MIN_HP = 75
-const MAX_HP = 400
+const MAX_HP = 1000
 const MAX_CONSUMPTION = estimateFuelConsumption(MAX_HP) // ~97.6
 
 export function FuelConsumptionPanel({

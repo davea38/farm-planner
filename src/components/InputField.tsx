@@ -32,9 +32,12 @@ export function InputField({
 }: InputFieldProps) {
   const { units } = useUnits()
 
-  const displayValue = metricUnit
+  const rawDisplay = metricUnit
     ? toDisplay(value, metricUnit, units)
     : value
+  // Round to 10 significant decimal places to eliminate floating point noise
+  // (e.g. 499.99999999999994 → 500)
+  const displayValue = parseFloat(rawDisplay.toPrecision(10))
 
   const shownUnit = metricUnit
     ? displayUnit(metricUnit, units)

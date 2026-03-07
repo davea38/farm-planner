@@ -82,4 +82,18 @@ describe("FuelConsumptionPanel", () => {
     // onApply should still receive metric L/ha value: 36.6 / 4 = 9.15 → 9.2
     expect(onApply).toHaveBeenCalledWith(expect.closeTo(9.2, 0))
   })
+
+  it("allows HP slider to go up to 1000", () => {
+    renderExpanded()
+    const slider = screen.getByRole("slider", { name: /tractor horsepower/i })
+    expect(slider).toHaveAttribute("max", "1000")
+  })
+
+  it("shows correct consumption at 1000 HP", () => {
+    renderExpanded()
+    const slider = screen.getByRole("slider", { name: /tractor horsepower/i })
+    fireEvent.change(slider, { target: { value: "1000" } })
+    // 0.244 * 1000 = 244.0 L/hr
+    expect(screen.getByText("244.0 L/hr")).toBeInTheDocument()
+  })
 })

@@ -5,10 +5,10 @@ export function estimateFuelConsumption(hp: number): number {
 }
 
 export const HP_REFERENCE_POINTS = [
-  { hp: 75, lPerHr: 18.3, label: "Small" },
-  { hp: 100, lPerHr: 24.4, label: "Medium" },
-  { hp: 150, lPerHr: 36.6, label: "Large" },
-  { hp: 200, lPerHr: 48.8, label: "Large+" },
-  { hp: 250, lPerHr: 61.0, label: "V. Large" },
-  { hp: 300, lPerHr: 73.2, label: "Heavy" },
+  { hp: 100, lPerHr: 24.4, label: "Small" },
+  { hp: 200, lPerHr: 48.8, label: "Medium" },
+  { hp: 400, lPerHr: 97.6, label: "Large" },
+  { hp: 600, lPerHr: 146.4, label: "V. Large" },
+  { hp: 800, lPerHr: 195.2, label: "Heavy" },
+  { hp: 1000, lPerHr: 244.0, label: "Max" },
 ]
