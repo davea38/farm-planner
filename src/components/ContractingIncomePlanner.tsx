@@ -348,6 +348,7 @@ export function ContractingIncomePlanner({
                       updateService(service.id, { chargeRate: rate })
                     }
                     currentRate={service.chargeRate}
+                    unitFilter={service.chargeUnit}
                   />
                 </CollapsibleSection>
 

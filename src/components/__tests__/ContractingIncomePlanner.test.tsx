@@ -188,7 +188,7 @@ describe("ContractingIncomePlanner", () => {
           interestRate: 2,
           insuranceRate: 2,
           storageRate: 1,
-          haPerHr: 4,
+
           fuelConsumptionPerHr: 14,
           fuelPrice: 0.6,
           repairsPct: 1,
@@ -242,6 +242,33 @@ describe("ContractingIncomePlanner", () => {
     )
     fireEvent.click(screen.getByRole("button", { name: /delete/i }))
     expect(onChange).toHaveBeenCalledWith({ services: [] })
+  })
+
+  it("filters NAAC rates panel by service charge unit", () => {
+    const service = {
+      id: "test-bale",
+      name: "Baling",
+      chargeRate: 5,
+      chargeUnit: "bale" as const,
+      annualVolume: 2000,
+      ownCostPerUnit: 3,
+      additionalCosts: 0,
+      linkedMachineSource: null,
+    }
+    render(
+      <ContractingIncomePlanner
+        initialState={{ services: [service] }}
+        onChange={vi.fn()}
+        savedHectareMachines={[]}
+        savedHourMachines={[]}
+      />,
+    )
+    // Expand the outer collapsible, then the inner NAAC panel
+    fireEvent.click(screen.getByText(/NAAC Rates/))
+    fireEvent.click(screen.getByText(/NAAC Contractor Rates/))
+    // Only bale-related categories should be visible — Soil Prep (per-ha) should not
+    expect(screen.queryByText("Soil Prep")).not.toBeInTheDocument()
+    expect(screen.getByText("Baling")).toBeInTheDocument()
   })
 
   it("shows summary even with a single service", () => {

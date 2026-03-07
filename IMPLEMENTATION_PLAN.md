@@ -2,7 +2,7 @@
 
 > Generated: 2026-03-07
 > Baseline: All SPEC-01 through SPEC-11 features fully implemented. SPEC-12 must-fix items done.
-> Current state: 377 tests passing, storage version 3, 7 tabs operational.
+> Current state: 382 tests passing, storage version 3, 7 tabs operational.
 
 ---
 
@@ -59,7 +59,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** "Without Contracting" can be misread as "without hiring a contractor" — the opposite meaning.
   **Files:** `src/components/ProfitabilityOverview.tsx`, `src/components/__tests__/ProfitabilityOverview.test.tsx`.
 
-- [ ] **2.3** Pass `unitFilter={service.chargeUnit}` to the embedded `ContractorRatesPanel` inside each contracting service card (finding #12).
+- [x] **2.3** Pass `unitFilter={service.chargeUnit}` to the embedded `ContractorRatesPanel` inside each contracting service card (finding #12).
   **WHY:** Without filtering, a farmer charging per bale sees 130+ irrelevant per-ha and per-hr rates.
   **Files:** `src/components/ContractingIncomePlanner.tsx`, `src/components/__tests__/ContractingIncomePlanner.test.tsx`.
 
@@ -147,7 +147,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 |------|-------|------|-----------|
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
-| 2 — Should Fix | 6 | 3 | 3 |
+| 2 — Should Fix | 6 | 4 | 2 |
 | 3 — Nice to Have | 8 | 0 | 8 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **12** | **14** |
+| **Total** | **26** | **13** | **13** |

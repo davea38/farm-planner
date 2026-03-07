@@ -98,4 +98,30 @@ describe("ContractorRatesPanel", () => {
     fireEvent.click(screen.getByText("Hedges & Boundaries"))
     expect(screen.getAllByText(/\/m/).length).toBeGreaterThan(0)
   })
+
+  it("filters categories to bale-only when unitFilter is bale", () => {
+    renderExpanded({ unitFilter: "bale" })
+    expect(screen.getByText("Baling")).toBeInTheDocument()
+    // Soil Prep has no bale rates, so it should not appear
+    expect(screen.queryByText("Soil Prep")).not.toBeInTheDocument()
+  })
+
+  it("filters categories to tonne-only when unitFilter is tonne", () => {
+    renderExpanded({ unitFilter: "tonne" })
+    expect(screen.getByText("Slurry & Manure")).toBeInTheDocument()
+    // Drilling has no tonne rates, so it should not appear
+    expect(screen.queryByText("Drilling")).not.toBeInTheDocument()
+  })
+
+  it("filters categories to head-only when unitFilter is head", () => {
+    renderExpanded({ unitFilter: "head" })
+    expect(screen.getByText("Livestock Services")).toBeInTheDocument()
+    expect(screen.queryByText("Soil Prep")).not.toBeInTheDocument()
+  })
+
+  it("filters categories to m-only when unitFilter is m", () => {
+    renderExpanded({ unitFilter: "m" })
+    expect(screen.getByText("Hedges & Boundaries")).toBeInTheDocument()
+    expect(screen.queryByText("Soil Prep")).not.toBeInTheDocument()
+  })
 })

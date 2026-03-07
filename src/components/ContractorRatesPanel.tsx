@@ -3,12 +3,13 @@ import { NAAC_RATES, NAAC_SOURCE, getRatesByUnit } from "@/lib/contractor-data"
 import { useUnits } from "@/lib/UnitContext"
 import { toDisplay, displayUnit } from "@/lib/units"
 import { CollapsibleSection } from "./CollapsibleSection"
+import type { ChargeUnit } from "@/lib/types"
 
 interface ContractorRatesPanelProps {
   onApply: (rate: number) => void
   currentRate?: number
   defaultCategory?: string
-  unitFilter?: "ha" | "hr"
+  unitFilter?: ChargeUnit
 }
 
 const CATEGORIES = [
@@ -186,8 +187,8 @@ export function ContractorRatesPanel({
           {rangeIndicatorPct !== null && (
             <div className="space-y-1">
               <div className="text-xs text-muted-foreground">
-                Your current rate: {"\u00a3"}{displayCurrentRate !== undefined && displayCurrentRate < 10 ? displayCurrentRate.toFixed(2) : displayCurrentRate !== undefined ? Math.round(displayCurrentRate) : currentRate}/
-                {unitFilter === "hr" ? "hr" : visibleRates[0]?.unit === "bale" ? "bale" : displayUnit("ha", units)}
+                Your current rate: {"\u00a3"}{displayCurrentRate !== undefined && displayCurrentRate < 10 ? displayCurrentRate.toFixed(2) : displayCurrentRate !== undefined ? Math.round(displayCurrentRate) : currentRate}
+                {unitFilter ? getUnitLabel(unitFilter) : visibleRates[0] ? getUnitLabel(visibleRates[0].unit) : "/unit"}
               </div>
               <div className="relative h-2 rounded-full bg-muted overflow-hidden">
                 <div
