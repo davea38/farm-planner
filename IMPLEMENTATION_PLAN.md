@@ -90,8 +90,9 @@
   - WHY: Every tab has 8-13 identically styled inputs; shared component eliminates repetition.
   - NOTE: Uses shadcn v4 TooltipTrigger directly (no asChild prop in Base UI). Props: label, value, onChange, unit, tooltip, min, max, step. 44px min height enforced via min-h-[44px]. Input is right-aligned with tabular-nums for clean number display.
 
-- [ ] **3.2** Create `src/components/ResultBanner.tsx` - full-width colored banner with `type` (green/amber/red), `mainText`, `subText` (32px main, white/dark text per color)
+- [x] **3.2** Create `src/components/ResultBanner.tsx` - full-width colored banner with `type` (green/amber/red), `mainText`, `subText` (32px main, white/dark text per color)
   - WHY: Used by Tabs 1, 2, and 4 for the traffic-light verdict.
+  - NOTE: Props: type ("green"|"amber"|"red"), mainText, subText (optional). Uses farm-green/farm-amber/farm-red Tailwind tokens. White text on green/red, foreground on amber. 32px bold main text, rounded-lg with padding.
 
 - [ ] **3.3** Create `src/components/CostBreakdown.tsx` - breakdown table showing labeled cost rows with formatted values
   - WHY: Both cost tabs display an itemized breakdown below the main result.
