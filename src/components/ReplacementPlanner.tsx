@@ -309,7 +309,7 @@ export function ReplacementPlanner({
 
         <div className="rounded-lg bg-card p-4 shadow-sm">
           <InputField
-            label="5-year average farm income"
+            label="5-yr avg. farm income"
             value={state.farmIncome}
             onChange={(v) => setState((prev) => ({ ...prev, farmIncome: v }))}
             unit="£"

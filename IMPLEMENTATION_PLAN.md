@@ -148,7 +148,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Banner text should match chosen unit system
 - [x] Modify `src/components/CompareMachines.tsx` — convert speed (km/hr ↔ mph) and area units
   - **Why:** Compare tab has speed and work rate fields affected by both toggles
-- [ ] Modify `src/components/ReplacementPlanner.tsx` — shorten "5-year average farm income" to "5-yr avg. farm income"
+- [x] Modify `src/components/ReplacementPlanner.tsx` — shorten "5-year average farm income" to "5-yr avg. farm income"
   - **Why:** Fixes label wrapping on narrow viewports
 - [x] Modify `src/components/ContractorRatesPanel.tsx` — convert NAAC rates £/ha ↔ £/acre
   - **Why:** Reference rates must match user's chosen unit
