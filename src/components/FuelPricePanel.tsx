@@ -63,6 +63,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
             type="button"
             onClick={() => onApply(redDieselPounds)}
             className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
+            aria-label={`Use red diesel price ${redDiesel.current}p`}
           >
             Use red diesel price ({redDiesel.current}p)
           </button>

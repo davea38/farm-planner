@@ -136,6 +136,7 @@ export function FuelConsumptionPanel({
             type="button"
             onClick={() => onApply(Number(applyValue.toFixed(1)))}
             className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
+            aria-label={`Use fuel consumption estimate ${displayValue}`}
           >
             Use this estimate ({displayValue})
           </button>

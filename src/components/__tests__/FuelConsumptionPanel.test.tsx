@@ -34,7 +34,7 @@ describe("FuelConsumptionPanel", () => {
     const onApply = vi.fn()
     renderExpanded({ onApply })
     fireEvent.click(
-      screen.getByRole("button", { name: /use this estimate/i })
+      screen.getByRole("button", { name: /use fuel consumption estimate/i })
     )
     expect(onApply).toHaveBeenCalledWith(expect.closeTo(36.6, 0))
   })
@@ -49,7 +49,7 @@ describe("FuelConsumptionPanel", () => {
     const onApply = vi.fn()
     renderExpanded({ onApply, mode: "perHectare", workRate: 4 })
     fireEvent.click(
-      screen.getByRole("button", { name: /use this estimate/i })
+      screen.getByRole("button", { name: /use fuel consumption estimate/i })
     )
     // 36.6 / 4 = 9.15 → rounded to 9.2
     expect(onApply).toHaveBeenCalledWith(expect.closeTo(9.2, 0))
@@ -77,7 +77,7 @@ describe("FuelConsumptionPanel", () => {
     )
     fireEvent.click(screen.getByText(/Estimate Fuel Consumption/i))
     fireEvent.click(
-      screen.getByRole("button", { name: /use this estimate/i })
+      screen.getByRole("button", { name: /use fuel consumption estimate/i })
     )
     // onApply should still receive metric L/ha value: 36.6 / 4 = 9.15 → 9.2
     expect(onApply).toHaveBeenCalledWith(expect.closeTo(9.2, 0))

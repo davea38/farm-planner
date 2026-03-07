@@ -44,7 +44,7 @@ export function Sparkline({
       height={height}
       viewBox={`0 0 ${width} ${height}`}
       role="img"
-      aria-label="5-year fuel price trend"
+      aria-label="Red diesel price trend 2022-2026"
       className="w-full h-auto"
     >
       <defs>

@@ -145,7 +145,7 @@ export function ContractorRatesPanel({
                           type="button"
                           onClick={() => onApply(r.rate)}
                           className="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
-                          aria-label={`Use ${r.operation} rate`}
+                          aria-label={`Use ${r.operation} rate ${formatRateValue(displayRate, unitLabel)}`}
                         >
                           Use
                         </button>

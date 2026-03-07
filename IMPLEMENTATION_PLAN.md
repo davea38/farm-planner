@@ -169,15 +169,15 @@ _Must be last. Depends on SPEC-01 through SPEC-04 (and ideally SPEC-06/07)._
   - **Why:** End-to-end flows validate reference panels wire through to form inputs
 - [x] Create `src/components/__tests__/CostPerHour.integration.test.tsx` — test fuel consumption slider → input fill, tractor hire rate → input fill, L/hr mode, default category
   - **Why:** Tab 2 integration flows; validates mode-specific behavior
-- [ ] Add accessibility tests — sparkline `role="img"` + `aria-label`, "Use" buttons with descriptive `aria-label`, HP slider `aria-label`, CollapsibleSection `aria-expanded`
+- [x] Add accessibility tests — sparkline `role="img"` + `aria-label`, "Use" buttons with descriptive `aria-label`, HP slider `aria-label`, CollapsibleSection `aria-expanded`
   - **Why:** Screen reader and keyboard navigation compliance
 
 ### Visual Polish
 
 - [ ] Ensure all reference panels use same `CollapsibleSection` wrapper with consistent padding, font sizes, button styles
   - **Why:** Visual consistency; users should perceive them as one design system
-- [ ] Add `aria-expanded` to `CollapsibleSection` trigger in `src/components/CollapsibleSection.tsx`
-  - **Why:** Accessibility requirement; may be missing from existing Radix/Base UI component
+- [x] Add `aria-expanded` to `CollapsibleSection` trigger in `src/components/CollapsibleSection.tsx`
+  - **Why:** Base UI's Collapsible.Trigger already adds `aria-expanded` automatically; verified via accessibility tests
 - [ ] Verify responsive layout at 320px, 768px, 1280px
   - **Why:** Three breakpoints that must not show visual breakage
 - [ ] Verify `npm run build` succeeds with zero TypeScript errors

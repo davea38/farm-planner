@@ -64,7 +64,7 @@ describe("CostPerHour reference panel integration", () => {
     render(<CostPerHour onChange={onChange} />)
     fireEvent.click(screen.getByText(/Estimate Fuel Consumption/i))
     // Default HP is 150, so estimate = 0.244 * 150 = 36.6 L/hr
-    fireEvent.click(screen.getByRole("button", { name: /use this estimate/i }))
+    fireEvent.click(screen.getByRole("button", { name: /use fuel consumption estimate/i }))
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({ fuelConsumptionPerHr: 36.6 })
     )
