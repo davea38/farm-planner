@@ -5,6 +5,8 @@ import { calcWorkrate } from "@/lib/calculations"
 import { InputField } from "./InputField"
 import { Input } from "@/components/ui/input"
 import { formatNumber, formatPct } from "@/lib/format"
+import { useUnits } from "@/lib/UnitContext"
+import { toDisplay, displayUnit } from "@/lib/units"
 
 function getZeroWorkrateFields(inputs: WorkrateInputs): string[] {
   const fields: string[] = []
@@ -24,6 +26,7 @@ export function CompareMachines({
   initialMachineB?: WorkrateInputs
   onChange?: (machineA: WorkrateInputs, machineB: WorkrateInputs) => void
 }) {
+  const { units } = useUnits()
   const [machineA, setMachineA] = useState<WorkrateInputs>(initialMachineA ?? defaultMachineA)
   const [machineB, setMachineB] = useState<WorkrateInputs>(initialMachineB ?? defaultMachineB)
 
@@ -104,15 +107,15 @@ export function CompareMachines({
           <div className="font-semibold text-center">{machineB.name || "Machine B"}</div>
 
           <div className="text-muted-foreground">Spot rate</div>
-          <div className="text-center tabular-nums">{formatNumber(resultsA.spotRate, 1)} ha/hr</div>
-          <div className="text-center tabular-nums">{formatNumber(resultsB.spotRate, 1)} ha/hr</div>
+          <div className="text-center tabular-nums">{formatNumber(toDisplay(resultsA.spotRate, "ha/hr", units), 1)} {displayUnit("ha/hr", units)}</div>
+          <div className="text-center tabular-nums">{formatNumber(toDisplay(resultsB.spotRate, "ha/hr", units), 1)} {displayUnit("ha/hr", units)}</div>
 
           <div className="font-medium">TRUE rate</div>
           <div className={`text-center tabular-nums font-bold ${winner === "A" ? "text-primary" : ""}`}>
-            {formatNumber(resultsA.overallWorkRate, 2)} ha/hr
+            {formatNumber(toDisplay(resultsA.overallWorkRate, "ha/hr", units), 2)} {displayUnit("ha/hr", units)}
           </div>
           <div className={`text-center tabular-nums font-bold ${winner === "B" ? "text-primary" : ""}`}>
-            {formatNumber(resultsB.overallWorkRate, 2)} ha/hr
+            {formatNumber(toDisplay(resultsB.overallWorkRate, "ha/hr", units), 2)} {displayUnit("ha/hr", units)}
           </div>
 
           <div className="text-muted-foreground text-xs col-span-3">(includes filling & travel)</div>
@@ -209,7 +212,7 @@ function MachineInputs({
         label="Speed"
         value={inputs.speed}
         onChange={onUpdate("speed")}
-        unit="km/hr"
+        metricUnit="km/hr"
         tooltip="Speed when working in the field"
         min={0}
       />
@@ -217,7 +220,7 @@ function MachineInputs({
         label="Application rate"
         value={inputs.applicationRate}
         onChange={onUpdate("applicationRate")}
-        unit="kg/ha"
+        metricUnit="kg/ha"
         tooltip="How much product per hectare"
         min={0}
       />
