@@ -314,8 +314,9 @@
 
 ## Phase 12: Verification & Edge Cases
 
-- [ ] **12.1** Verify Tab 1: AHDB defaults produce total = £30.27/ha, saving = -£54,880
+- [x] **12.1** Verify Tab 1: AHDB defaults produce total = £30.27/ha, saving = -£54,880
   - WHY: Exact acceptance criteria from spec.
+  - NOTE: Verified programmatically. Total £30.27/ha (fixed £14.07 + running £16.20), annual saving -£54,880 — both match spec exactly. TypeScript compiles clean, Vite build succeeds.
 
 - [ ] **12.2** Verify Tab 2: AHDB defaults produce total = £65.56/hr, saving = £14,393.41
   - WHY: Exact acceptance criteria from spec.
