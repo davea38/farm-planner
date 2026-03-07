@@ -87,7 +87,7 @@ export function calcCostPerHour(inputs: CostPerHourInputs): CostPerHourResults {
   const fixedCostPerHr = hoursPerYear > 0 ? totalFixedCostPerYear / hoursPerYear : 0;
 
   const labourPerHr = labourCost;
-  const fuelPerHr = fuelConsumptionPerHr * haPerHr * fuelPrice;
+  const fuelPerHr = fuelConsumptionPerHr * fuelPrice;
   const repairsPerHr = hoursPerYear > 0 ? (purchasePrice * repairsPct / 100) / hoursPerYear : 0;
 
   const totalCostPerHr = fixedCostPerHr + labourPerHr + fuelPerHr + repairsPerHr;
