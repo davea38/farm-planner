@@ -1,7 +1,5 @@
 # SPEC-09: Complete NAAC 2025 Contracting Prices Data
 
-## Status: Implemented
-
 ## Summary
 
 Extended the app's NAAC contractor rates data from 35 entries across 6 categories to 130+ entries across 12 categories, matching the full NAAC Contracting Prices Survey 2025 PDF.
@@ -53,14 +51,6 @@ Operations listed in the PDF with both £/ha and £/hr rates are stored as two s
 | bale, head | < £5 | £5–10 | > £10 |
 | tonne | < £6 | £6–15 | > £15 |
 | m | < £12 | £12–20 | > £20 |
-
-## Files Modified
-| File | Change |
-|------|--------|
-| `src/lib/contractor-data.ts` | Extended unit type, fixed 2 errors, added ~95 rate entries, added 6 new categories |
-| `src/components/ContractorRatesPanel.tsx` | Added new category tabs, per-unit traffic lights, new unit labels |
-| `src/lib/__tests__/contractor-data.test.ts` | Updated assertions for 100+ rates, 12 categories, new units, corrected values |
-| `src/components/__tests__/ContractorRatesPanel.test.tsx` | Tests for 12 category tabs, new unit display (tonne, head, m) |
 
 ## Verification
 - `npm run test` — all 329 tests pass
