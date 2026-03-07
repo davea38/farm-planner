@@ -337,8 +337,9 @@
 - [ ] **12.6** Test export/import cycle: export, clear localStorage, import, confirm restored
   - WHY: End-to-end backup/restore validation.
 
-- [ ] **12.7** Test zero-value edge cases: hectares=0, hours=0, work rate=0, application rate=0 show friendly messages (no Infinity/NaN)
+- [x] **12.7** Test zero-value edge cases: hectares=0, hours=0, work rate=0, application rate=0 show friendly messages (no Infinity/NaN)
   - WHY: Spec explicitly requires graceful zero handling.
+  - NOTE: Full code audit completed. Calculations layer: all division-by-zero cases guarded (yearsOwned, hectaresPerYear, workRate, hoursPerYear, applicationRate, spotRate*efficiency, totalTimePerLoad, farmIncome). Format layer: formatGBP/formatPct/formatNumber all return "—" for non-finite values. UI layer: CostPerHectare checks hectaresPerYear/workRate/yearsOwned, CostPerHour checks hoursPerYear/yearsOwned, CompareMachines checks applicationRate/width/speed/fieldEfficiency — all show amber "Enter a value for X" messages. BUG FIXED: ReplacementPlanner farmIncome=0 was showing misleading "comfortable" green banner (0% < 20%); now shows amber "Enter farm income to see cost as % of income" instead.
 
 - [x] **12.8** Test offline: `npm run build`, serve `dist/` folder, confirm full functionality
   - WHY: Spec requires no internet after initial setup.

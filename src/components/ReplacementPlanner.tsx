@@ -241,11 +241,16 @@ export function ReplacementPlanner({
   )
 
   // Traffic-light: green <20%, amber 20-35%, red >35%
+  const hasZeroIncome = state.farmIncome <= 0
   let bannerType: "green" | "amber" | "red"
   let bannerText: string
   let bannerSub: string | undefined
 
-  if (summary.pctOfIncome < 20) {
+  if (hasZeroIncome) {
+    bannerType = "amber"
+    bannerText = "Enter farm income to see cost as % of income"
+    bannerSub = undefined
+  } else if (summary.pctOfIncome < 20) {
     bannerType = "green"
     bannerText = `${formatPct(summary.pctOfIncome)} of income — comfortable`
     bannerSub = "Machinery costs are well within a healthy range"
