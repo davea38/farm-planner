@@ -14,14 +14,20 @@ describe("ContractorRatesPanel", () => {
     expect(screen.getByText(/NAAC Contractor Rates/i)).toBeInTheDocument()
   })
 
-  it("shows category tabs", () => {
+  it("shows all 12 category tabs", () => {
     renderExpanded()
     expect(screen.getByText("Soil Prep")).toBeInTheDocument()
     expect(screen.getByText("Drilling")).toBeInTheDocument()
     expect(screen.getByText("Application")).toBeInTheDocument()
     expect(screen.getByText("Harvesting")).toBeInTheDocument()
     expect(screen.getByText("Baling")).toBeInTheDocument()
+    expect(screen.getByText("Bale Wrapping")).toBeInTheDocument()
+    expect(screen.getByText("Slurry & Manure")).toBeInTheDocument()
     expect(screen.getByText("Tractor Hire")).toBeInTheDocument()
+    expect(screen.getByText("Hedges & Boundaries")).toBeInTheDocument()
+    expect(screen.getByText("Mobile Feed")).toBeInTheDocument()
+    expect(screen.getByText("Livestock Services")).toBeInTheDocument()
+    expect(screen.getByText("Specialist")).toBeInTheDocument()
   })
 
   it("shows operation rates for default category (Soil Prep)", () => {
@@ -56,7 +62,7 @@ describe("ContractorRatesPanel", () => {
   })
 
   it("filters by unit when unitFilter provided", () => {
-    renderExpanded({ unitFilter: "hr" })
+    renderExpanded({ unitFilter: "hr", defaultCategory: "Tractor Hire" })
     expect(screen.getByText(/100–150 HP/)).toBeInTheDocument()
   })
 
@@ -73,5 +79,23 @@ describe("ContractorRatesPanel", () => {
   it("shows range indicator when currentRate provided", () => {
     renderExpanded({ currentRate: 76 })
     expect(screen.getByText(/Your current rate/)).toBeInTheDocument()
+  })
+
+  it("shows tonne unit label for Slurry & Manure", () => {
+    renderExpanded()
+    fireEvent.click(screen.getByText("Slurry & Manure"))
+    expect(screen.getAllByText(/\/tonne/).length).toBeGreaterThan(0)
+  })
+
+  it("shows head unit label for Livestock Services", () => {
+    renderExpanded()
+    fireEvent.click(screen.getByText("Livestock Services"))
+    expect(screen.getAllByText(/\/head/).length).toBeGreaterThan(0)
+  })
+
+  it("shows metre unit label for Hedges & Boundaries", () => {
+    renderExpanded()
+    fireEvent.click(screen.getByText("Hedges & Boundaries"))
+    expect(screen.getAllByText(/\/m/).length).toBeGreaterThan(0)
   })
 })

@@ -17,10 +17,32 @@ const CATEGORIES = [
   "Application",
   "Harvesting",
   "Baling",
+  "Bale Wrapping",
+  "Slurry & Manure",
   "Tractor Hire",
+  "Hedges & Boundaries",
+  "Mobile Feed",
+  "Livestock Services",
+  "Specialist",
 ]
 
-function rateTier(rate: number): "low" | "mid" | "high" {
+function rateTier(rate: number, unit: string): "low" | "mid" | "high" {
+  if (unit === "bale" || unit === "head") {
+    if (rate < 5) return "low"
+    if (rate <= 10) return "mid"
+    return "high"
+  }
+  if (unit === "tonne") {
+    if (rate < 6) return "low"
+    if (rate <= 15) return "mid"
+    return "high"
+  }
+  if (unit === "m") {
+    if (rate < 12) return "low"
+    if (rate <= 20) return "mid"
+    return "high"
+  }
+  // ha, hr
   if (rate < 40) return "low"
   if (rate <= 100) return "mid"
   return "high"
@@ -76,6 +98,9 @@ export function ContractorRatesPanel({
   const getUnitLabel = (rateUnit: string): string => {
     if (rateUnit === "ha") return "/" + displayUnit("ha", units)
     if (rateUnit === "hr") return "/hr"
+    if (rateUnit === "tonne") return "/tonne"
+    if (rateUnit === "head") return "/head"
+    if (rateUnit === "m") return "/m"
     return "/bale"
   }
 
@@ -126,13 +151,13 @@ export function ContractorRatesPanel({
                 </tr>
               </thead>
               <tbody>
-                {visibleRates.map(r => {
-                  const tier = rateTier(r.rate)
+                {visibleRates.map((r, idx) => {
+                  const tier = rateTier(r.rate, r.unit)
                   const displayRate = convertRate(r.rate, r.unit)
                   const unitLabel = getUnitLabel(r.unit)
                   return (
                     <tr
-                      key={r.operation}
+                      key={`${r.operation}-${r.unit}-${idx}`}
                       className={`border-b border-border last:border-0 ${tierStyles[tier]}`}
                       data-rate-tier={tier}
                     >
