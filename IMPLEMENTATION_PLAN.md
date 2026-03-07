@@ -39,8 +39,9 @@
   - WHY: Spec requires large readable text and constrained layout for tablet/laptop use.
   - NOTE: Set font-size: 18px on html element in index.css. Sans-serif stack already configured via Geist Variable font. Added max-w-[800px] centered container with horizontal padding in App.tsx. Used bg-background token instead of hardcoded bg-gray-50.
 
-- [ ] **1.8** Add a tractor favicon to `public/favicon.ico` and set page title to "Farm Machinery Planner"
+- [x] **1.8** Add a tractor favicon to `public/favicon.ico` and set page title to "Farm Machinery Planner"
   - WHY: Professional identity matching the farm context.
+  - NOTE: Created SVG tractor favicon at public/favicon.svg (green tractor with cab, wheels, exhaust). Updated index.html link from /vite.svg to /favicon.svg. Page title already set to "Farm Machinery Planner" since task 4.2. Build verified clean.
 
 ---
 
