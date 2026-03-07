@@ -119,9 +119,9 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
 
 ### Part A: Unit Conversion System
 
-- [ ] Create `src/lib/units.ts` with `CONVERSIONS`, types (`AreaUnit`, `SpeedUnit`, `UnitPreferences`), `DEFAULT_UNITS`, `toDisplay()`/`fromDisplay()`/`displayUnit()`
+- [x] Create `src/lib/units.ts` with `CONVERSIONS`, types (`AreaUnit`, `SpeedUnit`, `UnitPreferences`), `DEFAULT_UNITS`, `toDisplay()`/`fromDisplay()`/`displayUnit()`
   - **Why:** Display-layer-only conversion; internal state stays metric
-- [ ] Create `src/lib/__tests__/units.test.ts` — test ha↔acres, ha/hr↔acres/hr, L/ha↔L/acre, £/ha↔£/acre, km/hr↔mph, passthrough, round-trip, displayUnit strings
+- [x] Create `src/lib/__tests__/units.test.ts` — test ha↔acres, ha/hr↔acres/hr, L/ha↔L/acre, £/ha↔£/acre, km/hr↔mph, passthrough, round-trip, displayUnit strings
   - **Why:** Conversion correctness is critical; errors silently produce wrong cost numbers
 - [ ] Create `UnitContext` (React context + `useUnits()` hook)
   - **Why:** Avoids prop drilling; all components read preferences via hook
