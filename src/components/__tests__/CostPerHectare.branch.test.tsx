@@ -4,10 +4,11 @@ import userEvent from "@testing-library/user-event"
 import { CostPerHectare } from "../CostPerHectare"
 import { UnitContext } from "@/lib/UnitContext"
 import type { CostPerHectareInputs } from "@/lib/types"
+import type { UnitPreferences } from "@/lib/units"
 
 const metricUnits = { area: "ha" as const, speed: "km" as const }
 
-function renderWithUnits(ui: React.ReactElement, units = metricUnits) {
+function renderWithUnits(ui: React.ReactElement, units: UnitPreferences = metricUnits) {
   return render(
     <UnitContext.Provider value={{ units, setUnits: () => {} }}>
       {ui}

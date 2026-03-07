@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest"
 import { lookupRepairPct, machineTypes } from "../repair-data"
-import type { MachineType } from "../repair-data"
 
 describe("lookupRepairPct", () => {
   it("returns 0 for zero hours", () => {

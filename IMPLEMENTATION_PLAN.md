@@ -1,8 +1,10 @@
-# Implementation Plan — Farm Machinery Planner
+# Farm Machinery Planner — Implementation Plan
 
-**Date:** 2026-03-07
-**Current state:** 7 tabs, storage version 2, 121 NAAC rates across 12 categories
-**Target state:** 7 tabs, 130+ NAAC rates across 12 categories, storage version 2
+> Generated: 2026-03-07
+> Baseline: All SPEC-01 through SPEC-11 features fully implemented. SPEC-12 must-fix items done.
+> Current state: 377 tests passing, storage version 3, 7 tabs operational.
+
+---
 
 ## Spec Status Summary
 
@@ -14,157 +16,138 @@
 | 04 | Contractor Rates Panel | [x] Done |
 | 05 | Integration & Polish | [x] Done |
 | 06 | UK Units & Labels | [x] Done |
-| 07 | Depreciation Planner | [x] Done — prop-driven mode, embedded on Tabs 1, 2, 5 |
+| 07 | Depreciation Planner | [x] Done |
 | 08 | Machine Profile Loading | [x] Done |
-| 09 | Complete NAAC Data | [x] Done — 121 entries across 12 categories, 6 dual-rate ops, 3 new unit types |
+| 09 | Complete NAAC Data | [x] Done |
 | 10 | Contracting Income | [x] Done |
-| 11 | Profitability Overview | [x] Done — read-only dashboard, income/costs/net, traffic-light, with/without contracting |
-
-## Dependency Graph
-
-```
-SPEC-08 (bug fix)        ──── independent, do first
-SPEC-07 (embed panels)   ──── independent, do first
-SPEC-09 (NAAC data)      ──── blocks SPEC-10
-SPEC-10 (Tab 6)          ──── blocks SPEC-11
-SPEC-11 (Tab 7)          ──── final
-```
+| 11 | Profitability Overview | [x] Done |
+| 12 | UX & Logic Review | Partially done — must-fix complete, should-fix/nice-to-have remain |
 
 ---
 
-## Phase A: SPEC-08 — SaveLoadToolbar Select Value Fix
+## Tier 0: Fix Pre-existing TypeScript Errors
 
-- [x] Verify Select `value` prop edge case: select index 0, delete it, select new index 0 — confirmed `null` is correct for Base UI (keeps controlled mode, renders placeholder)
-- [x] Fix: Use `value={null}` (not `""`) for no-selection state + `placeholder` prop on SelectValue instead of children — Base UI renders placeholder when value is null
-- [x] Remove unused `selectedLabel` variable
-- [x] Run `npm test` — all 320 tests pass, including re-selection after delete test
+Root cause: helper functions in test files infer narrow literal types from default parameter values instead of using the `UnitPreferences` union type. Fixing this makes `npx tsc -b` clean.
 
-**Files:** `src/components/SaveLoadToolbar.tsx`
+- [x] **0.1** Add `: UnitPreferences` type annotation to `renderWithUnits()` `units` parameter in `InputField.test.tsx`, `CompareMachines.test.tsx`, and `CostPerHectare.branch.test.tsx`.
 
----
+- [x] **0.2** Remove unused `within` import in `ReplacementPlanner.full.test.tsx`.
 
-## Phase B: SPEC-07 — Embed DepreciationPanel on Tabs 1, 2, and 5
+- [x] **0.3** Remove unused `MachineType` import in `repair-data.test.ts`.
 
-_Currently DepreciationPanel lives only on Tab 3 with zero props (fully internal state). Spec requires it embedded on Tabs 1, 2, and 5 with optional prop-driven mode._
-
-### B1–B5: All complete
-
-- [x] Refactored DepreciationPanel to accept optional props: `purchasePrice`, `yearsOwned`, `onApplySalePrice`, `onYearsChange` — controlled mode when props provided, internal state when standalone
-- [x] Purchase price input hidden when `purchasePrice` prop provided; "Use as sale price" button shown only when `onApplySalePrice` provided
-- [x] Embedded in CostPerHectare (Tab 1) with CollapsibleSection, wired to form's `purchasePrice`, `yearsOwned`, and `salePrice`
-- [x] Embedded in CostPerHour (Tab 2) with same integration
-- [x] Embedded in ReplacementPlanner (Tab 5) as standalone reference helper
-- [x] Added 16 tests (10 standalone + 6 prop-driven); all 356 tests pass, `vite build` succeeds
-
-**Files:** `src/components/DepreciationPanel.tsx`, `src/components/__tests__/DepreciationPanel.test.tsx`, `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`, `src/components/ReplacementPlanner.tsx`
+- [x] **0.4** Remove unused `act` import in `storage.test.ts`.
 
 ---
 
-## Phase C: SPEC-09 — Complete NAAC 2025 Contractor Rates Data
+## Tier 1: Must Fix — SPEC-12 Product Owner Approved (ALL DONE)
 
-_Was implemented then reverted (commit 9f1d5dc). Must be re-implemented per spec. Blocks SPEC-10._
-
-### C1–C8: All complete
-
-- [x] Extended `ContractorRate.unit` to include `"tonne" | "head" | "m"` — new categories need these units
-- [x] Fixed slug pelleting (11.42→11.35) and lime spreading (19.85 £/ha → 9.53 £/tonne) — data errors from original entry
-- [x] Added ~82 operations to existing categories (Soil Prep +7, Drilling +4, Application +6 + 1 dual, Harvesting +15 + 3 dual, Baling +2, Tractor Hire +6)
-- [x] Added 6 new categories: Bale Wrapping (9), Slurry & Manure (13), Hedges & Boundaries (9), Mobile Feed (2), Livestock Services (4), Specialist (3)
-- [x] 6 dual-rate operations stored as separate entries with different units
-- [x] Updated ContractorRatesPanel: 12 category pills, per-unit-type traffic-light thresholds, new unit labels, composite row keys
-- [x] Updated tests: 121+ rates, 12 categories, 6 unit types, corrected values, new UI assertions
-- [x] All 328 tests pass, `vite build` succeeds (pre-existing TS errors in unrelated test files are known)
-
-**Files:** `src/lib/contractor-data.ts`, `src/components/ContractorRatesPanel.tsx`, `src/lib/__tests__/contractor-data.test.ts`, `src/components/__tests__/ContractorRatesPanel.test.tsx`
+- [x] **1.1** Fix SPECS.md fuel per hour formula (findings #1, #17).
+- [x] **1.2** Remove orphaned `haPerHr` field + storage migration v2→v3 (finding #2).
+- [x] **1.3** Make farm income editable on Profitability tab with bidirectional sync (finding #3).
+- [x] **1.4** Include current (unsaved) machine in Profitability running costs (finding #4).
+- [x] **1.5** Auto-sync default fuel prices from AHDB `FUEL_PRICES` constant (findings #8, #19).
 
 ---
 
-## Phase D: SPEC-10 — Contracting Income Planner (Tab 6)
+## Tier 2: Should Fix — Significant UX Improvements
 
-_Depends on SPEC-09 for extended unit types and 12-category NAAC data. Blocks SPEC-11._
+- [ ] **2.1** Change "Cost to replace" label to "Replacement price" with tooltip "What the replacement machine will cost to buy (before deducting trade-in value)" in `ReplacementPlanner.tsx` line 147 (finding #6).
+  **WHY:** "Cost to replace" is ambiguous — a farmer might enter the net cost instead of the gross purchase price.
+  **Files:** `src/components/ReplacementPlanner.tsx`, `src/components/__tests__/ReplacementPlanner.full.test.tsx`.
 
-### D1–D7: All complete
+- [ ] **2.2** Rename "Without Contracting" / "With Contracting" to "Farm Only" / "Farm + Contracting" in the comparison table on ProfitabilityOverview (finding #18).
+  **WHY:** "Without Contracting" can be misread as "without hiring a contractor" — the opposite meaning.
+  **Files:** `src/components/ProfitabilityOverview.tsx`, `src/components/__tests__/ProfitabilityOverview.test.tsx`.
 
-- [x] Added `ChargeUnit`, `ContractingService`, `ContractingIncomeState` types and extended `AppState` in `types.ts`
-- [x] Added `calculateContractingService()` and `calculateContractingSummary()` pure functions in `calculations.ts`
-- [x] Bumped `CURRENT_VERSION` to 2, added v1→v2 migration, updated `createDefaultState` in `storage.ts`
-- [x] Built `ContractingIncomePlanner.tsx` with service cards, pull-from-saved-machine dropdown, NAAC rates panel, results display, traffic-light banners, and overall summary
-- [x] Wired Tab 6 ("Contracting Income") into `App.tsx` with state callbacks and saved machine props
-- [x] Created calculation tests (10 tests) and component tests (9 tests)
-- [x] Updated storage tests for version 2; all 348 tests pass, `vite build` succeeds
+- [ ] **2.3** Pass `unitFilter={service.chargeUnit}` to the embedded `ContractorRatesPanel` inside each contracting service card (finding #12).
+  **WHY:** Without filtering, a farmer charging per bale sees 130+ irrelevant per-ha and per-hr rates.
+  **Files:** `src/components/ContractingIncomePlanner.tsx`, `src/components/__tests__/ContractingIncomePlanner.test.tsx`.
 
-**Files:** `src/lib/types.ts`, `src/lib/calculations.ts`, `src/lib/storage.ts`, `src/components/ContractingIncomePlanner.tsx`, `src/components/__tests__/ContractingIncomePlanner.test.tsx`, `src/lib/__tests__/contracting-calculations.test.ts`, `src/App.tsx`
+- [ ] **2.4** Add "Total annual cost: £X/year" line to the results section on both CostPerHectare and CostPerHour tabs (finding #9).
+  **WHY:** Farmers think in annual budgets. Only showing per-unit cost forces mental arithmetic.
+  **Files:** `src/lib/types.ts` (add `totalAnnualCost` to result interfaces), `src/lib/calculations.ts`, `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`, related test files.
 
----
+- [ ] **2.5** Add a transient "Saved! This machine's costs now appear on the Profitability tab" notification after saving a machine profile (finding #16).
+  **WHY:** Farmers don't understand the save-then-view-profitability workflow.
+  **Files:** `src/components/SaveLoadToolbar.tsx`.
 
-## Phase E: SPEC-11 — Profitability Overview (Tab 7)
-
-_Depends on SPEC-10 for contracting income data in AppState._
-
-### E1–E5: All complete
-
-- [x] Added `ProfitabilityInputs`, `ProfitabilityResults` interfaces and `calculateProfitability()` pure function to `calculations.ts`
-- [x] Created 11 calculation tests (total income, costs, net position, machinery %, contracting offset %, with/without contracting, zero/edge cases)
-- [x] Built `ProfitabilityOverview.tsx` — read-only dashboard with Income section, Costs section, Net Position card, traffic-light banner, With vs Without Contracting comparison table, key/legend, empty state
-- [x] Component assembles data from all tabs: replacement planner farm income, saved per-ha/per-hr machines, contracting services
-- [x] Wired Tab 7 ("Profitability") into `App.tsx` with `appState` prop
-- [x] Created 10 component tests (renders, sections, traffic-light, comparison table, offset, key/legend, empty state)
-- [x] All 377 tests pass, `vite build` succeeds
-
-**Files:** `src/lib/calculations.ts`, `src/components/ProfitabilityOverview.tsx`, `src/components/__tests__/ProfitabilityOverview.test.tsx`, `src/lib/__tests__/profitability-calculations.test.ts`, `src/App.tsx`
+- [x] **2.6** Change "Contracting delivery costs" to "Contracting operating costs" (finding #10). Already done.
 
 ---
 
-## File Change Summary
+## Tier 3: Nice to Have — Polish
 
-### New Files (6)
+- [ ] **3.1** Add comment documenting the `6000` constant in the workrate formula: `// 6000 = 60 min/hr × 100 (efficiency is %, not decimal)` (finding #24).
+  **WHY:** Unexplained magic number makes the formula unauditable.
+  **Files:** `src/lib/calculations.ts`.
 
-| File | Spec |
-|------|------|
-| `src/components/ContractingIncomePlanner.tsx` | 10 |
-| `src/components/__tests__/ContractingIncomePlanner.test.tsx` | 10 |
-| `src/lib/__tests__/contracting-calculations.test.ts` | 10 |
-| `src/components/ProfitabilityOverview.tsx` | 11 |
-| `src/components/__tests__/ProfitabilityOverview.test.tsx` | 11 |
-| `src/lib/__tests__/profitability-calculations.test.ts` | 11 |
+- [ ] **3.2** Improve interest rate tooltip: "The return you could earn if you invested the money instead. Usually 2-4%. If you borrowed, use your loan rate instead." (finding #14).
+  **WHY:** Conflating savings rate (2-4%) with loan rate (6-8%) significantly changes results.
 
-### Modified Files (14)
+- [ ] **3.3** Add a note on the Contracting Income tab about shared machine cost-base (finding #5).
+  **WHY:** Per-unit cost is overstated when a machine is shared between own-use and contracting.
+  **Files:** `src/components/ContractingIncomePlanner.tsx`.
 
-| File | Specs |
-|------|-------|
-| `src/components/SaveLoadToolbar.tsx` | 08 |
-| `src/components/CostPerHectare.tsx` | 02, 03, 04, 06, 07 |
-| `src/components/CostPerHour.tsx` | 02, 03, 04, 06, 07 |
-| `src/components/InputField.tsx` | 06 |
-| `src/components/CostBreakdown.tsx` | 06 |
-| `src/components/ResultBanner.tsx` | 06 |
-| `src/components/CompareMachines.tsx` | 06 |
-| `src/components/ReplacementPlanner.tsx` | 06, 07 |
-| `src/components/CollapsibleSection.tsx` | 05 |
-| `src/components/DepreciationPanel.tsx` | 07 |
-| `src/components/__tests__/DepreciationPanel.test.tsx` | 07 |
-| `src/lib/contractor-data.ts` | 09 |
-| `src/components/ContractorRatesPanel.tsx` | 09 |
-| `src/lib/__tests__/contractor-data.test.ts` | 09 |
-| `src/components/__tests__/ContractorRatesPanel.test.tsx` | 09 |
-| `src/lib/types.ts` | 10 |
-| `src/lib/calculations.ts` | 10, 11 |
-| `src/lib/storage.ts` | 06, 10 |
-| `src/App.tsx` | 10, 11 |
+- [ ] **3.4** Create a mapping between replacement planner categories and depreciation categories (finding #7).
+  **WHY:** "Cultivator" doesn't auto-map to "Tillage Equipment" depreciation curve.
+  **Files:** `src/lib/types.ts` or new mapping file.
+
+- [ ] **3.5** Add machine type selector (spreader/sprayer) to Compare Machines for switching units between kg and L (finding #13).
+  **WHY:** Sprayers use litres, not kg. Showing "800 kg" for a sprayer tank is wrong.
+  **Files:** `src/components/CompareMachines.tsx`.
+
+- [ ] **3.6** Link replacement machine rows to depreciation curves — "View depreciation" button per row (finding #15). Depends on 3.4.
+  **WHY:** Manually selecting matching depreciation categories for 10 machines is tedious.
+  **Files:** `src/components/ReplacementPlanner.tsx`.
+
+- [ ] **3.7** Make `usePerYear` and `currentHours` fields in Replacement Planner either functional or labelled "(for your reference)" (finding #20).
+  **WHY:** Editable fields that affect nothing feel broken to a farmer.
+  **Files:** `src/components/ReplacementPlanner.tsx`.
+
+- [ ] **3.8** Show two profitability percentages: "Machinery costs as % of farm income" and "All costs as % of total income" (finding #11).
+  **WHY:** Same thresholds but different income bases cause confusing discrepancies between tabs.
+  **Files:** `src/components/ProfitabilityOverview.tsx`.
 
 ---
 
-## Remaining Tasks (Priority Order)
+## Tier 4: Additional Observations
 
-_No remaining tasks._
+- [ ] **4.1** Add a note that insurance is calculated on purchase price, not current value, per AHDB methodology (finding #21).
+  **WHY:** Known simplification that could mislead farmers with older machines.
 
-### Already Complete
+- [ ] **4.2** When "Cost to Budget" is negative, show "You'll receive £X when you swap" instead of a confusing negative number (finding #22).
+  **WHY:** Negative values look like errors without explanation.
+  **Files:** `src/components/ReplacementPlanner.tsx`.
 
-- [x] SPEC-01: Test infrastructure bootstrap (vitest + testing-library + jsdom)
-- [x] SPEC-02: Fuel price reference panel (AHDB data, sparkline, "Use red diesel" button)
-- [x] SPEC-03: Fuel consumption estimator (HP slider, 0.244 × HP formula, reference table)
-- [x] SPEC-04: Contractor rates panel (6 categories, traffic-light rows, "Use" buttons) — 40 rates across 6 categories
-- [x] SPEC-05: Integration tests & visual polish (4 e2e flows, accessibility, responsive)
-- [x] SPEC-06: UK unit toggle & label fixes (ha/acres, km/miles, whitespace-nowrap)
-- [x] SPEC-07: Depreciation curve planner (8 categories, SVG chart, sweet spot, slider)
-- [x] SPEC-08: Machine profile loading bug fix (parent state callbacks, controlled Select)
+- [ ] **4.3** Update SPECS.md to document the standalone Depreciation Tab 3 (finding #23).
+  **WHY:** Spec should reflect what was built.
+  **Files:** `specs/SPECS.md`.
+
+---
+
+## Recommended Execution Order
+
+1. **Tier 0** (0.1–0.4) — Clean TS baseline. One pass, all independent.
+2. **Tier 2.1** — Label + tooltip change in ReplacementPlanner.
+3. **Tier 2.2** — Label change in ProfitabilityOverview.
+4. **Tier 2.3** — Single prop addition for NAAC filtering.
+5. **Tier 2.4** — Types + calculations + UI for total annual cost.
+6. **Tier 2.5** — Save notification UX.
+7. **Tier 3.1** — One-line comment.
+8. **Tier 3.2** — Tooltip text.
+9. **Tier 3.3** — Informational note.
+10. **Tier 3.4** → **3.6** — Category mapping, then depreciation linking.
+11. Remaining Tier 3 + Tier 4 as time permits.
+
+---
+
+## Summary
+
+| Tier | Total | Done | Remaining |
+|------|-------|------|-----------|
+| 0 — Tech Debt | 4 | 4 | 0 |
+| 1 — Must Fix | 5 | 5 | 0 |
+| 2 — Should Fix | 6 | 5 | 1 |
+| 3 — Nice to Have | 8 | 0 | 8 |
+| 4 — Observations | 3 | 0 | 3 |
+| **Total** | **26** | **14** | **12** |

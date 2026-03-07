@@ -3,11 +3,12 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { InputField } from "../InputField"
 import { UnitContext } from "@/lib/UnitContext"
+import type { UnitPreferences } from "@/lib/units"
 
 const metricUnits = { area: "ha" as const, speed: "km" as const }
 const imperialUnits = { area: "acres" as const, speed: "miles" as const }
 
-function renderWithUnits(ui: React.ReactElement, units = metricUnits) {
+function renderWithUnits(ui: React.ReactElement, units: UnitPreferences = metricUnits) {
   return render(
     <UnitContext.Provider value={{ units, setUnits: () => {} }}>
       {ui}

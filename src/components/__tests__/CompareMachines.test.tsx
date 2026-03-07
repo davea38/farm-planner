@@ -4,10 +4,11 @@ import userEvent from "@testing-library/user-event"
 import { CompareMachines } from "../CompareMachines"
 import { UnitContext } from "@/lib/UnitContext"
 import type { WorkrateInputs } from "@/lib/types"
+import type { UnitPreferences } from "@/lib/units"
 
 const defaultUnits = { area: "ha" as const, speed: "km" as const }
 
-function renderWithUnits(ui: React.ReactElement, units = defaultUnits) {
+function renderWithUnits(ui: React.ReactElement, units: UnitPreferences = defaultUnits) {
   return render(
     <UnitContext.Provider value={{ units, setUnits: () => {} }}>
       {ui}
