@@ -9,6 +9,7 @@ import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
+import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHour({
@@ -143,6 +144,10 @@ export function CostPerHour({
           unit="L/hr"
           tooltip="Litres of fuel burned per hour of work"
           min={0}
+        />
+        <FuelConsumptionPanel
+          onApply={update("fuelConsumptionPerHr")}
+          mode="perHour"
         />
         <InputField
           label="Fuel price"

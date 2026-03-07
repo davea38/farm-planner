@@ -56,17 +56,17 @@ _Depends on: SPEC-01_
 
 _Depends on: SPEC-01_
 
-- [ ] Create `src/lib/fuel-consumption-data.ts` with `FUEL_CONSUMPTION_FACTOR` (0.244), `estimateFuelConsumption(hp)`, and `HP_REFERENCE_POINTS` (6 entries, 75–300 HP)
+- [x] Create `src/lib/fuel-consumption-data.ts` with `FUEL_CONSUMPTION_FACTOR` (0.244), `estimateFuelConsumption(hp)`, and `HP_REFERENCE_POINTS` (6 entries, 75–300 HP)
   - **Why:** Pure estimation logic; formula 0.244 × HP = L/hr
-- [ ] Create `src/lib/__tests__/fuel-consumption-data.test.ts` — test 100 HP → 24.4, 200 HP → 48.8, 0 HP → 0, reference table has 6 entries
+- [x] Create `src/lib/__tests__/fuel-consumption-data.test.ts` — test 100 HP → 24.4, 200 HP → 48.8, 0 HP → 0, reference table has 6 entries
   - **Why:** RED tests for estimation function and data constants
-- [ ] Create `src/components/FuelConsumptionPanel.tsx` — collapsible panel with HP slider (75–400), gauge bar, 6-column reference table, "Use this estimate" button, source footer; `mode` prop switches L/hr vs L/ha
+- [x] Create `src/components/FuelConsumptionPanel.tsx` — collapsible panel with HP slider (75–400), gauge bar, 6-column reference table, "Use this estimate" button, source footer; `mode` prop switches L/hr vs L/ha
   - **Why:** Interactive panel; perHectare mode divides L/hr by workRate to get L/ha
-- [ ] Create `src/components/__tests__/FuelConsumptionPanel.test.tsx` — test title, default estimate (36.6), onApply in both modes, L/ha display with workRate
+- [x] Create `src/components/__tests__/FuelConsumptionPanel.test.tsx` — test title, default estimate (36.6), onApply in both modes, L/ha display with workRate
   - **Why:** Component behavior tests for both mode variants
-- [ ] Modify `src/components/CostPerHectare.tsx` — add `<FuelConsumptionPanel mode="perHectare">` below "Fuel use" input
+- [x] Modify `src/components/CostPerHectare.tsx` — add `<FuelConsumptionPanel mode="perHectare">` below "Fuel use" input
   - **Why:** Tab 1 needs L/ha output, derived from L/hr ÷ work rate
-- [ ] Modify `src/components/CostPerHour.tsx` — add `<FuelConsumptionPanel mode="perHour">` below fuel consumption input
+- [x] Modify `src/components/CostPerHour.tsx` — add `<FuelConsumptionPanel mode="perHour">` below fuel consumption input
   - **Why:** Tab 2 needs raw L/hr output
 
 ---

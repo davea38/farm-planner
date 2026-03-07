@@ -9,6 +9,7 @@ import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
+import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHectare({
@@ -161,6 +162,11 @@ export function CostPerHectare({
           unit="L/ha"
           tooltip="Litres of fuel burned per hectare"
           min={0}
+        />
+        <FuelConsumptionPanel
+          onApply={update("fuelUse")}
+          mode="perHectare"
+          workRate={inputs.workRate}
         />
         <InputField
           label="Spares & repairs"
