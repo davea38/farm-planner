@@ -17,6 +17,8 @@ function getZeroWorkrateFields(inputs: WorkrateInputs): string[] {
   return fields
 }
 
+type MachineType = "spreader" | "sprayer"
+
 export function CompareMachines({
   initialMachineA,
   initialMachineB,
@@ -29,6 +31,8 @@ export function CompareMachines({
   const { units } = useUnits()
   const [machineA, setMachineA] = useState<WorkrateInputs>(initialMachineA ?? defaultMachineA)
   const [machineB, setMachineB] = useState<WorkrateInputs>(initialMachineB ?? defaultMachineB)
+  const [typeA, setTypeA] = useState<MachineType>("spreader")
+  const [typeB, setTypeB] = useState<MachineType>("spreader")
 
   const updateA = (field: keyof WorkrateInputs) => (value: number) => {
     setMachineA((prev) => ({ ...prev, [field]: value }))
@@ -73,12 +77,16 @@ export function CompareMachines({
         <MachineInputs
           title={machineA.name || "Machine A"}
           inputs={machineA}
+          machineType={typeA}
+          onMachineTypeChange={setTypeA}
           onNameChange={(name) => setMachineA((prev) => ({ ...prev, name }))}
           onUpdate={updateA}
         />
         <MachineInputs
           title={machineB.name || "Machine B"}
           inputs={machineB}
+          machineType={typeB}
+          onMachineTypeChange={setTypeB}
           onNameChange={(name) => setMachineB((prev) => ({ ...prev, name }))}
           onUpdate={updateB}
         />
@@ -168,14 +176,21 @@ export function CompareMachines({
 function MachineInputs({
   title,
   inputs,
+  machineType,
+  onMachineTypeChange,
   onNameChange,
   onUpdate,
 }: {
   title: string
   inputs: WorkrateInputs
+  machineType: MachineType
+  onMachineTypeChange: (type: MachineType) => void
   onNameChange: (name: string) => void
   onUpdate: (field: keyof WorkrateInputs) => (value: number) => void
 }) {
+  const capacityUnit = machineType === "sprayer" ? "L" : "kg"
+  const rateUnit = machineType === "sprayer" ? "L/ha" : "kg/ha"
+
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
       <h2 className="text-sm font-semibold mb-3">{title}</h2>
@@ -192,6 +207,19 @@ function MachineInputs({
         />
       </div>
 
+      {/* Machine type selector */}
+      <div className="flex items-center gap-2 min-h-[44px]">
+        <label className="flex-1 text-sm font-medium leading-tight">Type</label>
+        <select
+          value={machineType}
+          onChange={(e) => onMachineTypeChange(e.target.value as MachineType)}
+          className="w-20 sm:w-28 text-right text-sm rounded-md border border-input bg-background px-2 py-1"
+        >
+          <option value="spreader">Spreader</option>
+          <option value="sprayer">Sprayer</option>
+        </select>
+      </div>
+
       <InputField
         label="Width"
         value={inputs.width}
@@ -204,8 +232,8 @@ function MachineInputs({
         label="Tank / hopper"
         value={inputs.capacity}
         onChange={onUpdate("capacity")}
-        unit="kg"
-        tooltip="How much the tank or hopper holds"
+        unit={capacityUnit}
+        tooltip={`How much the tank or hopper holds (in ${capacityUnit === "L" ? "litres" : "kilograms"})`}
         min={0}
       />
       <InputField
@@ -220,8 +248,8 @@ function MachineInputs({
         label="Application rate"
         value={inputs.applicationRate}
         onChange={onUpdate("applicationRate")}
-        metricUnit="kg/ha"
-        tooltip="How much product per hectare"
+        metricUnit={rateUnit}
+        tooltip={`How much product per hectare (in ${capacityUnit === "L" ? "litres" : "kilograms"})`}
         min={0}
       />
       <InputField

@@ -92,7 +92,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** "Cultivator" doesn't auto-map to "Tillage Equipment" depreciation curve.
   **Files:** `src/lib/category-mapping.ts` (new), `src/lib/__tests__/category-mapping.test.ts` (new).
 
-- [ ] **3.5** Add machine type selector (spreader/sprayer) to Compare Machines for switching units between kg and L (finding #13).
+- [x] **3.5** Add machine type selector (spreader/sprayer) to Compare Machines for switching units between kg and L (finding #13).
   **WHY:** Sprayers use litres, not kg. Showing "800 kg" for a sprayer tank is wrong.
   **Files:** `src/components/CompareMachines.tsx`.
 
@@ -148,6 +148,6 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
-| 3 — Nice to Have | 8 | 4 | 4 |
+| 3 — Nice to Have | 8 | 5 | 3 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **19** | **7** |
+| **Total** | **26** | **20** | **6** |
