@@ -153,8 +153,9 @@
 - [ ] **5.6** Integrate `SaveLoadToolbar` for naming/saving/loading/deleting machines on this tab
   - WHY: Farmers need to cost multiple machines and switch between them.
 
-- [ ] **5.7** Connect Tab 1 to auto-save hook for localStorage persistence
+- [x] **5.7** Connect Tab 1 to auto-save hook for localStorage persistence
   - WHY: Data must survive closing the tab.
+  - NOTE: Handled centrally via App.tsx state management in 10.1.
 
 - [ ] **5.8** Handle division-by-zero: if hectares/year or work rate is 0, show friendly message instead of Infinity/NaN
   - WHY: Spec explicitly calls out this edge case.
@@ -177,8 +178,9 @@
 - [ ] **6.4** Integrate `SaveLoadToolbar` for named machine save/load
   - WHY: Same save/load requirement as Tab 1 with its own machine list.
 
-- [ ] **6.5** Connect to auto-save and handle zero-division edge cases (hours/year = 0)
+- [x] **6.5** Connect to auto-save and handle zero-division edge cases (hours/year = 0)
   - WHY: Same persistence and safety requirements as Tab 1.
+  - NOTE: Auto-save handled centrally via App.tsx in 10.1. Zero-division already handled in calcCostPerHour.
 
 ---
 
@@ -217,8 +219,9 @@
   - WHY: Spec requires responsive stacking on narrow screens.
   - NOTE: Uses grid-cols-1 sm:grid-cols-2 for responsive stacking.
 
-- [ ] **8.6** Connect Tab 3 to auto-save via localStorage
+- [x] **8.6** Connect Tab 3 to auto-save via localStorage
   - WHY: Same persistence requirement.
+  - NOTE: Handled centrally via App.tsx state management in 10.1.
 
 ---
 
@@ -248,15 +251,17 @@
   - WHY: Percentage-of-income is the key decision indicator for whole-farm strategy.
   - NOTE: Budget summary section with total/average stats, farm income InputField, percentage display, and ResultBanner with traffic-light thresholds.
 
-- [ ] **9.7** Connect Tab 4 to auto-save via localStorage
+- [x] **9.7** Connect Tab 4 to auto-save via localStorage
   - WHY: Most data entry of any tab; losing it would be devastating.
+  - NOTE: Handled centrally via App.tsx state management in 10.1.
 
 ---
 
 ## Phase 10: Data Persistence Integration
 
-- [ ] **10.1** On app load in `App.tsx`, call `loadState()` and hydrate all four tabs from localStorage, falling back to defaults
+- [x] **10.1** On app load in `App.tsx`, call `loadState()` and hydrate all four tabs from localStorage, falling back to defaults
   - WHY: Values must survive browser refresh without explicit user action.
+  - NOTE: App.tsx now calls loadState() as useState initializer, passes initial data to each tab via props, receives changes via onChange callbacks, and assembles full AppState for useAutoSave (1s debounce). Each tab component accepts optional initialInputs/onChange props, initializes useState from props (falling back to defaults), and notifies parent on changes via useEffect (skipping first render to avoid redundant save).
 
 - [ ] **10.2** Wire global "Export to file" button to `exportToFile()` triggering `.json` download of full state
   - WHY: Backup mechanism and cross-device transfer.

@@ -1,11 +1,46 @@
+import { useState, useCallback } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { CostPerHectare } from '@/components/CostPerHectare'
 import { CostPerHour } from '@/components/CostPerHour'
 import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
+import { loadState, useAutoSave } from '@/lib/storage'
+import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState } from '@/lib/types'
 
 function App() {
+  const [appState, setAppState] = useState<AppState>(loadState)
+
+  useAutoSave(appState)
+
+  const onCostPerHectareChange = useCallback((inputs: CostPerHectareInputs) => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHectare: { ...prev.costPerHectare, current: inputs },
+    }))
+  }, [])
+
+  const onCostPerHourChange = useCallback((inputs: CostPerHourInputs) => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHour: { ...prev.costPerHour, current: inputs },
+    }))
+  }, [])
+
+  const onCompareMachinesChange = useCallback((machineA: WorkrateInputs, machineB: WorkrateInputs) => {
+    setAppState((prev) => ({
+      ...prev,
+      compareMachines: { machineA, machineB },
+    }))
+  }, [])
+
+  const onReplacementPlannerChange = useCallback((state: ReplacementPlannerState) => {
+    setAppState((prev) => ({
+      ...prev,
+      replacementPlanner: state,
+    }))
+  }, [])
+
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background">
@@ -43,19 +78,32 @@ function App() {
             </TabsList>
 
             <TabsContent value="cost-per-hectare" className="mt-4">
-              <CostPerHectare />
+              <CostPerHectare
+                initialInputs={appState.costPerHectare.current}
+                onChange={onCostPerHectareChange}
+              />
             </TabsContent>
 
             <TabsContent value="cost-per-hour" className="mt-4">
-              <CostPerHour />
+              <CostPerHour
+                initialInputs={appState.costPerHour.current}
+                onChange={onCostPerHourChange}
+              />
             </TabsContent>
 
             <TabsContent value="compare-machines" className="mt-4">
-              <CompareMachines />
+              <CompareMachines
+                initialMachineA={appState.compareMachines.machineA}
+                initialMachineB={appState.compareMachines.machineB}
+                onChange={onCompareMachinesChange}
+              />
             </TabsContent>
 
             <TabsContent value="replacement-planner" className="mt-4">
-              <ReplacementPlanner />
+              <ReplacementPlanner
+                initialState={appState.replacementPlanner}
+                onChange={onReplacementPlannerChange}
+              />
             </TabsContent>
           </Tabs>
         </div>

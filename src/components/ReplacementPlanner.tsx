@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import type { ReplacementMachine, ReplacementPlannerState } from "@/lib/types"
 import { defaultReplacementPlanner, createDefaultReplacementMachines } from "@/lib/defaults"
 import { calcReplacementSummary } from "@/lib/calculations"
@@ -182,11 +182,19 @@ function TimelineChart({
   )
 }
 
-export function ReplacementPlanner() {
-  const [state, setState] = useState<ReplacementPlannerState>(() => ({
-    ...defaultReplacementPlanner,
-    machines: createDefaultReplacementMachines(),
-  }))
+export function ReplacementPlanner({
+  initialState,
+  onChange,
+}: {
+  initialState?: ReplacementPlannerState
+  onChange?: (state: ReplacementPlannerState) => void
+}) {
+  const [state, setState] = useState<ReplacementPlannerState>(() =>
+    initialState ?? {
+      ...defaultReplacementPlanner,
+      machines: createDefaultReplacementMachines(),
+    }
+  )
 
   const updateMachine = (id: string, updated: ReplacementMachine) => {
     setState((prev) => ({
@@ -217,6 +225,15 @@ export function ReplacementPlanner() {
       machines: [...prev.machines, newMachine],
     }))
   }
+
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    onChange?.(state)
+  }, [state, onChange])
 
   const summary = useMemo(
     () => calcReplacementSummary(state.machines, state.farmIncome, CURRENT_YEAR, 6),

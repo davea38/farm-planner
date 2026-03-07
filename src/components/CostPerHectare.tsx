@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import type { CostPerHectareInputs } from "@/lib/types"
 import { defaultCostPerHectare } from "@/lib/defaults"
 import { calcCostPerHectare } from "@/lib/calculations"
@@ -8,12 +8,27 @@ import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 
-export function CostPerHectare() {
-  const [inputs, setInputs] = useState<CostPerHectareInputs>(defaultCostPerHectare)
+export function CostPerHectare({
+  initialInputs,
+  onChange,
+}: {
+  initialInputs?: CostPerHectareInputs
+  onChange?: (inputs: CostPerHectareInputs) => void
+}) {
+  const [inputs, setInputs] = useState<CostPerHectareInputs>(initialInputs ?? defaultCostPerHectare)
 
   const update = (field: keyof CostPerHectareInputs) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
   }
+
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    onChange?.(inputs)
+  }, [inputs, onChange])
 
   const results = useMemo(() => calcCostPerHectare(inputs), [inputs])
 

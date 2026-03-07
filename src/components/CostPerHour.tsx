@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import type { CostPerHourInputs } from "@/lib/types"
 import { defaultCostPerHour } from "@/lib/defaults"
 import { calcCostPerHour } from "@/lib/calculations"
@@ -8,12 +8,27 @@ import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 
-export function CostPerHour() {
-  const [inputs, setInputs] = useState<CostPerHourInputs>(defaultCostPerHour)
+export function CostPerHour({
+  initialInputs,
+  onChange,
+}: {
+  initialInputs?: CostPerHourInputs
+  onChange?: (inputs: CostPerHourInputs) => void
+}) {
+  const [inputs, setInputs] = useState<CostPerHourInputs>(initialInputs ?? defaultCostPerHour)
 
   const update = (field: keyof CostPerHourInputs) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
   }
+
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    onChange?.(inputs)
+  }, [inputs, onChange])
 
   const results = useMemo(() => calcCostPerHour(inputs), [inputs])
 

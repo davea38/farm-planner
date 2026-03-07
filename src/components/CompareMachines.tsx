@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import type { WorkrateInputs } from "@/lib/types"
 import { defaultMachineA, defaultMachineB } from "@/lib/defaults"
 import { calcWorkrate } from "@/lib/calculations"
@@ -6,9 +6,17 @@ import { InputField } from "./InputField"
 import { Input } from "@/components/ui/input"
 import { formatNumber, formatPct } from "@/lib/format"
 
-export function CompareMachines() {
-  const [machineA, setMachineA] = useState<WorkrateInputs>(defaultMachineA)
-  const [machineB, setMachineB] = useState<WorkrateInputs>(defaultMachineB)
+export function CompareMachines({
+  initialMachineA,
+  initialMachineB,
+  onChange,
+}: {
+  initialMachineA?: WorkrateInputs
+  initialMachineB?: WorkrateInputs
+  onChange?: (machineA: WorkrateInputs, machineB: WorkrateInputs) => void
+}) {
+  const [machineA, setMachineA] = useState<WorkrateInputs>(initialMachineA ?? defaultMachineA)
+  const [machineB, setMachineB] = useState<WorkrateInputs>(initialMachineB ?? defaultMachineB)
 
   const updateA = (field: keyof WorkrateInputs) => (value: number) => {
     setMachineA((prev) => ({ ...prev, [field]: value }))
@@ -16,6 +24,15 @@ export function CompareMachines() {
   const updateB = (field: keyof WorkrateInputs) => (value: number) => {
     setMachineB((prev) => ({ ...prev, [field]: value }))
   }
+
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    onChange?.(machineA, machineB)
+  }, [machineA, machineB, onChange])
 
   const resultsA = useMemo(() => calcWorkrate(machineA), [machineA])
   const resultsB = useMemo(() => calcWorkrate(machineB), [machineB])
