@@ -112,8 +112,9 @@ Root cause: helper functions in test files infer narrow literal types from defau
 
 ## Tier 4: Additional Observations
 
-- [ ] **4.1** Add a note that insurance is calculated on purchase price, not current value, per AHDB methodology (finding #21).
+- [x] **4.1** Add a note that insurance is calculated on purchase price, not current value, per AHDB methodology (finding #21).
   **WHY:** Known simplification that could mislead farmers with older machines.
+  **Files:** `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`.
 
 - [x] **4.2** When "Cost to Budget" is negative, show "You'll receive £X when you swap" instead of a confusing negative number (finding #22).
   **WHY:** Negative values look like errors without explanation.
@@ -149,5 +150,5 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
 | 3 — Nice to Have | 8 | 8 | 0 |
-| 4 — Observations | 3 | 1 | 2 |
-| **Total** | **26** | **24** | **2** |
+| 4 — Observations | 3 | 2 | 1 |
+| **Total** | **26** | **25** | **1** |

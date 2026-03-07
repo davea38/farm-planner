@@ -212,7 +212,7 @@ export function CostPerHour({
               value={inputs.insuranceRate}
               onChange={update("insuranceRate")}
               unit="%"
-              tooltip="Annual insurance as a percentage of what you paid"
+              tooltip="Annual insurance as a percentage of purchase price. Note: this follows the AHDB method — in practice, you may insure based on current market value, which could be lower."
               min={0}
             />
             <InputField
