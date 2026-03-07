@@ -10,6 +10,7 @@ import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
+import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHour({
@@ -226,6 +227,12 @@ export function CostPerHour({
           unit="£/hr"
           tooltip="What a contractor would charge you per hour for the same job"
           min={0}
+        />
+        <ContractorRatesPanel
+          onApply={update("contractorCharge")}
+          currentRate={inputs.contractorCharge}
+          unitFilter="hr"
+          defaultCategory="Tractor Hire"
         />
       </div>
 

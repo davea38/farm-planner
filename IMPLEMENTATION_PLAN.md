@@ -75,17 +75,17 @@ _Depends on: SPEC-01_
 
 _Depends on: SPEC-01_
 
-- [ ] Create `src/lib/contractor-data.ts` with `NAAC_SOURCE`, `NAAC_RATES` (35+ rates, 6 categories), `getRatesByCategory()`, `getRatesByUnit()`
+- [x] Create `src/lib/contractor-data.ts` with `NAAC_SOURCE`, `NAAC_RATES` (35+ rates, 6 categories), `getRatesByCategory()`, `getRatesByUnit()`
   - **Why:** Static NAAC 2025-26 rate data across Soil Prep, Drilling, Application, Harvesting, Baling, Tractor Hire
-- [ ] Create `src/lib/__tests__/contractor-data.test.ts` — test rate count ≥ 30, specific values, category/unit filter functions, all rates > 0
+- [x] Create `src/lib/__tests__/contractor-data.test.ts` — test rate count ≥ 30, specific values, category/unit filter functions, all rates > 0
   - **Why:** Data integrity and filter function tests
-- [ ] Create `src/components/ContractorRatesPanel.tsx` — collapsible panel with 6 category pill tabs, traffic-light table (green < £40, amber £40–100, red > £100), "Use" button per row, range indicator, source footer
+- [x] Create `src/components/ContractorRatesPanel.tsx` — collapsible panel with 6 category pill tabs, traffic-light table (green < £40, amber £40–100, red > £100), "Use" button per row, range indicator, source footer
   - **Why:** Most complex reference panel; `unitFilter` and `defaultCategory` props tailor it per tab
-- [ ] Create `src/components/__tests__/ContractorRatesPanel.test.tsx` — test title, category tabs, rate rows, onApply, traffic-light attributes, unit filtering, source
+- [x] Create `src/components/__tests__/ContractorRatesPanel.test.tsx` — test title, category tabs, rate rows, onApply, traffic-light attributes, unit filtering, source
   - **Why:** Component tests for navigation, selection, and visual classification
-- [ ] Modify `src/components/CostPerHectare.tsx` — add `<ContractorRatesPanel unitFilter="ha">` below "Contractor charges" input
+- [x] Modify `src/components/CostPerHectare.tsx` — add `<ContractorRatesPanel unitFilter="ha">` below "Contractor charges" input
   - **Why:** Tab 1 shows per-hectare contractor rates
-- [ ] Modify `src/components/CostPerHour.tsx` — add `<ContractorRatesPanel unitFilter="hr" defaultCategory="Tractor Hire">` below contractor charges input
+- [x] Modify `src/components/CostPerHour.tsx` — add `<ContractorRatesPanel unitFilter="hr" defaultCategory="Tractor Hire">` below contractor charges input
   - **Why:** Tab 2 defaults to hourly Tractor Hire rates
 
 ---

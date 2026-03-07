@@ -10,6 +10,7 @@ import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
+import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHectare({
@@ -227,6 +228,11 @@ export function CostPerHectare({
           unit="£/ha"
           tooltip="What a contractor would charge you per hectare for the same job"
           min={0}
+        />
+        <ContractorRatesPanel
+          onApply={update("contractorCharge")}
+          currentRate={inputs.contractorCharge}
+          unitFilter="ha"
         />
       </div>
 
