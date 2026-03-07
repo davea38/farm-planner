@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import type { CostPerHectareInputs } from "@/lib/types"
+import type { CostPerHectareInputs, SavedMachine } from "@/lib/types"
 import { defaultCostPerHectare } from "@/lib/defaults"
 import { calcCostPerHectare } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
@@ -8,13 +8,22 @@ import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
 import { RepairEstimator } from "./RepairEstimator"
+import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHectare({
   initialInputs,
   onChange,
+  savedMachines = [],
+  onSaveMachine,
+  onLoadMachine,
+  onDeleteMachine,
 }: {
   initialInputs?: CostPerHectareInputs
   onChange?: (inputs: CostPerHectareInputs) => void
+  savedMachines?: SavedMachine<CostPerHectareInputs>[]
+  onSaveMachine?: (name: string, inputs: CostPerHectareInputs) => void
+  onLoadMachine?: (index: number) => void
+  onDeleteMachine?: (index: number) => void
 }) {
   const [inputs, setInputs] = useState<CostPerHectareInputs>(initialInputs ?? defaultCostPerHectare)
 
@@ -54,8 +63,24 @@ export function CostPerHectare({
     bannerText = `You'd save ${formatGBP(savingAbs)}/year using a contractor`
   }
 
+  const handleLoad = (index: number) => {
+    const machine = savedMachines[index]
+    if (machine) {
+      setInputs(machine.inputs)
+    }
+    onLoadMachine?.(index)
+  }
+
   return (
     <div className="space-y-6">
+      {/* Save / Load Toolbar */}
+      <SaveLoadToolbar
+        savedMachines={savedMachines}
+        onSave={(name) => onSaveMachine?.(name, inputs)}
+        onLoad={handleLoad}
+        onDelete={(index) => onDeleteMachine?.(index)}
+      />
+
       {/* What Did You Pay? */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">What Did You Pay / What Will You Get?</h2>

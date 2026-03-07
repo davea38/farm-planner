@@ -20,6 +20,26 @@ function App() {
     }))
   }, [])
 
+  const onSaveCostPerHectareMachine = useCallback((name: string, inputs: CostPerHectareInputs) => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHectare: {
+        ...prev.costPerHectare,
+        savedMachines: [...prev.costPerHectare.savedMachines, { name, inputs }],
+      },
+    }))
+  }, [])
+
+  const onDeleteCostPerHectareMachine = useCallback((index: number) => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHectare: {
+        ...prev.costPerHectare,
+        savedMachines: prev.costPerHectare.savedMachines.filter((_, i) => i !== index),
+      },
+    }))
+  }, [])
+
   const onCostPerHourChange = useCallback((inputs: CostPerHourInputs) => {
     setAppState((prev) => ({
       ...prev,
@@ -81,6 +101,9 @@ function App() {
               <CostPerHectare
                 initialInputs={appState.costPerHectare.current}
                 onChange={onCostPerHectareChange}
+                savedMachines={appState.costPerHectare.savedMachines}
+                onSaveMachine={onSaveCostPerHectareMachine}
+                onDeleteMachine={onDeleteCostPerHectareMachine}
               />
             </TabsContent>
 

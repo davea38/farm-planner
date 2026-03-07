@@ -154,8 +154,9 @@
   - WHY: Spec places this helper inline for farmers who don't know their repair percentage.
   - NOTE: Added RepairEstimator component inline below the Spares & repairs InputField. "Help me estimate repairs" link opens the dialog, "Use this value" auto-fills the repairsPct field.
 
-- [ ] **5.6** Integrate `SaveLoadToolbar` for naming/saving/loading/deleting machines on this tab
+- [x] **5.6** Integrate `SaveLoadToolbar` for naming/saving/loading/deleting machines on this tab
   - WHY: Farmers need to cost multiple machines and switch between them.
+  - NOTE: SaveLoadToolbar rendered at top of CostPerHectare tab. App.tsx passes savedMachines array and onSave/onDelete callbacks. Loading a machine updates local inputs state directly. Saved machines persist via auto-save through AppState.
 
 - [x] **5.7** Connect Tab 1 to auto-save hook for localStorage persistence
   - WHY: Data must survive closing the tab.
