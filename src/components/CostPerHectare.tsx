@@ -3,6 +3,8 @@ import type { CostPerHectareInputs, SavedMachine } from "@/lib/types"
 import { defaultCostPerHectare } from "@/lib/defaults"
 import { calcCostPerHectare } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
+import { useUnits } from "@/lib/UnitContext"
+import { displayUnit } from "@/lib/units"
 import { InputField } from "./InputField"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
@@ -44,6 +46,8 @@ export function CostPerHectare({
     onChange?.(inputs)
   }, [inputs, onChange])
 
+  const { units } = useUnits()
+
   const results = useMemo(() => calcCostPerHectare(inputs), [inputs])
 
   const runningCostPerHa = results.labourPerHa + results.fuelPerHa + results.repairsPerHa
@@ -51,7 +55,7 @@ export function CostPerHectare({
 
   // Check for zero-value fields that would produce meaningless results
   const zeroWarnings: string[] = []
-  if (inputs.hectaresPerYear <= 0) zeroWarnings.push("hectares worked per year")
+  if (inputs.hectaresPerYear <= 0) zeroWarnings.push(units.area === "acres" ? "acres worked per year" : "hectares worked per year")
   if (inputs.workRate <= 0) zeroWarnings.push("work rate")
   if (inputs.yearsOwned <= 0) zeroWarnings.push("years owned")
   const hasZeroWarning = zeroWarnings.length > 0
@@ -120,10 +124,10 @@ export function CostPerHectare({
           min={0}
         />
         <InputField
-          label="Hectares worked/year"
+          label={`${displayUnit("ha", units) === "acres" ? "Acres" : "Hectares"} worked/year`}
           value={inputs.hectaresPerYear}
           onChange={update("hectaresPerYear")}
-          unit="ha"
+          metricUnit="ha"
           tooltip="Total hectares this machine covers in a year"
           min={0}
         />
@@ -144,7 +148,7 @@ export function CostPerHectare({
           label="Work rate"
           value={inputs.workRate}
           onChange={update("workRate")}
-          unit="ha/hr"
+          metricUnit="ha/hr"
           tooltip="How many hectares per hour this machine covers"
           min={0}
         />
@@ -169,7 +173,7 @@ export function CostPerHectare({
           label="Fuel use"
           value={inputs.fuelUse}
           onChange={update("fuelUse")}
-          unit="L/ha"
+          metricUnit="L/ha"
           tooltip="Litres of fuel burned per hectare"
           min={0}
         />
@@ -234,7 +238,7 @@ export function CostPerHectare({
           label="Contractor charges"
           value={inputs.contractorCharge}
           onChange={update("contractorCharge")}
-          unit="£/ha"
+          metricUnit="£/ha"
           tooltip="What a contractor would charge you per hectare for the same job"
           min={0}
         />
