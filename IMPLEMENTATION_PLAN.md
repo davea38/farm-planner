@@ -144,7 +144,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Tab 2 has the same area-based fields
 - [x] Modify `src/components/CostBreakdown.tsx` — use `displayUnit()` for result row unit labels
   - **Why:** Results must show £/acre when in acres mode
-- [ ] Modify `src/components/ResultBanner.tsx` — use converted unit text in saving messages
+- [x] Modify `src/components/ResultBanner.tsx` — use converted unit text in saving messages
   - **Why:** Banner text should match chosen unit system
 - [x] Modify `src/components/CompareMachines.tsx` — convert speed (km/hr ↔ mph) and area units
   - **Why:** Compare tab has speed and work rate fields affected by both toggles

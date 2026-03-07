@@ -4,7 +4,7 @@ import { defaultCostPerHectare } from "@/lib/defaults"
 import { calcCostPerHectare } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
 import { useUnits } from "@/lib/UnitContext"
-import { displayUnit } from "@/lib/units"
+import { displayUnit, toDisplay } from "@/lib/units"
 import { InputField } from "./InputField"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
@@ -66,6 +66,10 @@ export function CostPerHectare({
   const threshold = contractorTotalCost * 0.1
   let bannerType: "green" | "amber" | "red"
   let bannerText: string
+  let bannerSub: string | undefined
+
+  const areaUnit = displayUnit("ha", units)
+  const perUnitDiff = toDisplay(Math.abs(results.totalCostPerHa - inputs.contractorCharge), "£/ha", units)
 
   if (savingAbs <= threshold) {
     bannerType = "amber"
@@ -73,9 +77,11 @@ export function CostPerHectare({
   } else if (results.annualSaving < 0) {
     bannerType = "green"
     bannerText = `You save ${formatGBP(savingAbs)}/year by owning this machine`
+    bannerSub = `${formatGBP(perUnitDiff)}/${areaUnit} cheaper than a contractor`
   } else {
     bannerType = "red"
     bannerText = `You'd save ${formatGBP(savingAbs)}/year using a contractor`
+    bannerSub = `Contractor is ${formatGBP(perUnitDiff)}/${areaUnit} cheaper`
   }
 
   const handleLoad = (index: number) => {
@@ -273,7 +279,7 @@ export function CostPerHectare({
               ]}
             />
 
-            <ResultBanner type={bannerType} mainText={bannerText} />
+            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
           </>
         )}
       </div>

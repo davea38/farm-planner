@@ -65,6 +65,9 @@ export function CostPerHour({
   const threshold = contractorTotalCost * 0.1
   let bannerType: "green" | "amber" | "red"
   let bannerText: string
+  let bannerSub: string | undefined
+
+  const perHourDiff = Math.abs(results.totalCostPerHr - inputs.contractorCharge)
 
   if (savingAbs <= threshold) {
     bannerType = "amber"
@@ -72,9 +75,11 @@ export function CostPerHour({
   } else if (results.annualSaving < 0) {
     bannerType = "green"
     bannerText = `You save ${formatGBP(savingAbs)}/year by owning this machine`
+    bannerSub = `${formatGBP(perHourDiff)}/hr cheaper than a contractor`
   } else {
     bannerType = "red"
     bannerText = `You'd save ${formatGBP(savingAbs)}/year using a contractor`
+    bannerSub = `Contractor is ${formatGBP(perHourDiff)}/hr cheaper`
   }
 
   const handleLoad = (index: number) => {
@@ -273,7 +278,7 @@ export function CostPerHour({
               ]}
             />
 
-            <ResultBanner type={bannerType} mainText={bannerText} />
+            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
           </>
         )}
       </div>
