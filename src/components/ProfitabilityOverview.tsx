@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { InputField } from "@/components/InputField";
 import { ResultBanner } from "@/components/ResultBanner";
 import { formatGBP, formatPct } from "@/lib/format";
 import {
@@ -13,6 +14,7 @@ import type { AppState } from "@/lib/types";
 
 interface ProfitabilityOverviewProps {
   appState: AppState;
+  onFarmIncomeChange?: (value: number) => void;
 }
 
 function getTrafficLight(pct: number): {
@@ -37,13 +39,15 @@ function getTrafficLight(pct: number): {
   };
 }
 
-export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) {
+export function ProfitabilityOverview({ appState, onFarmIncomeChange }: ProfitabilityOverviewProps) {
   const hasMachines =
     appState.costPerHectare.savedMachines.length > 0 ||
     appState.costPerHour.savedMachines.length > 0;
+  const hasCurrentHaMachine = appState.costPerHectare.current.hectaresPerYear > 0;
+  const hasCurrentHrMachine = appState.costPerHour.current.hoursPerYear > 0;
   const hasServices = appState.contractingIncome.services.length > 0;
 
-  const { results, runningCostsHa, runningCostsHr } = useMemo(() => {
+  const { results, runningCostsHa, runningCostsHr, currentHaRunning, currentHrRunning } = useMemo(() => {
     const replacementSummary = calcReplacementSummary(
       appState.replacementPlanner.machines,
       appState.replacementPlanner.farmIncome,
@@ -67,6 +71,18 @@ export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) 
       0,
     );
 
+    // Include current (unsaved) machine costs
+    let curHaRunning = 0;
+    if (hasCurrentHaMachine) {
+      const r = calcCostPerHectare(appState.costPerHectare.current);
+      curHaRunning = r.totalCostPerHa * appState.costPerHectare.current.hectaresPerYear;
+    }
+    let curHrRunning = 0;
+    if (hasCurrentHrMachine) {
+      const r = calcCostPerHour(appState.costPerHour.current);
+      curHrRunning = r.totalCostPerHr * appState.costPerHour.current.hoursPerYear;
+    }
+
     let contractingGrossIncome = 0;
     let contractingCosts = 0;
     for (const s of appState.contractingIncome.services) {
@@ -85,12 +101,18 @@ export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) 
       contractingGrossIncome,
       contractingCosts,
       replacementAnnualCost: replacementSummary.averageAnnualCost,
-      runningCostsHectare: haRunning,
-      runningCostsHour: hrRunning,
+      runningCostsHectare: haRunning + curHaRunning,
+      runningCostsHour: hrRunning + curHrRunning,
     });
 
-    return { results: profResults, runningCostsHa: haRunning, runningCostsHr: hrRunning };
-  }, [appState]);
+    return {
+      results: profResults,
+      runningCostsHa: haRunning,
+      runningCostsHr: hrRunning,
+      currentHaRunning: curHaRunning,
+      currentHrRunning: curHrRunning,
+    };
+  }, [appState, hasCurrentHaMachine, hasCurrentHrMachine]);
 
   const trafficLight = getTrafficLight(results.machineryCostPctOfIncome);
   const haCountLabel = appState.costPerHectare.savedMachines.length;
@@ -114,12 +136,14 @@ export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) 
             Income
           </h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <span className="text-muted-foreground">
-              Farm income (from Replacement Planner):
-            </span>
-            <span className="font-medium text-right">
-              {formatGBP(results.farmIncomeAmount)}/year
-            </span>
+            <InputField
+              label="Farm income"
+              value={appState.replacementPlanner.farmIncome}
+              onChange={(v) => onFarmIncomeChange?.(v)}
+              unit="£/year"
+              tooltip="Your total annual farm income (excluding contracting)"
+              min={0}
+            />
             <span className="text-muted-foreground">
               Contracting income (from Tab 6):
             </span>
@@ -153,14 +177,34 @@ export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) 
             <span className="font-medium text-right">
               {formatGBP(runningCostsHa)}/year
             </span>
+            {hasCurrentHaMachine && (
+              <>
+                <span className="text-muted-foreground pl-2">
+                  ↳ Current unsaved machine (per-ha):
+                </span>
+                <span className="font-medium text-right text-muted-foreground">
+                  {formatGBP(currentHaRunning)}/year
+                </span>
+              </>
+            )}
             <span className="text-muted-foreground">
               Running costs (per-hr machines x {hrCountLabel}):
             </span>
             <span className="font-medium text-right">
               {formatGBP(runningCostsHr)}/year
             </span>
+            {hasCurrentHrMachine && (
+              <>
+                <span className="text-muted-foreground pl-2">
+                  ↳ Current unsaved machine (per-hr):
+                </span>
+                <span className="font-medium text-right text-muted-foreground">
+                  {formatGBP(currentHrRunning)}/year
+                </span>
+              </>
+            )}
             <span className="text-muted-foreground">
-              Contracting delivery costs:
+              Contracting operating costs:
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.contractingCosts)}/year
@@ -222,7 +266,7 @@ export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) 
         {hasServices && (
           <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wide border-b pb-1">
-              With vs Without Contracting
+              Farm Only vs Farm + Contracting
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
@@ -230,9 +274,9 @@ export function ProfitabilityOverview({ appState }: ProfitabilityOverviewProps) 
                   <tr className="border-b">
                     <th className="text-left py-2 pr-4"></th>
                     <th className="text-right py-2 px-4">
-                      Without Contracting
+                      Farm Only
                     </th>
-                    <th className="text-right py-2 pl-4">With Contracting</th>
+                    <th className="text-right py-2 pl-4">Farm + Contracting</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -55,7 +55,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** "Cost to replace" is ambiguous — a farmer might enter the net cost instead of the gross purchase price.
   **Files:** `src/components/ReplacementPlanner.tsx`, `src/components/__tests__/ReplacementPlanner.full.test.tsx`.
 
-- [ ] **2.2** Rename "Without Contracting" / "With Contracting" to "Farm Only" / "Farm + Contracting" in the comparison table on ProfitabilityOverview (finding #18).
+- [x] **2.2** Rename "Without Contracting" / "With Contracting" to "Farm Only" / "Farm + Contracting" in the comparison table on ProfitabilityOverview (finding #18).
   **WHY:** "Without Contracting" can be misread as "without hiring a contractor" — the opposite meaning.
   **Files:** `src/components/ProfitabilityOverview.tsx`, `src/components/__tests__/ProfitabilityOverview.test.tsx`.
 
@@ -147,7 +147,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
 |------|-------|------|-----------|
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
-| 2 — Should Fix | 6 | 2 | 4 |
+| 2 — Should Fix | 6 | 3 | 3 |
 | 3 — Nice to Have | 8 | 0 | 8 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **11** | **15** |
+| **Total** | **26** | **12** | **14** |

@@ -5,7 +5,7 @@ import type { AppState } from "@/lib/types";
 
 function createTestState(overrides?: Partial<AppState>): AppState {
   return {
-    version: 2,
+    version: 3,
     lastSaved: new Date().toISOString(),
     costPerHectare: {
       current: {
@@ -34,7 +34,7 @@ function createTestState(overrides?: Partial<AppState>): AppState {
         interestRate: 0,
         insuranceRate: 0,
         storageRate: 0,
-        haPerHr: 0,
+
         fuelConsumptionPerHr: 0,
         fuelPrice: 0,
         repairsPct: 0,
@@ -127,8 +127,9 @@ describe("ProfitabilityOverview", () => {
       },
     });
     render(<ProfitabilityOverview appState={state} />);
-    expect(screen.getByRole("heading", { name: /without contracting/i })).toBeInTheDocument();
-    expect(screen.getAllByText(/with contracting/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("heading", { name: /farm only vs farm \+ contracting/i })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: /Farm Only/ })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: /Farm \+ Contracting/ })).toBeInTheDocument();
   });
 
   it("shows traffic-light banner based on machinery cost %", () => {
