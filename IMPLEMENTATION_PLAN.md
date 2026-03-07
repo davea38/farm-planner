@@ -107,14 +107,17 @@
 
 ## Phase 4: App Shell & Navigation
 
-- [ ] **4.1** Create `src/main.tsx` entry point rendering `<App />` with React 18 `createRoot`
+- [x] **4.1** Create `src/main.tsx` entry point rendering `<App />` with React 18 `createRoot`
   - WHY: Standard React entry point required by Vite.
+  - NOTE: Already created by Vite scaffolding in 1.1. Uses StrictMode + createRoot.
 
-- [ ] **4.2** Create `index.html` with root div, title, and Vite script entry
+- [x] **4.2** Create `index.html` with root div, title, and Vite script entry
   - WHY: HTML shell needed for Vite to serve the app.
+  - NOTE: Already created by Vite scaffolding in 1.1. Title set to "Farm Machinery Planner".
 
-- [ ] **4.3** Create `src/App.tsx` with shadcn Tabs for 4 tabs (Cost per Hectare, Cost per Hour, Compare Machines, Replacement Planner), active tab in primary green, 800px max-width centered
+- [x] **4.3** Create `src/App.tsx` with shadcn Tabs for 4 tabs (Cost per Hectare, Cost per Hour, Compare Machines, Replacement Planner), active tab in primary green, 800px max-width centered
   - WHY: Top-level layout hosting all tab content; must exist before tabs render.
+  - NOTE: Uses base-ui value-based tabs with string values. Active tab styled with primary green via data-active:bg-primary. TooltipProvider wraps entire app. 4-column grid TabsList with responsive text sizing. Tab content panels have placeholder text until tab components are built.
 
 - [ ] **4.4** Add global header with "Farm Machinery Planner" title and Export/Import JSON buttons
   - WHY: Spec requires JSON export/import accessible from any tab.
