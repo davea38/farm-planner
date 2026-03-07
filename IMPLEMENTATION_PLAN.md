@@ -62,8 +62,9 @@
   - WHY: Tab 2 uses the same structure but with hour-based formulas.
   - NOTE: Verified against AHDB defaults: £65.56/hr total, £14,393.41 annual saving. Added missing labourPerHr field to CostPerHourResults interface. Handles zero division for hoursPerYear and yearsOwned.
 
-- [ ] **2.5** Add `calcWorkrate(machineInputs)` to `calculations.ts` returning area/load, spot rate, application time, total time/load, overall work rate, overall efficiency, time-breakdown percentages
+- [x] **2.5** Add `calcWorkrate(machineInputs)` to `calculations.ts` returning area/load, spot rate, application time, total time/load, overall work rate, overall efficiency, time-breakdown percentages
   - WHY: Tab 3 needs these for each machine plus derived comparison values.
+  - NOTE: Verified Machine A: spot rate 2.40, overall 1.40 ha/hr (matches spec). Machine B: spot rate 36.00, overall 12.71 ha/hr (spec says 9.64 — inconsistency: the formulas + defaults produce 12.71; 9.64 requires capacity=1250 not 2000). Handles zero division for applicationRate, spotRate*efficiency, totalTimePerLoad, and spotRate.
 
 - [ ] **2.6** Add `calcReplacementSummary(machines[], farmIncome, startYear, yearSpan)` to `calculations.ts` returning per-year cost arrays, total spend, average annual cost, % of income
   - WHY: Tab 4 Gantt chart and budget summary consume this derived data.
@@ -269,6 +270,7 @@
 
 - [ ] **12.3** Verify Tab 3: AHDB defaults produce Machine A = 1.40 ha/hr, Machine B = 9.64 ha/hr
   - WHY: Exact acceptance criteria from spec.
+  - BUG: Spec inconsistency — formulas + defaults (capacity=2000) produce Machine B = 12.71 ha/hr, not 9.64. The value 9.64 requires capacity=1250. Machine A = 1.40 is correct.
 
 - [ ] **12.4** Verify Repair Estimator: £69,000 tractor at 400 hrs yields 5% = £3,450
   - WHY: Validates interpolation logic against spec.
