@@ -1,7 +1,7 @@
 # Implementation Plan — Farm Machinery Planner
 
 **Date:** 2026-03-07
-**Current state:** 6 tabs, storage version 2, 121 NAAC rates across 12 categories
+**Current state:** 7 tabs, storage version 2, 121 NAAC rates across 12 categories
 **Target state:** 7 tabs, 130+ NAAC rates across 12 categories, storage version 2
 
 ## Spec Status Summary
@@ -18,7 +18,7 @@
 | 08 | Machine Profile Loading | [x] Done |
 | 09 | Complete NAAC Data | [x] Done — 121 entries across 12 categories, 6 dual-rate ops, 3 new unit types |
 | 10 | Contracting Income | [x] Done |
-| 11 | Profitability Overview | **Not started** — Tab 7 does not exist |
+| 11 | Profitability Overview | [x] Done — read-only dashboard, income/costs/net, traffic-light, with/without contracting |
 
 ## Dependency Graph
 
@@ -101,48 +101,15 @@ _Depends on SPEC-09 for extended unit types and 12-category NAAC data. Blocks SP
 
 _Depends on SPEC-10 for contracting income data in AppState._
 
-### E1: Add calculation function
+### E1–E5: All complete
 
-- [ ] Add `ProfitabilityResults` interface to `calculations.ts` with: totalIncome, farmIncomeAmount, contractingIncomeAmount, totalCosts, replacementCosts, totalRunningCosts, contractingCosts, netPosition, machineryCostPctOfIncome, contractingOffsetPct, netWithoutContracting, netWithContracting, contractingNetContribution
-  - **Why:** Comprehensive output type for the read-only profitability dashboard
-- [ ] Implement `calculateProfitability(appState)` pure function that aggregates income/costs from all tabs
-  - **Why:** Core aggregation logic — derives running costs from saved machines (calcCostPerHectare/Hour), contracting from services (calculateContractingService), replacement from planner (calcReplacementSummary)
-- [ ] Create `src/lib/__tests__/profitability-calculations.test.ts` testing: total income, total costs, net position, machinery cost %, contracting offset %, with/without contracting comparison, zero/edge cases
-  - **Why:** Pure function tests before building UI
-
-### E2: Build ProfitabilityOverview component
-
-- [ ] Create `src/components/ProfitabilityOverview.tsx` (read-only, prop: `appState: AppState`) with Income section (farm + contracting = total) and Costs section (replacement + running per-ha + running per-hr + contracting = total)
-  - **Why:** Consolidated view of all income and cost streams across the app
-- [ ] Add Net Position card with large display, machinery cost as % of income, contracting offset %
-  - **Why:** The key "bottom line" metric the farmer needs to see prominently
-- [ ] Add traffic-light banner: green (<20%), amber (20-35%), red (>35%) based on machinery cost % of income
-  - **Why:** Quick visual indicator of whether machinery costs are sustainable relative to farm income
-- [ ] Add "With vs Without Contracting" comparison table and contracting net contribution callout
-  - **Why:** Shows the financial impact of offering contracting services — the key insight of the tool
-- [ ] Add key/legend explaining traffic-light thresholds
-  - **Why:** Context for the color coding so farmers understand the benchmarks
-- [ ] Add empty state message when no saved machines or services exist
-  - **Why:** Guide user to populate other tabs first rather than showing zeros
-
-### E3: Wire into App.tsx
-
-- [ ] Add Tab 7 trigger ("Profitability") to TabsList in `App.tsx`
-  - **Why:** New tab must be visible in navigation
-- [ ] Add TabsContent rendering `<ProfitabilityOverview appState={appState} />`
-  - **Why:** Pass entire appState since this tab reads from all other tabs (farm income, saved machines, contracting services, replacement planner)
-
-### E4: Component tests
-
-- [ ] Create `src/components/__tests__/ProfitabilityOverview.test.tsx` testing: renders, income/costs/net sections, traffic-light banner, with/without contracting comparison, empty state, contracting offset
-  - **Why:** Component display and state-driven rendering tests
-
-### E5: Final verification
-
-- [ ] Run `npm test` — all tests pass
-  - **Why:** Full regression check across all 7 tabs
-- [ ] Run `npm run build` — no TypeScript errors
-  - **Why:** Final type-safety gate
+- [x] Added `ProfitabilityInputs`, `ProfitabilityResults` interfaces and `calculateProfitability()` pure function to `calculations.ts`
+- [x] Created 11 calculation tests (total income, costs, net position, machinery %, contracting offset %, with/without contracting, zero/edge cases)
+- [x] Built `ProfitabilityOverview.tsx` — read-only dashboard with Income section, Costs section, Net Position card, traffic-light banner, With vs Without Contracting comparison table, key/legend, empty state
+- [x] Component assembles data from all tabs: replacement planner farm income, saved per-ha/per-hr machines, contracting services
+- [x] Wired Tab 7 ("Profitability") into `App.tsx` with `appState` prop
+- [x] Created 10 component tests (renders, sections, traffic-light, comparison table, offset, key/legend, empty state)
+- [x] All 377 tests pass, `vite build` succeeds
 
 **Files:** `src/lib/calculations.ts`, `src/components/ProfitabilityOverview.tsx`, `src/components/__tests__/ProfitabilityOverview.test.tsx`, `src/lib/__tests__/profitability-calculations.test.ts`, `src/App.tsx`
 

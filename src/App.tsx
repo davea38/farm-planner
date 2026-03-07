@@ -8,6 +8,7 @@ import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
 import { DepreciationPanel } from '@/components/DepreciationPanel'
 import { ContractingIncomePlanner } from '@/components/ContractingIncomePlanner'
+import { ProfitabilityOverview } from '@/components/ProfitabilityOverview'
 import { UnitToggle } from '@/components/UnitToggle'
 import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
@@ -175,7 +176,7 @@ function App() {
           </div>
 
           <Tabs defaultValue="cost-per-hectare">
-            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto gap-1">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-7 h-auto gap-1">
               <TabsTrigger
                 value="cost-per-hectare"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
@@ -211,6 +212,12 @@ function App() {
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
                 Contracting Income
+              </TabsTrigger>
+              <TabsTrigger
+                value="profitability"
+                className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
+              >
+                Profitability
               </TabsTrigger>
             </TabsList>
 
@@ -262,6 +269,10 @@ function App() {
                 savedHectareMachines={appState.costPerHectare.savedMachines}
                 savedHourMachines={appState.costPerHour.savedMachines}
               />
+            </TabsContent>
+
+            <TabsContent value="profitability" className="mt-4">
+              <ProfitabilityOverview appState={appState} />
             </TabsContent>
           </Tabs>
         </div>

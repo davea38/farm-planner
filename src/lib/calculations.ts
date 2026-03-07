@@ -9,6 +9,70 @@ import type {
   WorkrateResults,
 } from "./types";
 
+export interface ProfitabilityInputs {
+  farmIncome: number;
+  contractingGrossIncome: number;
+  contractingCosts: number;
+  replacementAnnualCost: number;
+  runningCostsHectare: number;
+  runningCostsHour: number;
+}
+
+export interface ProfitabilityResults {
+  totalIncome: number;
+  farmIncomeAmount: number;
+  contractingIncomeAmount: number;
+  totalCosts: number;
+  replacementCosts: number;
+  totalRunningCosts: number;
+  contractingCosts: number;
+  netPosition: number;
+  machineryCostPctOfIncome: number;
+  contractingOffsetPct: number;
+  netWithoutContracting: number;
+  netWithContracting: number;
+  contractingNetContribution: number;
+}
+
+export function calculateProfitability(
+  inputs: ProfitabilityInputs,
+): ProfitabilityResults {
+  const totalIncome = inputs.farmIncome + inputs.contractingGrossIncome;
+  const totalRunningCosts = inputs.runningCostsHectare + inputs.runningCostsHour;
+  const totalCosts =
+    inputs.replacementAnnualCost + totalRunningCosts + inputs.contractingCosts;
+  const netPosition = totalIncome - totalCosts;
+
+  const machineryCostPctOfIncome =
+    totalIncome > 0 ? (totalCosts / totalIncome) * 100 : 0;
+
+  const contractingOffsetPct =
+    totalCosts > 0 ? (inputs.contractingGrossIncome / totalCosts) * 100 : 0;
+
+  const costsWithoutContracting =
+    inputs.replacementAnnualCost + totalRunningCosts;
+  const netWithoutContracting = inputs.farmIncome - costsWithoutContracting;
+  const netWithContracting = netPosition;
+  const contractingNetContribution =
+    netWithContracting - netWithoutContracting;
+
+  return {
+    totalIncome,
+    farmIncomeAmount: inputs.farmIncome,
+    contractingIncomeAmount: inputs.contractingGrossIncome,
+    totalCosts,
+    replacementCosts: inputs.replacementAnnualCost,
+    totalRunningCosts,
+    contractingCosts: inputs.contractingCosts,
+    netPosition,
+    machineryCostPctOfIncome,
+    contractingOffsetPct,
+    netWithoutContracting,
+    netWithContracting,
+    contractingNetContribution,
+  };
+}
+
 export interface ContractingServiceResults {
   grossIncome: number;
   totalOwnCost: number;
