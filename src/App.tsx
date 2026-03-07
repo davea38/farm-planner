@@ -6,6 +6,7 @@ import { CostPerHectare } from '@/components/CostPerHectare'
 import { CostPerHour } from '@/components/CostPerHour'
 import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
+import { DepreciationPanel } from '@/components/DepreciationPanel'
 import { UnitToggle } from '@/components/UnitToggle'
 import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
@@ -166,7 +167,7 @@ function App() {
           </div>
 
           <Tabs defaultValue="cost-per-hectare">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto gap-1">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 h-auto gap-1">
               <TabsTrigger
                 value="cost-per-hectare"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
@@ -178,6 +179,12 @@ function App() {
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
                 Cost per Hour
+              </TabsTrigger>
+              <TabsTrigger
+                value="depreciation"
+                className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
+              >
+                Depreciation
               </TabsTrigger>
               <TabsTrigger
                 value="compare-machines"
@@ -213,6 +220,10 @@ function App() {
                 onLoadMachine={onLoadCostPerHourMachine}
                 onDeleteMachine={onDeleteCostPerHourMachine}
               />
+            </TabsContent>
+
+            <TabsContent value="depreciation" className="mt-4">
+              <DepreciationPanel />
             </TabsContent>
 
             <TabsContent value="compare-machines" className="mt-4">

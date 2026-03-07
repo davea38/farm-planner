@@ -1,84 +1,52 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { DepreciationPanel } from "@/components/DepreciationPanel"
 
-function renderExpanded(
-  props: Partial<React.ComponentProps<typeof DepreciationPanel>> = {}
-) {
-  const result = render(
-    <DepreciationPanel
-      onApplySalePrice={props.onApplySalePrice ?? vi.fn()}
-      purchasePrice={props.purchasePrice}
-      yearsOwned={props.yearsOwned}
-      onYearsChange={props.onYearsChange}
-    />
-  )
-  fireEvent.click(screen.getByText(/Depreciation Curve/i))
-  return result
+function renderPanel() {
+  return render(<DepreciationPanel />)
 }
 
 describe("DepreciationPanel", () => {
-  it("renders panel title", () => {
-    render(<DepreciationPanel onApplySalePrice={vi.fn()} />)
-    expect(screen.getByText(/Depreciation Curve/i)).toBeInTheDocument()
-  })
-
   it("renders machine category dropdown", () => {
-    renderExpanded()
+    renderPanel()
     expect(screen.getByRole("combobox")).toBeInTheDocument()
   })
 
   it("renders SVG chart", () => {
-    const { container } = renderExpanded({ purchasePrice: 126000 })
+    const { container } = renderPanel()
     expect(container.querySelector("svg")).toBeInTheDocument()
   })
 
-  it("shows estimated value for given years", () => {
-    renderExpanded({ purchasePrice: 126000, yearsOwned: 8 })
+  it("shows estimated value", () => {
+    renderPanel()
     const matches = screen.getAllByText(/£/)
     expect(matches.length).toBeGreaterThan(0)
   })
 
   it("shows percentage lost", () => {
-    renderExpanded({ purchasePrice: 100000, yearsOwned: 5 })
+    renderPanel()
     const matches = screen.getAllByText(/%/)
     expect(matches.length).toBeGreaterThan(0)
   })
 
   it("shows sweet spot callout", () => {
-    renderExpanded({ purchasePrice: 126000 })
+    renderPanel()
     expect(screen.getByText(/sweet spot/i)).toBeInTheDocument()
   })
 
-  it("calls onApplySalePrice when button clicked", () => {
-    const onApply = vi.fn()
-    renderExpanded({
-      onApplySalePrice: onApply,
-      purchasePrice: 126000,
-      yearsOwned: 8,
-    })
-    fireEvent.click(screen.getByRole("button", { name: /use.*sale price/i }))
-    expect(onApply).toHaveBeenCalledWith(expect.any(Number))
-  })
-
   it("shows source attribution", () => {
-    renderExpanded()
+    renderPanel()
     expect(screen.getByText(/ASAE/i)).toBeInTheDocument()
   })
 
   it("has year slider", () => {
-    renderExpanded({ purchasePrice: 126000 })
+    renderPanel()
     expect(screen.getByRole("slider")).toBeInTheDocument()
   })
 
-  it("updates estimated value when slider changes", () => {
-    const onYearsChange = vi.fn()
-    renderExpanded({
-      purchasePrice: 100000,
-      yearsOwned: 2,
-      onYearsChange,
-    })
+  it("updates when slider changes", () => {
+    renderPanel()
     const slider = screen.getByRole("slider")
     fireEvent.change(slider, { target: { value: "6" } })
-    expect(onYearsChange).toHaveBeenCalledWith(6)
+    expect(slider).toHaveValue("6")
   })
 })

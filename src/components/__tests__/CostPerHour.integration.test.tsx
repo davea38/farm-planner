@@ -18,11 +18,6 @@ describe("CostPerHour reference panel integration", () => {
     expect(screen.getByText(/NAAC Contractor Rates/i)).toBeInTheDocument()
   })
 
-  it("has depreciation panel", () => {
-    render(<CostPerHour />)
-    expect(screen.getByText(/Depreciation Curve/i)).toBeInTheDocument()
-  })
-
   it("shows source attribution for AHDB when expanded", () => {
     render(<CostPerHour />)
     fireEvent.click(screen.getByText(/AHDB Fuel Prices/i))
