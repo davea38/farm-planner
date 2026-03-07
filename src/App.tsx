@@ -3,6 +3,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { CostPerHectare } from '@/components/CostPerHectare'
 import { CostPerHour } from '@/components/CostPerHour'
 import { CompareMachines } from '@/components/CompareMachines'
+import { ReplacementPlanner } from '@/components/ReplacementPlanner'
 
 function App() {
   return (
@@ -54,9 +55,7 @@ function App() {
             </TabsContent>
 
             <TabsContent value="replacement-planner" className="mt-4">
-              <p className="text-muted-foreground text-center py-12">
-                Replacement Planner coming soon.
-              </p>
+              <ReplacementPlanner />
             </TabsContent>
           </Tabs>
         </div>

@@ -222,23 +222,29 @@
 
 ## Phase 9: Tab 4 - Replacement Planner
 
-- [ ] **9.1** Create `src/components/ReplacementPlanner.tsx` with editable table pre-populated with AHDB default rows (Tractor 1-4, Combine, SP Sprayer, Seed drill, Cultivator x2, Other), each with: name, use/year, time to change, current hours, price to change, current value
+- [x] **9.1** Create `src/components/ReplacementPlanner.tsx` with editable table pre-populated with AHDB default rows (Tractor 1-4, Combine, SP Sprayer, Seed drill, Cultivator x2, Other), each with: name, use/year, time to change, current hours, price to change, current value
   - WHY: Most complex tab; building last means all shared infrastructure is proven.
+  - NOTE: Each machine rendered as a card with inline text name input, 2-column grid of InputFields, and a derived "Cost to budget" display. Uses createDefaultReplacementMachines() for unique IDs.
 
-- [ ] **9.2** Add "Add Machine" and per-row "Remove" buttons for dynamic row management
+- [x] **9.2** Add "Add Machine" and per-row "Remove" buttons for dynamic row management
   - WHY: Spec states user can add/remove rows freely.
+  - NOTE: "Remove" button per card, dashed "+ Add Machine" button at bottom. New machines get crypto.randomUUID() ids.
 
-- [ ] **9.3** Compute derived columns: "Cost to budget" (price to change - current value) per row, "Annual investment" summing costs in their due year
+- [x] **9.3** Compute derived columns: "Cost to budget" (price to change - current value) per row, "Annual investment" summing costs in their due year
   - WHY: Derived values feed the timeline and budget summary.
+  - NOTE: Cost to budget shown inline per machine card. Annual costs computed via calcReplacementSummary().
 
-- [ ] **9.4** Create `src/components/TimelineChart.tsx` - Gantt-style timeline with machine rows, colored blocks at replacement year, plus annual spend bar chart
+- [x] **9.4** Create `src/components/TimelineChart.tsx` - Gantt-style timeline with machine rows, colored blocks at replacement year, plus annual spend bar chart
   - WHY: Visual timeline is the signature feature, showing lumpy spending years at a glance.
+  - NOTE: Implemented as TimelineChart local component within ReplacementPlanner.tsx. CSS grid layout with year columns, green blocks at replacement years showing net cost, and proportional bar chart for annual spend below.
 
-- [ ] **9.5** Set timeline year range dynamically: current year to latest "time to change" (minimum 6 years)
+- [x] **9.5** Set timeline year range dynamically: current year to latest "time to change" (minimum 6 years)
   - WHY: Timeline must adapt to the farmer's data.
+  - NOTE: Handled by calcReplacementSummary() which enforces Math.max(yearSpan, latestTimeToChange, 6). Timeline uses current year from Date.
 
-- [ ] **9.6** Render Budget Summary: total spend, average annual cost, farm income input (default 350,000), cost as % of income, traffic-light banner (green <20%, amber 20-35%, red >35%)
+- [x] **9.6** Render Budget Summary: total spend, average annual cost, farm income input (default 350,000), cost as % of income, traffic-light banner (green <20%, amber 20-35%, red >35%)
   - WHY: Percentage-of-income is the key decision indicator for whole-farm strategy.
+  - NOTE: Budget summary section with total/average stats, farm income InputField, percentage display, and ResultBanner with traffic-light thresholds.
 
 - [ ] **9.7** Connect Tab 4 to auto-save via localStorage
   - WHY: Most data entry of any tab; losing it would be devastating.
