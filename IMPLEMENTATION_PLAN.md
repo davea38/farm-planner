@@ -123,7 +123,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Display-layer-only conversion; internal state stays metric
 - [x] Create `src/lib/__tests__/units.test.ts` — test ha↔acres, ha/hr↔acres/hr, L/ha↔L/acre, £/ha↔£/acre, km/hr↔mph, passthrough, round-trip, displayUnit strings
   - **Why:** Conversion correctness is critical; errors silently produce wrong cost numbers
-- [ ] Create `UnitContext` (React context + `useUnits()` hook)
+- [x] Create `UnitContext` (React context + `useUnits()` hook)
   - **Why:** Avoids prop drilling; all components read preferences via hook
 - [ ] Create `src/components/UnitToggle.tsx` — two segmented pill toggles: [ha | acres] and [km | miles], with `aria-pressed`
   - **Why:** Global toggle; compact pill design
