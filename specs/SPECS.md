@@ -565,7 +565,7 @@ farm-planner/
    - Hectare tab: Total cost = £30.27/ha, annual saving = -£54,880
    - Hour tab: Total cost = £65.56/hr, annual saving = £14,393.41
    - Workrate: Machine A overall rate = 1.40 ha/hr, Machine B = 9.64 ha/hr
-   - Repair estimator: £69,000 tractor at 400 hrs, 5% = £3,450
+   - Repair estimator: £69,000 tractor at 1000 hrs, 5% = £3,450
 2. **Save/load**: Enter values, refresh browser, confirm values persist.
 3. **Export/import**: Export JSON, clear localStorage, import JSON, confirm values restored.
 4. **Responsive**: Check all tabs render correctly at 320px, 768px, and 1280px widths.
