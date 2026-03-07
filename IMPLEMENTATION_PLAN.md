@@ -46,8 +46,9 @@
 
 ## Phase 2: Shared Utilities (Pure Logic, No UI)
 
-- [ ] **2.1** Create `src/lib/types.ts` with TypeScript interfaces: `CostPerHectareInputs`, `CostPerHourInputs`, `WorkrateInputs`, `ReplacementMachine`, `ReplacementPlannerState`, `AppState`
+- [x] **2.1** Create `src/lib/types.ts` with TypeScript interfaces: `CostPerHectareInputs`, `CostPerHourInputs`, `WorkrateInputs`, `ReplacementMachine`, `ReplacementPlannerState`, `AppState`
   - WHY: Shared types enforce consistency between calculations, UI, and storage.
+  - NOTE: Also added result interfaces (CostPerHectareResults, CostPerHourResults, WorkrateResults, ReplacementSummary) and SavedMachine<T> generic for save/load.
 
 - [ ] **2.2** Create `src/lib/defaults.ts` exporting default values for every tab (from spec defaults) and default Replacement Planner rows (Tractor 1-4, Combine, SP Sprayer, Seed drill, Cultivator x2, Other)
   - WHY: Every field must be pre-filled with sensible UK farming defaults so the farmer only changes what they know.

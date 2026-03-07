@@ -1,0 +1,129 @@
+export interface CostPerHectareInputs {
+  purchasePrice: number;
+  yearsOwned: number;
+  salePrice: number;
+  hectaresPerYear: number;
+  interestRate: number;
+  insuranceRate: number;
+  storageRate: number;
+  workRate: number;
+  labourCost: number;
+  fuelPrice: number;
+  fuelUse: number;
+  repairsPct: number;
+  contractorCharge: number;
+}
+
+export interface CostPerHectareResults {
+  averageValue: number;
+  annualInterest: number;
+  annualDepreciation: number;
+  annualInsurance: number;
+  annualStorage: number;
+  totalFixedCostPerYear: number;
+  fixedCostPerHa: number;
+  labourPerHa: number;
+  fuelPerHa: number;
+  repairsPerHa: number;
+  totalCostPerHa: number;
+  annualSaving: number;
+}
+
+export interface CostPerHourInputs {
+  purchasePrice: number;
+  yearsOwned: number;
+  salePrice: number;
+  hoursPerYear: number;
+  interestRate: number;
+  insuranceRate: number;
+  storageRate: number;
+  haPerHr: number;
+  fuelConsumptionPerHr: number;
+  fuelPrice: number;
+  repairsPct: number;
+  labourCost: number;
+  contractorCharge: number;
+}
+
+export interface CostPerHourResults {
+  averageValue: number;
+  annualInterest: number;
+  annualDepreciation: number;
+  annualInsurance: number;
+  annualStorage: number;
+  totalFixedCostPerYear: number;
+  fixedCostPerHr: number;
+  fuelPerHr: number;
+  repairsPerHr: number;
+  totalCostPerHr: number;
+  annualSaving: number;
+}
+
+export interface WorkrateInputs {
+  name: string;
+  width: number;
+  capacity: number;
+  speed: number;
+  applicationRate: number;
+  transportTime: number;
+  fillingTime: number;
+  fieldEfficiency: number;
+}
+
+export interface WorkrateResults {
+  areaPerLoad: number;
+  fillingRate: number;
+  spotRate: number;
+  applicationTime: number;
+  totalTimePerLoad: number;
+  overallWorkRate: number;
+  overallEfficiency: number;
+  applicationPct: number;
+  fillingPct: number;
+  transportPct: number;
+}
+
+export interface ReplacementMachine {
+  id: string;
+  name: string;
+  usePerYear: number;
+  timeToChange: number;
+  currentHours: number;
+  priceToChange: number;
+  currentValue: number;
+}
+
+export interface ReplacementPlannerState {
+  machines: ReplacementMachine[];
+  farmIncome: number;
+}
+
+export interface ReplacementSummary {
+  annualCosts: { year: number; cost: number }[];
+  totalSpend: number;
+  averageAnnualCost: number;
+  pctOfIncome: number;
+}
+
+export interface SavedMachine<T> {
+  name: string;
+  inputs: T;
+}
+
+export interface AppState {
+  version: number;
+  lastSaved: string;
+  costPerHectare: {
+    current: CostPerHectareInputs;
+    savedMachines: SavedMachine<CostPerHectareInputs>[];
+  };
+  costPerHour: {
+    current: CostPerHourInputs;
+    savedMachines: SavedMachine<CostPerHourInputs>[];
+  };
+  compareMachines: {
+    machineA: WorkrateInputs;
+    machineB: WorkrateInputs;
+  };
+  replacementPlanner: ReplacementPlannerState;
+}
