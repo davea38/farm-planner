@@ -152,7 +152,7 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Fixes label wrapping on narrow viewports
 - [x] Modify `src/components/ContractorRatesPanel.tsx` — convert NAAC rates £/ha ↔ £/acre
   - **Why:** Reference rates must match user's chosen unit
-- [ ] Modify `src/components/FuelConsumptionPanel.tsx` — show L/acre in perHectare mode when acres selected
+- [x] Modify `src/components/FuelConsumptionPanel.tsx` — show L/acre in perHectare mode when acres selected
   - **Why:** Fuel consumption per area unit must match preference
 - [x] Update Tab 1 label in `src/App.tsx` — "Cost per Hectare" ↔ "Cost per Acre"
   - **Why:** Most visible indicator that unit conversion is active

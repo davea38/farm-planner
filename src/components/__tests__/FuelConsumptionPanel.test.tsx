@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { FuelConsumptionPanel } from "@/components/FuelConsumptionPanel"
+import { UnitContext } from "@/lib/UnitContext"
+import type { UnitPreferences } from "@/lib/units"
 
 function renderExpanded(
   props: Partial<React.ComponentProps<typeof FuelConsumptionPanel>> = {}
@@ -50,6 +52,34 @@ describe("FuelConsumptionPanel", () => {
       screen.getByRole("button", { name: /use this estimate/i })
     )
     // 36.6 / 4 = 9.15 → rounded to 9.2
+    expect(onApply).toHaveBeenCalledWith(expect.closeTo(9.2, 0))
+  })
+
+  it("shows L/acre in perHectare mode when area unit is acres", () => {
+    const acresUnits: UnitPreferences = { area: "acres", speed: "km" }
+    render(
+      <UnitContext.Provider value={{ units: acresUnits, setUnits: vi.fn() }}>
+        <FuelConsumptionPanel onApply={vi.fn()} mode="perHectare" workRate={4} />
+      </UnitContext.Provider>
+    )
+    fireEvent.click(screen.getByText(/Estimate Fuel Consumption/i))
+    const matches = screen.getAllByText(/L\/acre/)
+    expect(matches.length).toBeGreaterThan(0)
+  })
+
+  it("still applies metric L/ha value when in acres mode", () => {
+    const onApply = vi.fn()
+    const acresUnits: UnitPreferences = { area: "acres", speed: "km" }
+    render(
+      <UnitContext.Provider value={{ units: acresUnits, setUnits: vi.fn() }}>
+        <FuelConsumptionPanel onApply={onApply} mode="perHectare" workRate={4} />
+      </UnitContext.Provider>
+    )
+    fireEvent.click(screen.getByText(/Estimate Fuel Consumption/i))
+    fireEvent.click(
+      screen.getByRole("button", { name: /use this estimate/i })
+    )
+    // onApply should still receive metric L/ha value: 36.6 / 4 = 9.15 → 9.2
     expect(onApply).toHaveBeenCalledWith(expect.closeTo(9.2, 0))
   })
 })

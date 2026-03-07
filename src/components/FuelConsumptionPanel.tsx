@@ -3,6 +3,8 @@ import {
   estimateFuelConsumption,
   HP_REFERENCE_POINTS,
 } from "@/lib/fuel-consumption-data"
+import { useUnits } from "@/lib/UnitContext"
+import { toDisplay, displayUnit } from "@/lib/units"
 import { CollapsibleSection } from "./CollapsibleSection"
 
 interface FuelConsumptionPanelProps {
@@ -21,6 +23,7 @@ export function FuelConsumptionPanel({
   workRate,
 }: FuelConsumptionPanelProps) {
   const [hp, setHp] = useState(150)
+  const { units } = useUnits()
 
   const lPerHr = estimateFuelConsumption(hp)
   const lPerHa =
@@ -30,9 +33,14 @@ export function FuelConsumptionPanel({
   const gaugePct = (lPerHr / MAX_CONSUMPTION) * 100
   const applyValue = lPerHa !== null ? lPerHa : lPerHr
 
+  const areaRateUnit = displayUnit("L/ha", units)
+  const workRateDisplayUnit = displayUnit("ha/hr", units)
+  const displayLPerHa = lPerHa !== null ? toDisplay(lPerHa, "L/ha", units) : null
+  const displayWorkRate = workRate ? toDisplay(workRate, "ha/hr", units) : undefined
+
   const displayValue =
-    lPerHa !== null
-      ? `${lPerHa.toFixed(1)} L/ha`
+    displayLPerHa !== null
+      ? `${displayLPerHa.toFixed(1)} ${areaRateUnit}`
       : `${lPerHr.toFixed(1)} L/hr`
 
   return (
@@ -73,9 +81,9 @@ export function FuelConsumptionPanel({
             <div className="text-lg font-bold mt-1">
               {lPerHr.toFixed(1)} L/hr
             </div>
-            {lPerHa !== null && (
+            {displayLPerHa !== null && displayWorkRate !== undefined && (
               <div className="text-sm text-muted-foreground mt-0.5">
-                At {workRate} ha/hr, that is {lPerHa.toFixed(1)} L/ha
+                At {displayWorkRate.toFixed(1)} {workRateDisplayUnit}, that is {displayLPerHa.toFixed(1)} {areaRateUnit}
               </div>
             )}
             <div className="mt-2 h-3 rounded-full bg-muted overflow-hidden">
