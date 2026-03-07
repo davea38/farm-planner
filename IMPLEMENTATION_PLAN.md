@@ -107,8 +107,9 @@
   - WHY: "Overheads" on Tabs 1 & 2 must be collapsed by default with a note.
   - NOTE: Uses @base-ui/react Collapsible primitives. Props: title, subtitle, defaultOpen (false by default), children. Chevron icon rotates on open. 44px min tap target on trigger. Inline SVG chevron avoids extra icon dependency.
 
-- [ ] **3.5** Create `src/components/SaveLoadToolbar.tsx` - name input, Save, dropdown Select to load, Delete button
+- [x] **3.5** Create `src/components/SaveLoadToolbar.tsx` - name input, Save, dropdown Select to load, Delete button
   - WHY: Both cost tabs need identical save/load for named machines.
+  - NOTE: Generic component accepting SavedMachine<T>[] with onSave/onLoad/onDelete callbacks. Uses shadcn Input, Button, Select. Name input + Save button in first row; Select dropdown + Delete button in second row (shown only when saved machines exist). 44px min tap targets.
 
 ---
 
