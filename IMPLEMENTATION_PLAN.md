@@ -70,8 +70,10 @@
   - WHY: Tab 4 Gantt chart and budget summary consume this derived data.
   - NOTE: Computes net cost per machine (priceToChange - currentValue), places in replacement year, builds annualCosts array. Enforces minimum 6-year span or extends to latest timeToChange. Handles zero farmIncome and zero timeToChange gracefully.
 
-- [ ] **2.7** Create `src/lib/repair-data.ts` with AHDB repair cost lookup table and `lookupRepairPct(machineType, annualHours)` interpolation function (tractors use 500/750/1000/1500 brackets; others use 50/100/150/200)
+- [x] **2.7** Create `src/lib/repair-data.ts` with AHDB repair cost lookup table and `lookupRepairPct(machineType, annualHours)` interpolation function (tractors use 500/750/1000/1500 brackets; others use 50/100/150/200)
   - WHY: Repair Cost Estimator pop-up depends on this data and interpolation logic.
+  - NOTE: Exports MachineType union, machineTypes array (9 AHDB categories with labels), and lookupRepairPct(). Tractors use 500/750/1000/1500hr brackets (3%/3.5%/5%/7%), others use 50/100/150/200hr. Linear interpolation between brackets, extrapolation beyond last bracket using perExtra100 rate. Returns 0 for non-positive hours.
+  - BUG: Spec verification says "£69,000 tractor at 400 hrs = 5%", but 400hrs is below the first tractor bracket (500hr = 3%). The lookup correctly returns 3% per the AHDB table data; the spec example may assume different brackets.
 
 - [x] **2.8** Create `src/lib/format.ts` with `formatGBP()` (£ + commas), `formatPct()` (1 decimal), `formatNumber()`
   - WHY: Spec requires consistent GBP and percentage formatting across every tab.
