@@ -14,14 +14,20 @@ describe("ContractorRatesPanel", () => {
     expect(screen.getByText(/NAAC Contractor Rates/i)).toBeInTheDocument()
   })
 
-  it("shows category tabs", () => {
+  it("shows all 12 category tabs", () => {
     renderExpanded()
     expect(screen.getByText("Soil Prep")).toBeInTheDocument()
     expect(screen.getByText("Drilling")).toBeInTheDocument()
     expect(screen.getByText("Application")).toBeInTheDocument()
     expect(screen.getByText("Harvesting")).toBeInTheDocument()
     expect(screen.getByText("Baling")).toBeInTheDocument()
+    expect(screen.getByText("Bale Wrapping")).toBeInTheDocument()
     expect(screen.getByText("Tractor Hire")).toBeInTheDocument()
+    expect(screen.getByText("Slurry & Manure")).toBeInTheDocument()
+    expect(screen.getByText("Hedges & Boundaries")).toBeInTheDocument()
+    expect(screen.getByText("Mobile Feed")).toBeInTheDocument()
+    expect(screen.getByText("Livestock Services")).toBeInTheDocument()
+    expect(screen.getByText("Specialist")).toBeInTheDocument()
   })
 
   it("shows operation rates for default category (Soil Prep)", () => {
@@ -56,7 +62,7 @@ describe("ContractorRatesPanel", () => {
   })
 
   it("filters by unit when unitFilter provided", () => {
-    renderExpanded({ unitFilter: "hr" })
+    renderExpanded({ unitFilter: "hr", defaultCategory: "Tractor Hire" })
     expect(screen.getByText(/100–150 HP/)).toBeInTheDocument()
   })
 
@@ -73,5 +79,26 @@ describe("ContractorRatesPanel", () => {
   it("shows range indicator when currentRate provided", () => {
     renderExpanded({ currentRate: 76 })
     expect(screen.getByText(/Your current rate/)).toBeInTheDocument()
+  })
+
+  it("displays tonne unit for lime spreading", () => {
+    renderExpanded()
+    fireEvent.click(screen.getByText("Application"))
+    expect(screen.getByText("Lime spreading")).toBeInTheDocument()
+    expect(screen.getByText(/\/tonne/)).toBeInTheDocument()
+  })
+
+  it("displays /head unit for livestock services", () => {
+    renderExpanded()
+    fireEvent.click(screen.getByText("Livestock Services"))
+    expect(screen.getAllByText(/Sheep shearing/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/\/head/).length).toBeGreaterThan(0)
+  })
+
+  it("displays /m unit for hedges & boundaries fencing", () => {
+    renderExpanded()
+    fireEvent.click(screen.getByText("Hedges & Boundaries"))
+    expect(screen.getByText("Hedge laying")).toBeInTheDocument()
+    expect(screen.getAllByText(/£\d+.*\/m\b/).length).toBeGreaterThan(0)
   })
 })
