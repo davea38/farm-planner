@@ -7,6 +7,7 @@ import { InputField } from "./InputField"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
+import { RepairEstimator } from "./RepairEstimator"
 
 export function CostPerHour({
   initialInputs,
@@ -128,6 +129,9 @@ export function CostPerHour({
           tooltip="Annual repair bill as a percentage of what you paid"
           min={0}
         />
+        <div className="flex justify-end">
+          <RepairEstimator onApply={update("repairsPct")} />
+        </div>
         <InputField
           label="Labour cost"
           value={inputs.labourCost}

@@ -149,8 +149,9 @@
   - WHY: This is the answer the farmer came for.
   - NOTE: Results in muted background section. CostBreakdown shows your cost (total, fixed, running) and contractor cost. Traffic-light banner: green when owning saves money, red when contractor cheaper, amber within 10% threshold of contractor total annual cost.
 
-- [ ] **5.5** Add "Help me estimate repairs" link next to Spares & Repairs field that opens RepairEstimator dialog
+- [x] **5.5** Add "Help me estimate repairs" link next to Spares & Repairs field that opens RepairEstimator dialog
   - WHY: Spec places this helper inline for farmers who don't know their repair percentage.
+  - NOTE: Added RepairEstimator component inline below the Spares & repairs InputField. "Help me estimate repairs" link opens the dialog, "Use this value" auto-fills the repairsPct field.
 
 - [ ] **5.6** Integrate `SaveLoadToolbar` for naming/saving/loading/deleting machines on this tab
   - WHY: Farmers need to cost multiple machines and switch between them.
@@ -174,8 +175,9 @@
   - WHY: Live-update pattern using per-hour formulas.
   - NOTE: useState + useMemo for live calculation. CostBreakdown shows total/hr, fixed/hr, running/hr. Traffic-light: green if owning cheaper, red if contractor cheaper, amber within 10% of contractor annual cost. Default £65.56/hr total, £14,393/year saving.
 
-- [ ] **6.3** Add "Help me estimate repairs" link opening RepairEstimator
+- [x] **6.3** Add "Help me estimate repairs" link opening RepairEstimator
   - WHY: Spec states repair estimator is available on both cost tabs.
+  - NOTE: Same pattern as 5.5 — RepairEstimator component below Spares & repairs field with onApply callback.
 
 - [ ] **6.4** Integrate `SaveLoadToolbar` for named machine save/load
   - WHY: Same save/load requirement as Tab 1 with its own machine list.
@@ -188,14 +190,17 @@
 
 ## Phase 7: Repair Cost Estimator (Shared Pop-up)
 
-- [ ] **7.1** Create `src/components/RepairEstimator.tsx` as shadcn Dialog with machine type dropdown (9 AHDB categories) and annual hours input
+- [x] **7.1** Create `src/components/RepairEstimator.tsx` as shadcn Dialog with machine type dropdown (9 AHDB categories) and annual hours input
   - WHY: Embedded helper tool referenced by Tabs 1 and 2.
+  - NOTE: Uses shadcn Dialog with Select dropdown for 9 machine types and number input for annual hours. Self-contained open/close state management.
 
-- [ ] **7.2** Implement lookup/interpolation using `lookupRepairPct()`, display: "For a [type] used [X] hours/year, budget about **Y%** of purchase price for repairs"
+- [x] **7.2** Implement lookup/interpolation using `lookupRepairPct()`, display: "For a [type] used [X] hours/year, budget about **Y%** of purchase price for repairs"
   - WHY: Must interpolate between AHDB table values, handling different hour brackets.
+  - NOTE: Uses useMemo to call lookupRepairPct on machineType/annualHours changes. Result displayed in highlighted banner with formatPct formatting.
 
-- [ ] **7.3** Add "Use this value" button calling `onApply(pct)` callback to auto-fill parent tab's repairs field, then close dialog
+- [x] **7.3** Add "Use this value" button calling `onApply(pct)` callback to auto-fill parent tab's repairs field, then close dialog
   - WHY: One-click flow from estimator back to cost tab input.
+  - NOTE: Button in DialogFooter calls onApply(repairPct) then setOpen(false). Parent tabs pass update("repairsPct") as onApply callback.
 
 ---
 

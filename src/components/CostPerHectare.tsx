@@ -7,6 +7,7 @@ import { InputField } from "./InputField"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { CostBreakdown } from "./CostBreakdown"
 import { ResultBanner } from "./ResultBanner"
+import { RepairEstimator } from "./RepairEstimator"
 
 export function CostPerHectare({
   initialInputs,
@@ -135,6 +136,9 @@ export function CostPerHectare({
           tooltip="Annual repair bill as a percentage of what you paid"
           min={0}
         />
+        <div className="flex justify-end">
+          <RepairEstimator onApply={update("repairsPct")} />
+        </div>
       </div>
 
       {/* Overheads (collapsed by default) */}
