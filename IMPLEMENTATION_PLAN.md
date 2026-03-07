@@ -35,8 +35,9 @@
   - WHY: Spec mandates specific farm-themed colors consistent across all components.
   - NOTE: Updated shadcn CSS variables in index.css. Added `--farm-green`, `--farm-amber`, `--farm-red` custom properties mapped to Tailwind via `@theme inline` as `farm-green`, `farm-amber`, `farm-red`. Primary/accent/destructive/ring also updated. Pre-existing lint warnings in shadcn button.tsx and tabs.tsx (react-refresh/only-export-components) are unrelated.
 
-- [ ] **1.7** Configure global typography: 18px base, sans-serif stack, 800px max-width centered container
+- [x] **1.7** Configure global typography: 18px base, sans-serif stack, 800px max-width centered container
   - WHY: Spec requires large readable text and constrained layout for tablet/laptop use.
+  - NOTE: Set font-size: 18px on html element in index.css. Sans-serif stack already configured via Geist Variable font. Added max-w-[800px] centered container with horizontal padding in App.tsx. Used bg-background token instead of hardcoded bg-gray-50.
 
 - [ ] **1.8** Add a tractor favicon to `public/favicon.ico` and set page title to "Farm Machinery Planner"
   - WHY: Professional identity matching the farm context.
