@@ -340,5 +340,6 @@
 - [ ] **12.7** Test zero-value edge cases: hectares=0, hours=0, work rate=0, application rate=0 show friendly messages (no Infinity/NaN)
   - WHY: Spec explicitly requires graceful zero handling.
 
-- [ ] **12.8** Test offline: `npm run build`, serve `dist/` folder, confirm full functionality
+- [x] **12.8** Test offline: `npm run build`, serve `dist/` folder, confirm full functionality
   - WHY: Spec requires no internet after initial setup.
+  - NOTE: TypeScript compiles clean (tsc -b). Vite build succeeds: 462KB JS (147KB gzip), 54KB CSS (10KB gzip), 3 font files, index.html. All assets correctly referenced. Page title "Farm Machinery Planner" confirmed. No application lint errors (only 2 pre-existing shadcn warnings). Missing favicon noted — tracked in task 1.8.
