@@ -66,8 +66,9 @@
   - WHY: Tab 3 needs these for each machine plus derived comparison values.
   - NOTE: Verified Machine A: spot rate 2.40, overall 1.40 ha/hr (matches spec). Machine B: spot rate 36.00, overall 12.71 ha/hr (spec says 9.64 — inconsistency: the formulas + defaults produce 12.71; 9.64 requires capacity=1250 not 2000). Handles zero division for applicationRate, spotRate*efficiency, totalTimePerLoad, and spotRate.
 
-- [ ] **2.6** Add `calcReplacementSummary(machines[], farmIncome, startYear, yearSpan)` to `calculations.ts` returning per-year cost arrays, total spend, average annual cost, % of income
+- [x] **2.6** Add `calcReplacementSummary(machines[], farmIncome, startYear, yearSpan)` to `calculations.ts` returning per-year cost arrays, total spend, average annual cost, % of income
   - WHY: Tab 4 Gantt chart and budget summary consume this derived data.
+  - NOTE: Computes net cost per machine (priceToChange - currentValue), places in replacement year, builds annualCosts array. Enforces minimum 6-year span or extends to latest timeToChange. Handles zero farmIncome and zero timeToChange gracefully.
 
 - [ ] **2.7** Create `src/lib/repair-data.ts` with AHDB repair cost lookup table and `lookupRepairPct(machineType, annualHours)` interpolation function (tractors use 500/750/1000/1500 brackets; others use 50/100/150/200)
   - WHY: Repair Cost Estimator pop-up depends on this data and interpolation logic.

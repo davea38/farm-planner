@@ -3,6 +3,8 @@ import type {
   CostPerHectareResults,
   CostPerHourInputs,
   CostPerHourResults,
+  ReplacementMachine,
+  ReplacementSummary,
   WorkrateInputs,
   WorkrateResults,
 } from "./types";
@@ -160,5 +162,44 @@ export function calcWorkrate(inputs: WorkrateInputs): WorkrateResults {
     applicationPct,
     fillingPct,
     transportPct,
+  };
+}
+
+export function calcReplacementSummary(
+  machines: ReplacementMachine[],
+  farmIncome: number,
+  startYear: number,
+  yearSpan: number,
+): ReplacementSummary {
+  // Ensure minimum 6-year span, or extend to latest replacement year
+  const latestTimeToChange = Math.max(0, ...machines.map((m) => m.timeToChange));
+  const effectiveSpan = Math.max(yearSpan, latestTimeToChange, 6);
+
+  // Build per-year cost array
+  const annualCosts: { year: number; cost: number }[] = [];
+  for (let i = 0; i <= effectiveSpan; i++) {
+    annualCosts.push({ year: startYear + i, cost: 0 });
+  }
+
+  // Place each machine's net cost in its replacement year
+  for (const machine of machines) {
+    if (machine.timeToChange <= 0) continue;
+    const costToBudget = machine.priceToChange - machine.currentValue;
+    const yearIndex = machine.timeToChange;
+    if (yearIndex >= 0 && yearIndex < annualCosts.length) {
+      annualCosts[yearIndex].cost += costToBudget;
+    }
+  }
+
+  const totalSpend = annualCosts.reduce((sum, entry) => sum + entry.cost, 0);
+  const numYears = annualCosts.length > 0 ? annualCosts.length : 1;
+  const averageAnnualCost = totalSpend / numYears;
+  const pctOfIncome = farmIncome > 0 ? (averageAnnualCost / farmIncome) * 100 : 0;
+
+  return {
+    annualCosts,
+    totalSpend,
+    averageAnnualCost,
+    pctOfIncome,
   };
 }
