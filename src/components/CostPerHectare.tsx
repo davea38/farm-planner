@@ -45,6 +45,13 @@ export function CostPerHectare({
   const runningCostPerHa = results.labourPerHa + results.fuelPerHa + results.repairsPerHa
   const contractorTotalCost = inputs.contractorCharge * inputs.hectaresPerYear
 
+  // Check for zero-value fields that would produce meaningless results
+  const zeroWarnings: string[] = []
+  if (inputs.hectaresPerYear <= 0) zeroWarnings.push("hectares worked per year")
+  if (inputs.workRate <= 0) zeroWarnings.push("work rate")
+  if (inputs.yearsOwned <= 0) zeroWarnings.push("years owned")
+  const hasZeroWarning = zeroWarnings.length > 0
+
   // Determine banner type: negative saving = owning cheaper (green), positive = contractor cheaper (red)
   // Within 10% of contractor charge = amber
   const savingAbs = Math.abs(results.annualSaving)
@@ -219,21 +226,29 @@ export function CostPerHectare({
       <div className="rounded-lg bg-muted/50 p-4 space-y-4">
         <h2 className="text-sm font-semibold">Results</h2>
 
-        <CostBreakdown
-          rows={[
-            { label: "Your cost", value: results.totalCostPerHa, unit: "ha", bold: true },
-            { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
-            { label: "Running costs", value: runningCostPerHa, unit: "ha" },
-          ]}
-        />
+        {hasZeroWarning ? (
+          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
+            Enter a value for {zeroWarnings.join(" and ")} to see results.
+          </div>
+        ) : (
+          <>
+            <CostBreakdown
+              rows={[
+                { label: "Your cost", value: results.totalCostPerHa, unit: "ha", bold: true },
+                { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
+                { label: "Running costs", value: runningCostPerHa, unit: "ha" },
+              ]}
+            />
 
-        <CostBreakdown
-          rows={[
-            { label: "Contractor cost", value: inputs.contractorCharge, unit: "ha", bold: true },
-          ]}
-        />
+            <CostBreakdown
+              rows={[
+                { label: "Contractor cost", value: inputs.contractorCharge, unit: "ha", bold: true },
+              ]}
+            />
 
-        <ResultBanner type={bannerType} mainText={bannerText} />
+            <ResultBanner type={bannerType} mainText={bannerText} />
+          </>
+        )}
       </div>
     </div>
   )

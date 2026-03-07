@@ -45,6 +45,12 @@ export function CostPerHour({
   const runningCostPerHr = results.labourPerHr + results.fuelPerHr + results.repairsPerHr
   const contractorTotalCost = inputs.contractorCharge * inputs.hoursPerYear
 
+  // Check for zero-value fields that would produce meaningless results
+  const zeroWarnings: string[] = []
+  if (inputs.hoursPerYear <= 0) zeroWarnings.push("hours worked per year")
+  if (inputs.yearsOwned <= 0) zeroWarnings.push("years owned")
+  const hasZeroWarning = zeroWarnings.length > 0
+
   // Determine banner type: negative saving = owning cheaper (green), positive = contractor cheaper (red)
   // Within 10% of contractor total annual cost = amber
   const savingAbs = Math.abs(results.annualSaving)
@@ -220,21 +226,29 @@ export function CostPerHour({
       <div className="rounded-lg bg-muted/50 p-4 space-y-4">
         <h2 className="text-sm font-semibold">Results</h2>
 
-        <CostBreakdown
-          rows={[
-            { label: "Your cost", value: results.totalCostPerHr, unit: "hr", bold: true },
-            { label: "Fixed costs", value: results.fixedCostPerHr, unit: "hr" },
-            { label: "Running costs", value: runningCostPerHr, unit: "hr" },
-          ]}
-        />
+        {hasZeroWarning ? (
+          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
+            Enter a value for {zeroWarnings.join(" and ")} to see results.
+          </div>
+        ) : (
+          <>
+            <CostBreakdown
+              rows={[
+                { label: "Your cost", value: results.totalCostPerHr, unit: "hr", bold: true },
+                { label: "Fixed costs", value: results.fixedCostPerHr, unit: "hr" },
+                { label: "Running costs", value: runningCostPerHr, unit: "hr" },
+              ]}
+            />
 
-        <CostBreakdown
-          rows={[
-            { label: "Contractor cost", value: inputs.contractorCharge, unit: "hr", bold: true },
-          ]}
-        />
+            <CostBreakdown
+              rows={[
+                { label: "Contractor cost", value: inputs.contractorCharge, unit: "hr", bold: true },
+              ]}
+            />
 
-        <ResultBanner type={bannerType} mainText={bannerText} />
+            <ResultBanner type={bannerType} mainText={bannerText} />
+          </>
+        )}
       </div>
     </div>
   )

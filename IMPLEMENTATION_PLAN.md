@@ -163,8 +163,9 @@
   - WHY: Data must survive closing the tab.
   - NOTE: Handled centrally via App.tsx state management in 10.1.
 
-- [ ] **5.8** Handle division-by-zero: if hectares/year or work rate is 0, show friendly message instead of Infinity/NaN
+- [x] **5.8** Handle division-by-zero: if hectares/year or work rate is 0, show friendly message instead of Infinity/NaN
   - WHY: Spec explicitly calls out this edge case.
+  - NOTE: All three calculator tabs (CostPerHectare, CostPerHour, CompareMachines) now detect zero values in critical divisor fields (hectares/year, work rate, years owned, hours/year, application rate, width, speed, field efficiency) and show an amber-tinted warning message ("Enter a value for X to see results") instead of the results section. Calculation functions already returned 0 for zero divisors; this adds the UI-level friendly message the spec requires.
 
 ---
 

@@ -6,6 +6,15 @@ import { InputField } from "./InputField"
 import { Input } from "@/components/ui/input"
 import { formatNumber, formatPct } from "@/lib/format"
 
+function getZeroWorkrateFields(inputs: WorkrateInputs): string[] {
+  const fields: string[] = []
+  if (inputs.applicationRate <= 0) fields.push("application rate")
+  if (inputs.width <= 0) fields.push("width")
+  if (inputs.speed <= 0) fields.push("speed")
+  if (inputs.fieldEfficiency <= 0) fields.push("field efficiency")
+  return fields
+}
+
 export function CompareMachines({
   initialMachineA,
   initialMachineB,
@@ -36,6 +45,11 @@ export function CompareMachines({
 
   const resultsA = useMemo(() => calcWorkrate(machineA), [machineA])
   const resultsB = useMemo(() => calcWorkrate(machineB), [machineB])
+
+  // Check for zero-value fields that produce meaningless results
+  const zeroFieldsA = getZeroWorkrateFields(machineA)
+  const zeroFieldsB = getZeroWorkrateFields(machineB)
+  const hasZeroWarning = zeroFieldsA.length > 0 || zeroFieldsB.length > 0
 
   const speedRatio =
     resultsA.overallWorkRate > 0 && resultsB.overallWorkRate > 0
@@ -71,6 +85,18 @@ export function CompareMachines({
       <div className="rounded-lg bg-muted/50 p-4 space-y-4">
         <h2 className="text-sm font-semibold">Results</h2>
 
+        {hasZeroWarning && (
+          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground space-y-1">
+            {zeroFieldsA.length > 0 && (
+              <p>Enter a value for {zeroFieldsA.join(" and ")} on {machineA.name || "Machine A"} to see results.</p>
+            )}
+            {zeroFieldsB.length > 0 && (
+              <p>Enter a value for {zeroFieldsB.join(" and ")} on {machineB.name || "Machine B"} to see results.</p>
+            )}
+          </div>
+        )}
+
+        {!hasZeroWarning && <>
         {/* Side-by-side results table */}
         <div className="grid grid-cols-[1fr_1fr_1fr] gap-2 text-sm">
           <div />
@@ -130,6 +156,7 @@ export function CompareMachines({
             </p>
           </div>
         )}
+        </>}
       </div>
     </div>
   )
