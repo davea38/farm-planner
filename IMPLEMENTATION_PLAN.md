@@ -125,9 +125,9 @@ _After SPEC-02/03/04/07 so all new panels get unit support in one pass._
   - **Why:** Conversion correctness is critical; errors silently produce wrong cost numbers
 - [x] Create `UnitContext` (React context + `useUnits()` hook)
   - **Why:** Avoids prop drilling; all components read preferences via hook
-- [ ] Create `src/components/UnitToggle.tsx` — two segmented pill toggles: [ha | acres] and [km | miles], with `aria-pressed`
+- [x] Create `src/components/UnitToggle.tsx` — two segmented pill toggles: [ha | acres] and [km | miles], with `aria-pressed`
   - **Why:** Global toggle; compact pill design
-- [ ] Create `src/components/__tests__/UnitToggle.test.tsx` — test both toggles render, active state, onChange callback
+- [x] Create `src/components/__tests__/UnitToggle.test.tsx` — test both toggles render, active state, onChange callback
   - **Why:** Accessibility and callback verification
 
 ### Part B: Apply Unit Conversion & Fix Labels
