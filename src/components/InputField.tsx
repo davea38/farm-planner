@@ -4,12 +4,15 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import { useUnits } from "@/lib/UnitContext"
+import { toDisplay, fromDisplay, displayUnit } from "@/lib/units"
 
 interface InputFieldProps {
   label: string
   value: number
   onChange: (value: number) => void
   unit?: string
+  metricUnit?: string
   tooltip?: string
   min?: number
   max?: number
@@ -21,14 +24,30 @@ export function InputField({
   value,
   onChange,
   unit,
+  metricUnit,
   tooltip,
   min,
   max,
   step = "any",
 }: InputFieldProps) {
+  const { units } = useUnits()
+
+  const displayValue = metricUnit
+    ? toDisplay(value, metricUnit, units)
+    : value
+
+  const shownUnit = metricUnit
+    ? displayUnit(metricUnit, units)
+    : unit
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = Number(e.target.value)
+    onChange(metricUnit ? fromDisplay(raw, metricUnit, units) : raw)
+  }
+
   return (
-    <div className="flex items-center gap-2 min-h-[44px]">
-      <label className="flex-1 text-sm font-medium leading-tight">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-h-[44px]">
+      <label className="flex-1 text-sm font-medium leading-tight whitespace-nowrap">
         {label}
         {tooltip && (
           <Tooltip>
@@ -42,19 +61,19 @@ export function InputField({
           </Tooltip>
         )}
       </label>
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 sm:ml-auto">
         <Input
           type="number"
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
+          value={displayValue}
+          onChange={handleChange}
           min={min}
           max={max}
           step={step}
           className="w-20 sm:w-28 text-right tabular-nums"
         />
-        {unit && (
+        {shownUnit && (
           <span className="text-sm text-muted-foreground w-12 shrink-0">
-            {unit}
+            {shownUnit}
           </span>
         )}
       </div>
