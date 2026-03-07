@@ -319,8 +319,9 @@
   - WHY: Exact acceptance criteria from spec.
   - NOTE: Verified programmatically. Total £30.27/ha (fixed £14.07 + running £16.20), annual saving -£54,880 — both match spec exactly. TypeScript compiles clean, Vite build succeeds.
 
-- [ ] **12.2** Verify Tab 2: AHDB defaults produce total = £65.56/hr, saving = £14,393.41
+- [x] **12.2** Verify Tab 2: AHDB defaults produce total = £65.56/hr, saving = £14,393.41
   - WHY: Exact acceptance criteria from spec.
+  - NOTE: Verified programmatically. Total £65.56/hr (fixed £16.64 + labour £14.00 + fuel £33.60 + repairs £1.33), annual saving £14,393.41 — both match spec exactly. TypeScript compiles clean, Vite build succeeds.
 
 - [ ] **12.3** Verify Tab 3: AHDB defaults produce Machine A = 1.40 ha/hr, Machine B = 9.64 ha/hr
   - WHY: Exact acceptance criteria from spec.
