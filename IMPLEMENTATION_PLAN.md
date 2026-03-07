@@ -165,7 +165,7 @@ _Must be last. Depends on SPEC-01 through SPEC-04 (and ideally SPEC-06/07)._
 
 ### Integration Tests
 
-- [ ] Create `src/components/__tests__/CostPerHectare.integration.test.tsx` — test fuel price → input fill, contractor rates → input fill, panel presence, source attributions
+- [x] Create `src/components/__tests__/CostPerHectare.integration.test.tsx` — test fuel price → input fill, contractor rates → input fill, panel presence, source attributions
   - **Why:** End-to-end flows validate reference panels wire through to form inputs
 - [ ] Create `src/components/__tests__/CostPerHour.integration.test.tsx` — test fuel consumption slider → input fill, tractor hire rate → input fill, L/hr mode, default category
   - **Why:** Tab 2 integration flows; validates mode-specific behavior
