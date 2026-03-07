@@ -100,7 +100,7 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Manually selecting matching depreciation categories for 10 machines is tedious.
   **Files:** `src/components/ReplacementPlanner.tsx`, `src/components/DepreciationPanel.tsx`, `src/components/CollapsibleSection.tsx`.
 
-- [ ] **3.7** Make `usePerYear` and `currentHours` fields in Replacement Planner either functional or labelled "(for your reference)" (finding #20).
+- [x] **3.7** Make `usePerYear` and `currentHours` fields in Replacement Planner labelled as reference-only via tooltips (finding #20).
   **WHY:** Editable fields that affect nothing feel broken to a farmer.
   **Files:** `src/components/ReplacementPlanner.tsx`.
 
@@ -148,6 +148,6 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
-| 3 — Nice to Have | 8 | 6 | 2 |
+| 3 — Nice to Have | 8 | 7 | 1 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **21** | **5** |
+| **Total** | **26** | **22** | **4** |

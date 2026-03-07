@@ -134,7 +134,7 @@ function MachineRow({
           value={machine.usePerYear}
           onChange={(v) => update("usePerYear")(v)}
           unit="hrs"
-          tooltip="How much you use it each year"
+          tooltip="For your reference — not used in cost calculations"
           min={0}
         />
         <InputField
@@ -150,7 +150,7 @@ function MachineRow({
           value={machine.currentHours}
           onChange={(v) => update("currentHours")(v)}
           unit="hrs"
-          tooltip="Hours on the clock right now"
+          tooltip="For your reference — not used in cost calculations"
           min={0}
         />
         <InputField
