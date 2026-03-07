@@ -332,8 +332,9 @@
   - WHY: Validates interpolation logic against spec.
   - NOTE: Fixed spec typo (400 hrs → 1000 hrs). The AHDB tractor brackets are 500/750/1000/1500 hr; 400 hrs is below the first bracket and correctly returns 3%. The verification example intended 1000 hrs (which gives 5%, and 69000 × 5% = £3,450). Interpolation verified correct for all brackets and extrapolation. Previously noted BUG in 2.7 is resolved.
 
-- [ ] **12.5** Test persistence: enter values, refresh browser, confirm restored
+- [x] **12.5** Test persistence: enter values, refresh browser, confirm restored
   - WHY: Core persistence requirement.
+  - NOTE: Verified programmatically with 44 assertions. Tests cover: (1) loadState returns correct defaults from empty localStorage, (2) saveState→loadState roundtrip preserves modified values across all 4 tabs including saved machines, (3) unchanged fields preserved alongside changes, (4) corrupt/invalid/future-version data falls back to defaults gracefully, (5) v0→v1 migration preserves data, (6) multiple save/load cycles maintain integrity, (7) simulated browser refresh (save then fresh loadState) restores all values. React wiring also verified: all 4 tab components use useRef-guarded useEffect to call onChange on state changes (skipping initial render), App.tsx assembles full AppState and useAutoSave debounces to saveState. TypeScript compiles clean.
 
 - [ ] **12.6** Test export/import cycle: export, clear localStorage, import, confirm restored
   - WHY: End-to-end backup/restore validation.
