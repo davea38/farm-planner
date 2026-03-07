@@ -2,6 +2,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { CostPerHectare } from '@/components/CostPerHectare'
 import { CostPerHour } from '@/components/CostPerHour'
+import { CompareMachines } from '@/components/CompareMachines'
 
 function App() {
   return (
@@ -49,9 +50,7 @@ function App() {
             </TabsContent>
 
             <TabsContent value="compare-machines" className="mt-4">
-              <p className="text-muted-foreground text-center py-12">
-                Compare Two Machines coming soon.
-              </p>
+              <CompareMachines />
             </TabsContent>
 
             <TabsContent value="replacement-planner" className="mt-4">

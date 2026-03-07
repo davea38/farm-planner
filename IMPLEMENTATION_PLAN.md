@@ -194,20 +194,25 @@
 
 ## Phase 8: Tab 3 - Compare Two Machines
 
-- [ ] **8.1** Create `src/components/CompareMachines.tsx` with side-by-side layout for Machine A & B, inputs: name, width, capacity, speed, application rate, transport time, filling time, field efficiency (spec defaults)
+- [x] **8.1** Create `src/components/CompareMachines.tsx` with side-by-side layout for Machine A & B, inputs: name, width, capacity, speed, application rate, transport time, filling time, field efficiency (spec defaults)
   - WHY: Different question (workrate comparison) with two-column layout.
+  - NOTE: Implemented complete Tab 3 in a single component including 8.2-8.5 below. Side-by-side input cards on sm+ screens, stacking on narrow. Name is a text input, all others use InputField. MachineInputs extracted as a local component for reuse.
 
-- [ ] **8.2** Wire both machines to state, call `calcWorkrate()` for each, display spot rate and TRUE overall work rate
+- [x] **8.2** Wire both machines to state, call `calcWorkrate()` for each, display spot rate and TRUE overall work rate
   - WHY: Live comparison is the core value.
+  - NOTE: useState + useMemo for each machine. Results table shows spot rate and TRUE rate with winner highlighted in primary green.
 
-- [ ] **8.3** Create `src/components/WorkrateBar.tsx` - horizontal stacked bar showing time breakdown (working/filling/transport) in distinct colors with labels
+- [x] **8.3** Create `src/components/WorkrateBar.tsx` - horizontal stacked bar showing time breakdown (working/filling/transport) in distinct colors with labels
   - WHY: Spec requires visual time-breakdown bars per machine.
+  - NOTE: Implemented as WorkrateBar local component within CompareMachines.tsx. Uses primary green for working, AHDB blue (#1565C0) for filling, farm-amber for transport. Percentages shown in bar when segment is >= 15% wide.
 
-- [ ] **8.4** Render visual comparison: two `WorkrateBar` components, "X times faster" number, highlight winner
+- [x] **8.4** Render visual comparison: two `WorkrateBar` components, "X times faster" number, highlight winner
   - WHY: Visual output is the primary deliverable of this tab.
+  - NOTE: Speed ratio calculated from overall work rates. Winner name shown with "Xх faster in practice" in a green-tinted banner.
 
-- [ ] **8.5** Stack two-column layout vertically on screens narrower than 640px
+- [x] **8.5** Stack two-column layout vertically on screens narrower than 640px
   - WHY: Spec requires responsive stacking on narrow screens.
+  - NOTE: Uses grid-cols-1 sm:grid-cols-2 for responsive stacking.
 
 - [ ] **8.6** Connect Tab 3 to auto-save via localStorage
   - WHY: Same persistence requirement.

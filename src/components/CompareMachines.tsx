@@ -1,0 +1,251 @@
+import { useState, useMemo } from "react"
+import type { WorkrateInputs } from "@/lib/types"
+import { defaultMachineA, defaultMachineB } from "@/lib/defaults"
+import { calcWorkrate } from "@/lib/calculations"
+import { InputField } from "./InputField"
+import { Input } from "@/components/ui/input"
+import { formatNumber, formatPct } from "@/lib/format"
+
+export function CompareMachines() {
+  const [machineA, setMachineA] = useState<WorkrateInputs>(defaultMachineA)
+  const [machineB, setMachineB] = useState<WorkrateInputs>(defaultMachineB)
+
+  const updateA = (field: keyof WorkrateInputs) => (value: number) => {
+    setMachineA((prev) => ({ ...prev, [field]: value }))
+  }
+  const updateB = (field: keyof WorkrateInputs) => (value: number) => {
+    setMachineB((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const resultsA = useMemo(() => calcWorkrate(machineA), [machineA])
+  const resultsB = useMemo(() => calcWorkrate(machineB), [machineB])
+
+  const speedRatio =
+    resultsA.overallWorkRate > 0 && resultsB.overallWorkRate > 0
+      ? resultsB.overallWorkRate / resultsA.overallWorkRate
+      : 0
+
+  const winner =
+    resultsA.overallWorkRate > resultsB.overallWorkRate
+      ? "A"
+      : resultsB.overallWorkRate > resultsA.overallWorkRate
+        ? "B"
+        : null
+
+  return (
+    <div className="space-y-6">
+      {/* Side-by-side inputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <MachineInputs
+          title={machineA.name || "Machine A"}
+          inputs={machineA}
+          onNameChange={(name) => setMachineA((prev) => ({ ...prev, name }))}
+          onUpdate={updateA}
+        />
+        <MachineInputs
+          title={machineB.name || "Machine B"}
+          inputs={machineB}
+          onNameChange={(name) => setMachineB((prev) => ({ ...prev, name }))}
+          onUpdate={updateB}
+        />
+      </div>
+
+      {/* Results */}
+      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+        <h2 className="text-sm font-semibold">Results</h2>
+
+        {/* Side-by-side results table */}
+        <div className="grid grid-cols-[1fr_1fr_1fr] gap-2 text-sm">
+          <div />
+          <div className="font-semibold text-center">{machineA.name || "Machine A"}</div>
+          <div className="font-semibold text-center">{machineB.name || "Machine B"}</div>
+
+          <div className="text-muted-foreground">Spot rate</div>
+          <div className="text-center tabular-nums">{formatNumber(resultsA.spotRate, 1)} ha/hr</div>
+          <div className="text-center tabular-nums">{formatNumber(resultsB.spotRate, 1)} ha/hr</div>
+
+          <div className="font-medium">TRUE rate</div>
+          <div className={`text-center tabular-nums font-bold ${winner === "A" ? "text-primary" : ""}`}>
+            {formatNumber(resultsA.overallWorkRate, 2)} ha/hr
+          </div>
+          <div className={`text-center tabular-nums font-bold ${winner === "B" ? "text-primary" : ""}`}>
+            {formatNumber(resultsB.overallWorkRate, 2)} ha/hr
+          </div>
+
+          <div className="text-muted-foreground text-xs col-span-3">(includes filling & travel)</div>
+        </div>
+
+        {/* Time breakdown bars */}
+        <div className="space-y-3 mt-4">
+          <h3 className="text-sm font-semibold">Time breakdown per load</h3>
+          <WorkrateBar
+            label={machineA.name || "Machine A"}
+            applicationPct={resultsA.applicationPct}
+            fillingPct={resultsA.fillingPct}
+            transportPct={resultsA.transportPct}
+          />
+          <WorkrateBar
+            label={machineB.name || "Machine B"}
+            applicationPct={resultsB.applicationPct}
+            fillingPct={resultsB.fillingPct}
+            transportPct={resultsB.transportPct}
+          />
+          <div className="flex gap-4 text-xs text-muted-foreground mt-1">
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-3 h-3 rounded-sm bg-primary" /> Working
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-3 h-3 rounded-sm bg-[#1565C0]" /> Filling
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-3 h-3 rounded-sm bg-farm-amber" /> Transport
+            </span>
+          </div>
+        </div>
+
+        {/* Speed comparison */}
+        {winner && speedRatio > 0 && (
+          <div className="rounded-lg bg-primary/10 p-4 text-center">
+            <p className="text-2xl font-bold text-primary">
+              {winner === "B"
+                ? `${machineB.name || "Machine B"} is ${formatNumber(speedRatio, 1)}x faster in practice`
+                : `${machineA.name || "Machine A"} is ${formatNumber(1 / speedRatio, 1)}x faster in practice`}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MachineInputs({
+  title,
+  inputs,
+  onNameChange,
+  onUpdate,
+}: {
+  title: string
+  inputs: WorkrateInputs
+  onNameChange: (name: string) => void
+  onUpdate: (field: keyof WorkrateInputs) => (value: number) => void
+}) {
+  return (
+    <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
+      <h2 className="text-sm font-semibold mb-3">{title}</h2>
+
+      {/* Name text input */}
+      <div className="flex items-center gap-2 min-h-[44px]">
+        <label className="flex-1 text-sm font-medium leading-tight">Name</label>
+        <Input
+          type="text"
+          value={inputs.name}
+          onChange={(e) => onNameChange(e.target.value)}
+          className="w-28 text-right"
+          placeholder="Name"
+        />
+      </div>
+
+      <InputField
+        label="Width"
+        value={inputs.width}
+        onChange={onUpdate("width")}
+        unit="m"
+        tooltip="Working width of the implement"
+        min={0}
+      />
+      <InputField
+        label="Tank / hopper"
+        value={inputs.capacity}
+        onChange={onUpdate("capacity")}
+        unit="kg"
+        tooltip="How much the tank or hopper holds"
+        min={0}
+      />
+      <InputField
+        label="Speed"
+        value={inputs.speed}
+        onChange={onUpdate("speed")}
+        unit="km/hr"
+        tooltip="Speed when working in the field"
+        min={0}
+      />
+      <InputField
+        label="Application rate"
+        value={inputs.applicationRate}
+        onChange={onUpdate("applicationRate")}
+        unit="kg/ha"
+        tooltip="How much product per hectare"
+        min={0}
+      />
+      <InputField
+        label="Travel time"
+        value={inputs.transportTime}
+        onChange={onUpdate("transportTime")}
+        unit="min"
+        tooltip="Time to drive from yard to field (one way)"
+        min={0}
+      />
+      <InputField
+        label="Fill time"
+        value={inputs.fillingTime}
+        onChange={onUpdate("fillingTime")}
+        unit="min"
+        tooltip="Time to refill the tank or hopper"
+        min={0}
+      />
+      <InputField
+        label="Field efficiency"
+        value={inputs.fieldEfficiency}
+        onChange={onUpdate("fieldEfficiency")}
+        unit="%"
+        tooltip="How much time is actual work vs turns, overlaps. 65-80% is normal"
+        min={0}
+        max={100}
+      />
+    </div>
+  )
+}
+
+function WorkrateBar({
+  label,
+  applicationPct,
+  fillingPct,
+  transportPct,
+}: {
+  label: string
+  applicationPct: number
+  fillingPct: number
+  transportPct: number
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="text-xs font-medium">{label}</div>
+      <div className="flex h-8 w-full rounded-md overflow-hidden">
+        {applicationPct > 0 && (
+          <div
+            className="bg-primary flex items-center justify-center text-[10px] text-primary-foreground font-medium overflow-hidden"
+            style={{ width: `${applicationPct}%` }}
+          >
+            {applicationPct >= 15 && `${formatPct(applicationPct)}`}
+          </div>
+        )}
+        {fillingPct > 0 && (
+          <div
+            className="bg-[#1565C0] flex items-center justify-center text-[10px] text-white font-medium overflow-hidden"
+            style={{ width: `${fillingPct}%` }}
+          >
+            {fillingPct >= 15 && `${formatPct(fillingPct)}`}
+          </div>
+        )}
+        {transportPct > 0 && (
+          <div
+            className="bg-farm-amber flex items-center justify-center text-[10px] text-foreground font-medium overflow-hidden"
+            style={{ width: `${transportPct}%` }}
+          >
+            {transportPct >= 15 && `${formatPct(transportPct)}`}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
