@@ -22,7 +22,7 @@ export function ResultBanner({ type, mainText, subText }: ResultBannerProps) {
         bannerStyles[type]
       )}
     >
-      <p className="text-[32px] font-bold leading-tight">{mainText}</p>
+      <p className="text-xl sm:text-2xl md:text-[32px] font-bold leading-tight">{mainText}</p>
       {subText && (
         <p className="mt-1 text-base opacity-90">{subText}</p>
       )}

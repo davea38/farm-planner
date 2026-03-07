@@ -17,7 +17,7 @@ export function CostBreakdown({ rows }: CostBreakdownProps) {
       {rows.map((row) => (
         <div
           key={row.label}
-          className={`flex items-baseline justify-between gap-4 ${
+          className={`flex items-baseline justify-between gap-2 sm:gap-4 ${
             row.bold ? "font-semibold text-base" : "text-sm text-muted-foreground pl-4"
           }`}
         >

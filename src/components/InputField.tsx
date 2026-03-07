@@ -50,7 +50,7 @@ export function InputField({
           min={min}
           max={max}
           step={step}
-          className="w-28 text-right tabular-nums"
+          className="w-20 sm:w-28 text-right tabular-nums"
         />
         {unit && (
           <span className="text-sm text-muted-foreground w-12 shrink-0">

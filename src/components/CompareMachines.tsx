@@ -98,7 +98,7 @@ export function CompareMachines({
 
         {!hasZeroWarning && <>
         {/* Side-by-side results table */}
-        <div className="grid grid-cols-[1fr_1fr_1fr] gap-2 text-sm">
+        <div className="grid grid-cols-[auto_1fr_1fr] gap-x-2 sm:gap-x-4 gap-y-1 text-sm">
           <div />
           <div className="font-semibold text-center">{machineA.name || "Machine A"}</div>
           <div className="font-semibold text-center">{machineB.name || "Machine B"}</div>
@@ -133,7 +133,7 @@ export function CompareMachines({
             fillingPct={resultsB.fillingPct}
             transportPct={resultsB.transportPct}
           />
-          <div className="flex gap-4 text-xs text-muted-foreground mt-1">
+          <div className="flex flex-wrap gap-2 sm:gap-4 text-xs text-muted-foreground mt-1">
             <span className="flex items-center gap-1">
               <span className="inline-block w-3 h-3 rounded-sm bg-primary" /> Working
             </span>
@@ -149,7 +149,7 @@ export function CompareMachines({
         {/* Speed comparison */}
         {winner && speedRatio > 0 && (
           <div className="rounded-lg bg-primary/10 p-4 text-center">
-            <p className="text-2xl font-bold text-primary">
+            <p className="text-lg sm:text-2xl font-bold text-primary">
               {winner === "B"
                 ? `${machineB.name || "Machine B"} is ${formatNumber(speedRatio, 1)}x faster in practice`
                 : `${machineA.name || "Machine A"} is ${formatNumber(1 / speedRatio, 1)}x faster in practice`}
@@ -184,7 +184,7 @@ function MachineInputs({
           type="text"
           value={inputs.name}
           onChange={(e) => onNameChange(e.target.value)}
-          className="w-28 text-right"
+          className="w-20 sm:w-28 text-right"
           placeholder="Name"
         />
       </div>

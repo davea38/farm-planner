@@ -299,8 +299,9 @@
   - WHY: Spec explicitly requires this to reduce cognitive load.
   - NOTE: Already implemented during Phase 5/6. Both CostPerHectare and CostPerHour use `<CollapsibleSection title="Overheads" subtitle="Most farmers leave these as they are" defaultOpen={false}>`. Verified correct.
 
-- [ ] **11.3** Test and fix responsive layout at 320px, 768px, and 1280px across all tabs
+- [x] **11.3** Test and fix responsive layout at 320px, 768px, and 1280px across all tabs
   - WHY: Spec lists these breakpoints as verification targets.
+  - NOTE: Comprehensive responsive audit and fixes applied. Header stacks vertically on mobile (flex-col sm:flex-row). Tab bar uses 2x2 grid on mobile (grid-cols-2 sm:grid-cols-4). InputField inputs shrink on mobile (w-20 sm:w-28). ResultBanner text scales down (text-xl sm:text-2xl md:text-[32px]). CompareMachines results grid uses auto-width first column, responsive gaps, and smaller speed comparison text. ReplacementPlanner MachineRow grid stacks on mobile (grid-cols-1 sm:grid-cols-2). Timeline chart reduced min-width to 320px and machine name column to 80px. Legend uses flex-wrap with smaller gaps. CostBreakdown uses responsive gap (gap-2 sm:gap-4).
 
 - [x] **11.4** Add card shadows and section separators: white cards on `#FAFAFA`, grey background for Results sections
   - WHY: Visual separation between inputs and outputs.

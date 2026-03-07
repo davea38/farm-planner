@@ -41,7 +41,7 @@ function MachineRow({
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
         <InputField
           label="Use/year"
           value={machine.usePerYear}
@@ -116,8 +116,8 @@ function TimelineChart({
   return (
     <div className="space-y-4 overflow-x-auto">
       {/* Year headers */}
-      <div className="min-w-[500px]">
-        <div className="grid gap-0" style={{ gridTemplateColumns: `120px repeat(${years.length}, 1fr)` }}>
+      <div className="min-w-[320px]">
+        <div className="grid gap-0" style={{ gridTemplateColumns: `80px repeat(${years.length}, 1fr)` }}>
           <div />
           {years.map((year) => (
             <div key={year} className="text-xs text-center text-muted-foreground font-medium">
@@ -133,7 +133,7 @@ function TimelineChart({
             <div
               key={machine.id}
               className="grid gap-0 items-center border-b border-muted/50"
-              style={{ gridTemplateColumns: `120px repeat(${years.length}, 1fr)` }}
+              style={{ gridTemplateColumns: `80px repeat(${years.length}, 1fr)` }}
             >
               <div className="text-xs truncate pr-2 py-1">{machine.name}</div>
               {years.map((year) => (
@@ -157,7 +157,7 @@ function TimelineChart({
         {/* Annual cost bar chart */}
         <div
           className="grid gap-0 items-end pt-2 border-t border-muted"
-          style={{ gridTemplateColumns: `120px repeat(${years.length}, 1fr)` }}
+          style={{ gridTemplateColumns: `80px repeat(${years.length}, 1fr)` }}
         >
           <div className="text-xs font-medium pr-2">Annual cost</div>
           {annualCosts.map(({ year, cost }) => (
