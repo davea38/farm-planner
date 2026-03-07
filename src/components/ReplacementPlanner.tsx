@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import type { ReplacementMachine, ReplacementPlannerState, MachineCategory } from "@/lib/types"
+import type { MachineCategory as DepreciationCategory } from "@/lib/depreciation-data"
 import { defaultReplacementPlanner, createDefaultReplacementMachines, MACHINE_CATEGORIES } from "@/lib/defaults"
 import { calcReplacementSummary } from "@/lib/calculations"
 import { formatGBP, formatPct } from "@/lib/format"
+import { getDepreciationCategory } from "@/lib/category-mapping"
 import { InputField } from "./InputField"
 import { ResultBanner } from "./ResultBanner"
 import { CollapsibleSection } from "./CollapsibleSection"
@@ -14,10 +16,12 @@ function MachineRow({
   machine,
   onChange,
   onRemove,
+  onViewDepreciation,
 }: {
   machine: ReplacementMachine
   onChange: (updated: ReplacementMachine) => void
   onRemove: () => void
+  onViewDepreciation: () => void
 }) {
   const update = (field: keyof ReplacementMachine) => (value: number | string | null) => {
     onChange({ ...machine, [field]: value })
@@ -35,6 +39,12 @@ function MachineRow({
           className="text-sm font-semibold bg-transparent border-b border-muted-foreground/30 focus:border-primary focus:outline-none min-h-[44px] flex-1 min-w-0"
           placeholder="Machine name"
         />
+        <button
+          onClick={onViewDepreciation}
+          className="text-muted-foreground hover:text-primary text-xs min-h-[44px] px-2 shrink-0"
+        >
+          View depreciation
+        </button>
         <button
           onClick={onRemove}
           className="text-muted-foreground hover:text-destructive text-xs min-h-[44px] px-2 shrink-0"
@@ -307,6 +317,19 @@ export function ReplacementPlanner({
     }))
   }
 
+  const [depreciationCategory, setDepreciationCategory] = useState<DepreciationCategory>("tractors_large")
+  const [depreciationOpen, setDepreciationOpen] = useState(false)
+  const depreciationRef = useRef<HTMLDivElement>(null)
+
+  const viewDepreciation = (category: MachineCategory) => {
+    setDepreciationCategory(getDepreciationCategory(category))
+    setDepreciationOpen(true)
+    // Scroll after state update renders the panel
+    setTimeout(() => {
+      depreciationRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }, 100)
+  }
+
   const isFirstRender = useRef(true)
   useEffect(() => {
     if (isFirstRender.current) {
@@ -355,6 +378,7 @@ export function ReplacementPlanner({
             machine={machine}
             onChange={(updated) => updateMachine(machine.id, updated)}
             onRemove={() => removeMachine(machine.id)}
+            onViewDepreciation={() => viewDepreciation(machine.category)}
           />
         ))}
       </div>
@@ -406,9 +430,16 @@ export function ReplacementPlanner({
       </div>
 
       {/* Depreciation Curve — standalone reference helper */}
-      <div className="rounded-lg bg-card p-4 shadow-sm">
-        <CollapsibleSection title="Depreciation Curve" defaultOpen={false}>
-          <DepreciationPanel />
+      <div ref={depreciationRef} className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection
+          title="Depreciation Curve"
+          open={depreciationOpen}
+          onOpenChange={setDepreciationOpen}
+        >
+          <DepreciationPanel
+            category={depreciationCategory}
+            onCategoryChange={setDepreciationCategory}
+          />
         </CollapsibleSection>
       </div>
     </div>

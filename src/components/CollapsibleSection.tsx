@@ -9,6 +9,10 @@ interface CollapsibleSectionProps {
   title: string
   subtitle?: string
   defaultOpen?: boolean
+  /** Controlled open state (overrides defaultOpen) */
+  open?: boolean
+  /** Callback when the open state changes */
+  onOpenChange?: (open: boolean) => void
   children: React.ReactNode
 }
 
@@ -16,9 +20,19 @@ export function CollapsibleSection({
   title,
   subtitle,
   defaultOpen = false,
+  open: propOpen,
+  onOpenChange,
   children,
 }: CollapsibleSectionProps) {
-  const [open, setOpen] = useState(defaultOpen)
+  const [internalOpen, setInternalOpen] = useState(defaultOpen)
+  const open = propOpen ?? internalOpen
+  const setOpen = (value: boolean) => {
+    if (propOpen !== undefined) {
+      onOpenChange?.(value)
+    } else {
+      setInternalOpen(value)
+    }
+  }
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>

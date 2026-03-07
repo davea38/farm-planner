@@ -23,6 +23,10 @@ interface DepreciationPanelProps {
   yearsOwned?: number
   /** Callback when the user changes years on the slider */
   onYearsChange?: (years: number) => void
+  /** Controlled depreciation category (e.g. pre-selected from replacement planner) */
+  category?: MachineCategory
+  /** Callback when the user changes the category dropdown */
+  onCategoryChange?: (category: MachineCategory) => void
 }
 
 export function DepreciationPanel({
@@ -30,8 +34,18 @@ export function DepreciationPanel({
   purchasePrice: propPurchasePrice,
   yearsOwned: propYearsOwned,
   onYearsChange,
+  category: propCategory,
+  onCategoryChange,
 }: DepreciationPanelProps = {}) {
-  const [category, setCategory] = useState<MachineCategory>("tractors_large")
+  const [internalCategory, setInternalCategory] = useState<MachineCategory>("tractors_large")
+  const category = propCategory ?? internalCategory
+  const handleCategoryChange = (value: MachineCategory) => {
+    if (propCategory !== undefined) {
+      onCategoryChange?.(value)
+    } else {
+      setInternalCategory(value)
+    }
+  }
   const [internalPurchasePrice, setInternalPurchasePrice] = useState(100000)
   const [internalYears, setInternalYears] = useState(5)
 
@@ -65,7 +79,7 @@ export function DepreciationPanel({
           </label>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as MachineCategory)}
+            onChange={(e) => handleCategoryChange(e.target.value as MachineCategory)}
             className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
           >
             {CATEGORIES.map(([key, p]) => (

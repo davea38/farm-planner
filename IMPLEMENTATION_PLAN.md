@@ -96,9 +96,9 @@ Root cause: helper functions in test files infer narrow literal types from defau
   **WHY:** Sprayers use litres, not kg. Showing "800 kg" for a sprayer tank is wrong.
   **Files:** `src/components/CompareMachines.tsx`.
 
-- [ ] **3.6** Link replacement machine rows to depreciation curves — "View depreciation" button per row (finding #15). Depends on 3.4.
+- [x] **3.6** Link replacement machine rows to depreciation curves — "View depreciation" button per row (finding #15). Depends on 3.4.
   **WHY:** Manually selecting matching depreciation categories for 10 machines is tedious.
-  **Files:** `src/components/ReplacementPlanner.tsx`.
+  **Files:** `src/components/ReplacementPlanner.tsx`, `src/components/DepreciationPanel.tsx`, `src/components/CollapsibleSection.tsx`.
 
 - [ ] **3.7** Make `usePerYear` and `currentHours` fields in Replacement Planner either functional or labelled "(for your reference)" (finding #20).
   **WHY:** Editable fields that affect nothing feel broken to a farmer.
@@ -148,6 +148,6 @@ Root cause: helper functions in test files infer narrow literal types from defau
 | 0 — Tech Debt | 4 | 4 | 0 |
 | 1 — Must Fix | 5 | 5 | 0 |
 | 2 — Should Fix | 6 | 6 | 0 |
-| 3 — Nice to Have | 8 | 5 | 3 |
+| 3 — Nice to Have | 8 | 6 | 2 |
 | 4 — Observations | 3 | 0 | 3 |
-| **Total** | **26** | **20** | **6** |
+| **Total** | **26** | **21** | **5** |
