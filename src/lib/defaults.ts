@@ -60,10 +60,14 @@ export const defaultMachineB: WorkrateInputs = {
   fieldEfficiency: 75,
 };
 
-function makeReplacementMachine(name: string): ReplacementMachine {
+function makeReplacementMachine(name: string, category: ReplacementMachine["category"] = "other"): ReplacementMachine {
   return {
     id: crypto.randomUUID(),
     name,
+    category,
+    condition: "used",
+    yearOfManufacture: null,
+    purchaseDate: null,
     usePerYear: 0,
     timeToChange: 0,
     currentHours: 0,
@@ -72,22 +76,33 @@ function makeReplacementMachine(name: string): ReplacementMachine {
   };
 }
 
-const defaultReplacementMachineNames = [
-  "Tractor 1",
-  "Tractor 2",
-  "Tractor 3",
-  "Tractor 4",
-  "Combine",
-  "SP Sprayer",
-  "Seed drill",
-  "Cultivator",
-  "Cultivator",
-  "Other",
+const defaultReplacementMachines: { name: string; category: ReplacementMachine["category"] }[] = [
+  { name: "Tractor 1", category: "tractor" },
+  { name: "Tractor 2", category: "tractor" },
+  { name: "Tractor 3", category: "tractor" },
+  { name: "Tractor 4", category: "tractor" },
+  { name: "Combine", category: "combine" },
+  { name: "SP Sprayer", category: "sprayer" },
+  { name: "Seed drill", category: "drill" },
+  { name: "Cultivator", category: "cultivator" },
+  { name: "Cultivator", category: "cultivator" },
+  { name: "Other", category: "other" },
 ];
 
 export function createDefaultReplacementMachines(): ReplacementMachine[] {
-  return defaultReplacementMachineNames.map(makeReplacementMachine);
+  return defaultReplacementMachines.map((m) => makeReplacementMachine(m.name, m.category));
 }
+
+export const MACHINE_CATEGORIES: { value: ReplacementMachine["category"]; label: string }[] = [
+  { value: "tractor", label: "Tractor" },
+  { value: "combine", label: "Combine" },
+  { value: "sprayer", label: "Sprayer" },
+  { value: "drill", label: "Drill" },
+  { value: "cultivator", label: "Cultivator" },
+  { value: "trailer", label: "Trailer" },
+  { value: "handler", label: "Handler" },
+  { value: "other", label: "Other" },
+];
 
 export const defaultReplacementPlanner: ReplacementPlannerState = {
   machines: createDefaultReplacementMachines(),

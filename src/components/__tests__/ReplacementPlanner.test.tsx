@@ -23,6 +23,10 @@ const testState: ReplacementPlannerState = {
     {
       id: "m1",
       name: "Tractor 1",
+      category: "tractor",
+      condition: "used",
+      yearOfManufacture: null,
+      purchaseDate: null,
       usePerYear: 500,
       timeToChange: 3,
       currentHours: 2000,
@@ -32,6 +36,10 @@ const testState: ReplacementPlannerState = {
     {
       id: "m2",
       name: "Combine",
+      category: "combine",
+      condition: "used",
+      yearOfManufacture: null,
+      purchaseDate: null,
       usePerYear: 200,
       timeToChange: 5,
       currentHours: 1000,
@@ -46,7 +54,9 @@ describe("ReplacementPlanner", () => {
   it("renders machine names", () => {
     renderWithUnits(<ReplacementPlanner initialState={testState} />)
     expect(screen.getByDisplayValue("Tractor 1")).toBeInTheDocument()
-    expect(screen.getByDisplayValue("Combine")).toBeInTheDocument()
+    // "Combine" appears in both name input and category select; check name input specifically
+    const nameInputs = screen.getAllByPlaceholderText("Machine name")
+    expect(nameInputs.some((el) => (el as HTMLInputElement).value === "Combine")).toBe(true)
   })
 
   it("displays budget summary section", () => {
@@ -87,7 +97,8 @@ describe("ReplacementPlanner", () => {
     await user.click(removeButtons[0])
 
     expect(screen.queryByDisplayValue("Tractor 1")).not.toBeInTheDocument()
-    expect(screen.getByDisplayValue("Combine")).toBeInTheDocument()
+    const nameInputs = screen.getAllByPlaceholderText("Machine name")
+    expect(nameInputs.some((el) => (el as HTMLInputElement).value === "Combine")).toBe(true)
   })
 
   it("calls onChange when machine is updated", async () => {
@@ -108,6 +119,10 @@ describe("ReplacementPlanner", () => {
         {
           id: "m1",
           name: "Small",
+          category: "other",
+          condition: "used",
+          yearOfManufacture: null,
+          purchaseDate: null,
           usePerYear: 100,
           timeToChange: 1,
           currentHours: 500,
@@ -136,6 +151,10 @@ describe("ReplacementPlanner", () => {
         {
           id: "m1",
           name: "Expensive",
+          category: "other",
+          condition: "used",
+          yearOfManufacture: null,
+          purchaseDate: null,
           usePerYear: 1000,
           timeToChange: 1,
           currentHours: 0,
@@ -155,6 +174,10 @@ describe("ReplacementPlanner", () => {
         {
           id: "m1",
           name: "Old",
+          category: "other",
+          condition: "used",
+          yearOfManufacture: null,
+          purchaseDate: null,
           usePerYear: 500,
           timeToChange: 0,
           currentHours: 5000,

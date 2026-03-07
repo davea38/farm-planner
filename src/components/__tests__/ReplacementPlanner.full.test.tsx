@@ -23,6 +23,10 @@ describe("ReplacementPlanner – MachineRow interactions", () => {
       {
         id: "m1",
         name: "Tractor",
+        category: "tractor",
+        condition: "used",
+        yearOfManufacture: null,
+        purchaseDate: null,
         usePerYear: 500,
         timeToChange: 3,
         currentHours: 2000,
@@ -38,7 +42,8 @@ describe("ReplacementPlanner – MachineRow interactions", () => {
     const user = userEvent.setup()
     renderWithUnits(<ReplacementPlanner initialState={state} onChange={onChange} />)
 
-    const nameInput = screen.getByDisplayValue("Tractor")
+    const nameInput = screen.getByPlaceholderText("Machine name")
+    expect((nameInput as HTMLInputElement).value).toBe("Tractor")
     await user.clear(nameInput)
     await user.type(nameInput, "Big Tractor")
 
@@ -77,6 +82,10 @@ describe("ReplacementPlanner – MachineRow interactions", () => {
         {
           id: "m1",
           name: "Combine",
+          category: "combine",
+          condition: "used",
+          yearOfManufacture: null,
+          purchaseDate: null,
           usePerYear: 200,
           timeToChange: 1,
           currentHours: 0,

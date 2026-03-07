@@ -12,6 +12,10 @@ import type {
   ReplacementMachine,
 } from "../types"
 
+function makeMachine(overrides: Omit<ReplacementMachine, "category" | "condition" | "yearOfManufacture" | "purchaseDate">): ReplacementMachine {
+  return { category: "other", condition: "used", yearOfManufacture: null, purchaseDate: null, ...overrides }
+}
+
 // ---------- calcCostPerHectare ----------
 
 describe("calcCostPerHectare", () => {
@@ -231,7 +235,7 @@ describe("calcReplacementSummary", () => {
 
   it("places machine cost in the correct year", () => {
     const machines: ReplacementMachine[] = [
-      {
+      makeMachine({
         id: "1",
         name: "Tractor",
         usePerYear: 500,
@@ -239,7 +243,7 @@ describe("calcReplacementSummary", () => {
         currentHours: 2000,
         priceToChange: 150000,
         currentValue: 50000,
-      },
+      }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
     // Cost should be at index 3 (year 2029)
@@ -249,7 +253,7 @@ describe("calcReplacementSummary", () => {
 
   it("skips machines with timeToChange <= 0", () => {
     const machines: ReplacementMachine[] = [
-      {
+      makeMachine({
         id: "1",
         name: "Old",
         usePerYear: 500,
@@ -257,7 +261,7 @@ describe("calcReplacementSummary", () => {
         currentHours: 5000,
         priceToChange: 100000,
         currentValue: 10000,
-      },
+      }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
     expect(result.totalSpend).toBe(0)
@@ -265,7 +269,7 @@ describe("calcReplacementSummary", () => {
 
   it("extends span to accommodate latest machine", () => {
     const machines: ReplacementMachine[] = [
-      {
+      makeMachine({
         id: "1",
         name: "Far future",
         usePerYear: 100,
@@ -273,7 +277,7 @@ describe("calcReplacementSummary", () => {
         currentHours: 0,
         priceToChange: 80000,
         currentValue: 20000,
-      },
+      }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
     // Effective span should be 10 (> 6), so 11 entries
@@ -283,8 +287,8 @@ describe("calcReplacementSummary", () => {
 
   it("calculates totalSpend across all machines", () => {
     const machines: ReplacementMachine[] = [
-      { id: "1", name: "A", usePerYear: 500, timeToChange: 2, currentHours: 0, priceToChange: 100000, currentValue: 30000 },
-      { id: "2", name: "B", usePerYear: 300, timeToChange: 4, currentHours: 0, priceToChange: 60000, currentValue: 10000 },
+      makeMachine({ id: "1", name: "A", usePerYear: 500, timeToChange: 2, currentHours: 0, priceToChange: 100000, currentValue: 30000 }),
+      makeMachine({ id: "2", name: "B", usePerYear: 300, timeToChange: 4, currentHours: 0, priceToChange: 60000, currentValue: 10000 }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
     expect(result.totalSpend).toBe(70000 + 50000)
@@ -292,7 +296,7 @@ describe("calcReplacementSummary", () => {
 
   it("calculates pctOfIncome correctly", () => {
     const machines: ReplacementMachine[] = [
-      { id: "1", name: "A", usePerYear: 500, timeToChange: 1, currentHours: 0, priceToChange: 70000, currentValue: 0 },
+      makeMachine({ id: "1", name: "A", usePerYear: 500, timeToChange: 1, currentHours: 0, priceToChange: 70000, currentValue: 0 }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
     const avgCost = result.totalSpend / result.annualCosts.length
@@ -301,7 +305,7 @@ describe("calcReplacementSummary", () => {
 
   it("handles zero farmIncome", () => {
     const machines: ReplacementMachine[] = [
-      { id: "1", name: "A", usePerYear: 500, timeToChange: 1, currentHours: 0, priceToChange: 70000, currentValue: 0 },
+      makeMachine({ id: "1", name: "A", usePerYear: 500, timeToChange: 1, currentHours: 0, priceToChange: 70000, currentValue: 0 }),
     ]
     const result = calcReplacementSummary(machines, 0, 2026, 6)
     expect(result.pctOfIncome).toBe(0)
@@ -309,8 +313,8 @@ describe("calcReplacementSummary", () => {
 
   it("accumulates multiple machines in the same year", () => {
     const machines: ReplacementMachine[] = [
-      { id: "1", name: "A", usePerYear: 500, timeToChange: 2, currentHours: 0, priceToChange: 50000, currentValue: 10000 },
-      { id: "2", name: "B", usePerYear: 300, timeToChange: 2, currentHours: 0, priceToChange: 80000, currentValue: 20000 },
+      makeMachine({ id: "1", name: "A", usePerYear: 500, timeToChange: 2, currentHours: 0, priceToChange: 50000, currentValue: 10000 }),
+      makeMachine({ id: "2", name: "B", usePerYear: 300, timeToChange: 2, currentHours: 0, priceToChange: 80000, currentValue: 20000 }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
     // Both in year index 2: (50000-10000) + (80000-20000) = 40000 + 60000 = 100000

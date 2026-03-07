@@ -84,9 +84,25 @@ export interface WorkrateResults {
   transportPct: number;
 }
 
+export type MachineCategory =
+  | "tractor"
+  | "combine"
+  | "sprayer"
+  | "drill"
+  | "cultivator"
+  | "trailer"
+  | "handler"
+  | "other";
+
+export type MachineCondition = "new" | "used";
+
 export interface ReplacementMachine {
   id: string;
   name: string;
+  category: MachineCategory;
+  condition: MachineCondition;
+  yearOfManufacture: number | null;
+  purchaseDate: string | null; // ISO date string or null if not yet purchased
   usePerYear: number;
   timeToChange: number;
   currentHours: number;

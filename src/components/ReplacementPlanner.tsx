@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import type { ReplacementMachine, ReplacementPlannerState } from "@/lib/types"
-import { defaultReplacementPlanner, createDefaultReplacementMachines } from "@/lib/defaults"
+import type { ReplacementMachine, ReplacementPlannerState, MachineCategory } from "@/lib/types"
+import { defaultReplacementPlanner, createDefaultReplacementMachines, MACHINE_CATEGORIES } from "@/lib/defaults"
 import { calcReplacementSummary } from "@/lib/calculations"
 import { formatGBP, formatPct } from "@/lib/format"
 import { InputField } from "./InputField"
@@ -17,7 +17,7 @@ function MachineRow({
   onChange: (updated: ReplacementMachine) => void
   onRemove: () => void
 }) {
-  const update = (field: keyof ReplacementMachine) => (value: number | string) => {
+  const update = (field: keyof ReplacementMachine) => (value: number | string | null) => {
     onChange({ ...machine, [field]: value })
   }
 
@@ -42,6 +42,81 @@ function MachineRow({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+        {/* Category */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-h-[44px]">
+          <label className="flex-1 text-sm font-medium leading-tight whitespace-nowrap">Category</label>
+          <select
+            value={machine.category}
+            onChange={(e) => update("category")(e.target.value as MachineCategory)}
+            className="w-20 sm:w-28 text-sm rounded border border-input bg-transparent px-2 py-1 text-right"
+          >
+            {MACHINE_CATEGORIES.map((cat) => (
+              <option key={cat.value} value={cat.value}>{cat.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Condition */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-h-[44px]">
+          <span className="flex-1 text-sm font-medium leading-tight whitespace-nowrap">Condition</span>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-1 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name={`condition-${machine.id}`}
+                value="new"
+                checked={machine.condition === "new"}
+                onChange={() => update("condition")("new")}
+                className="accent-primary"
+              />
+              New
+            </label>
+            <label className="flex items-center gap-1 text-sm cursor-pointer">
+              <input
+                type="radio"
+                name={`condition-${machine.id}`}
+                value="used"
+                checked={machine.condition === "used"}
+                onChange={() => update("condition")("used")}
+                className="accent-primary"
+              />
+              Used
+            </label>
+          </div>
+        </div>
+
+        {/* Year of manufacture */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-h-[44px]">
+          <label className="flex-1 text-sm font-medium leading-tight whitespace-nowrap">Year of manufacture</label>
+          <input
+            type="number"
+            value={machine.yearOfManufacture ?? ""}
+            onChange={(e) => {
+              const val = e.target.value
+              update("yearOfManufacture")(val === "" ? null : Number(val))
+            }}
+            min={1900}
+            max={new Date().getFullYear() + 2}
+            className="w-20 sm:w-28 text-right tabular-nums text-sm rounded border border-input bg-transparent px-2 py-1"
+            placeholder="Year"
+          />
+        </div>
+
+        {/* Purchase date */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-h-[44px]">
+          <label className="flex-1 text-sm font-medium leading-tight whitespace-nowrap">Purchase date</label>
+          <input
+            type="date"
+            aria-label="Purchase date"
+            value={machine.purchaseDate ?? ""}
+            onChange={(e) => {
+              const val = e.target.value
+              update("purchaseDate")(val === "" ? null : val)
+            }}
+            className="w-20 sm:w-28 text-right text-sm rounded border border-input bg-transparent px-2 py-1"
+          />
+        </div>
+
         <InputField
           label="Use/year"
           value={machine.usePerYear}
@@ -214,6 +289,10 @@ export function ReplacementPlanner({
     const newMachine: ReplacementMachine = {
       id: crypto.randomUUID(),
       name: "New machine",
+      category: "other",
+      condition: "used",
+      yearOfManufacture: null,
+      purchaseDate: null,
       usePerYear: 0,
       timeToChange: 0,
       currentHours: 0,
