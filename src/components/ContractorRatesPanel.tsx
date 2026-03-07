@@ -17,41 +17,10 @@ const CATEGORIES = [
   "Application",
   "Harvesting",
   "Baling",
-  "Bale Wrapping",
   "Tractor Hire",
-  "Slurry & Manure",
-  "Hedges & Boundaries",
-  "Mobile Feed",
-  "Livestock Services",
-  "Specialist",
 ]
 
-const UNIT_LABELS: Record<string, string> = {
-  ha: "",
-  hr: "/hr",
-  bale: "/bale",
-  tonne: "/tonne",
-  head: "/head",
-  m: "/m",
-}
-
-function rateTier(rate: number, unit: string): "low" | "mid" | "high" {
-  if (unit === "bale" || unit === "head") {
-    if (rate < 5) return "low"
-    if (rate <= 10) return "mid"
-    return "high"
-  }
-  if (unit === "m") {
-    if (rate < 12) return "low"
-    if (rate <= 20) return "mid"
-    return "high"
-  }
-  if (unit === "tonne") {
-    if (rate < 6) return "low"
-    if (rate <= 15) return "mid"
-    return "high"
-  }
-  // ha and hr use same thresholds
+function rateTier(rate: number): "low" | "mid" | "high" {
   if (rate < 40) return "low"
   if (rate <= 100) return "mid"
   return "high"
@@ -106,7 +75,8 @@ export function ContractorRatesPanel({
 
   const getUnitLabel = (rateUnit: string): string => {
     if (rateUnit === "ha") return "/" + displayUnit("ha", units)
-    return UNIT_LABELS[rateUnit] ?? `/${rateUnit}`
+    if (rateUnit === "hr") return "/hr"
+    return "/bale"
   }
 
   const rangeMin = visibleRates.length > 0 ? Math.min(...visibleRates.map(r => convertRate(r.rate, r.unit))) : 0
@@ -156,13 +126,13 @@ export function ContractorRatesPanel({
                 </tr>
               </thead>
               <tbody>
-                {visibleRates.map((r, idx) => {
-                  const tier = rateTier(r.rate, r.unit)
+                {visibleRates.map(r => {
+                  const tier = rateTier(r.rate)
                   const displayRate = convertRate(r.rate, r.unit)
                   const unitLabel = getUnitLabel(r.unit)
                   return (
                     <tr
-                      key={`${r.operation}-${r.unit}-${idx}`}
+                      key={r.operation}
                       className={`border-b border-border last:border-0 ${tierStyles[tier]}`}
                       data-rate-tier={tier}
                     >
