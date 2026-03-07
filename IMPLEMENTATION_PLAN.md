@@ -277,5 +277,4 @@ _No remaining tasks._
 - [x] SPEC-06: UK unit toggle & label fixes (ha/acres, km/miles, whitespace-nowrap)
 - [x] SPEC-07: Depreciation curve planner (8 categories, SVG chart, sweet spot, slider)
 - [x] SPEC-08: Machine profile loading bug fix (parent state callbacks, controlled Select)
-- [x] Select `value` fallback verified: `null` is correct for Base UI (controlled mode, no selection); `""` would try to match a non-existent item
-- [x] NAAC rates expanded from 38 to 40 (added Lime spreading and Slug pelleting to Application category)
+
