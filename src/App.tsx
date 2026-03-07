@@ -1,11 +1,12 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 import { CostPerHectare } from '@/components/CostPerHectare'
 import { CostPerHour } from '@/components/CostPerHour'
 import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
-import { loadState, useAutoSave } from '@/lib/storage'
+import { loadState, useAutoSave, exportToFile, importFromFile } from '@/lib/storage'
 import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState } from '@/lib/types'
 
 function App() {
@@ -81,13 +82,53 @@ function App() {
     }))
   }, [])
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleExport = useCallback(() => {
+    exportToFile(appState)
+  }, [appState])
+
+  const handleImport = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
+  const handleFileSelected = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    try {
+      const imported = await importFromFile(file)
+      setAppState(imported)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to import file')
+    }
+    // Reset input so the same file can be re-imported
+    e.target.value = ''
+  }, [])
+
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-[800px] px-4 py-6">
-          <h1 className="text-2xl font-bold text-center mb-6">
-            Farm Machinery Planner
-          </h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">
+              Farm Machinery Planner
+            </h1>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleExport}>
+                Export JSON
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleImport}>
+                Import JSON
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={handleFileSelected}
+              />
+            </div>
+          </div>
 
           <Tabs defaultValue="cost-per-hectare">
             <TabsList className="grid w-full grid-cols-4 h-auto">

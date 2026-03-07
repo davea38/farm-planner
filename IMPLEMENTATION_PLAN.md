@@ -127,8 +127,9 @@
   - WHY: Top-level layout hosting all tab content; must exist before tabs render.
   - NOTE: Uses base-ui value-based tabs with string values. Active tab styled with primary green via data-active:bg-primary. TooltipProvider wraps entire app. 4-column grid TabsList with responsive text sizing. Tab content panels have placeholder text until tab components are built.
 
-- [ ] **4.4** Add global header with "Farm Machinery Planner" title and Export/Import JSON buttons
+- [x] **4.4** Add global header with "Farm Machinery Planner" title and Export/Import JSON buttons
   - WHY: Spec requires JSON export/import accessible from any tab.
+  - NOTE: Header uses flex layout with title left-aligned and Export/Import outline buttons right-aligned. Export triggers JSON download via exportToFile(). Import uses hidden file input with .json accept filter, calls importFromFile() and updates app state on success, shows alert on error. Also completes 10.2 and 10.3.
 
 ---
 
@@ -273,11 +274,13 @@
   - WHY: Values must survive browser refresh without explicit user action.
   - NOTE: App.tsx now calls loadState() as useState initializer, passes initial data to each tab via props, receives changes via onChange callbacks, and assembles full AppState for useAutoSave (1s debounce). Each tab component accepts optional initialInputs/onChange props, initializes useState from props (falling back to defaults), and notifies parent on changes via useEffect (skipping first render to avoid redundant save).
 
-- [ ] **10.2** Wire global "Export to file" button to `exportToFile()` triggering `.json` download of full state
+- [x] **10.2** Wire global "Export to file" button to `exportToFile()` triggering `.json` download of full state
   - WHY: Backup mechanism and cross-device transfer.
+  - NOTE: Implemented as part of 4.4 — Export JSON button in global header calls exportToFile(appState).
 
-- [ ] **10.3** Wire global "Import from file" button to `importFromFile()` reading `.json`, validating, overwriting localStorage, reloading state
+- [x] **10.3** Wire global "Import from file" button to `importFromFile()` reading `.json`, validating, overwriting localStorage, reloading state
   - WHY: Completes the backup/restore cycle; validation prevents corrupt data.
+  - NOTE: Implemented as part of 4.4 — Import JSON button triggers hidden file input, calls importFromFile(), updates appState on success, shows error alert on failure.
 
 - [ ] **10.4** Add version field handling in `loadState()` for future schema migration
   - WHY: Without versioning, future schema changes would corrupt saved data.
