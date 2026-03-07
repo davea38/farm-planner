@@ -94,8 +94,9 @@
   - WHY: Used by Tabs 1, 2, and 4 for the traffic-light verdict.
   - NOTE: Props: type ("green"|"amber"|"red"), mainText, subText (optional). Uses farm-green/farm-amber/farm-red Tailwind tokens. White text on green/red, foreground on amber. 32px bold main text, rounded-lg with padding.
 
-- [ ] **3.3** Create `src/components/CostBreakdown.tsx` - breakdown table showing labeled cost rows with formatted values
+- [x] **3.3** Create `src/components/CostBreakdown.tsx` - breakdown table showing labeled cost rows with formatted values
   - WHY: Both cost tabs display an itemized breakdown below the main result.
+  - NOTE: Takes array of CostRow objects ({label, value, unit, bold?}). Bold rows for totals, indented muted rows for line items. Uses formatGBP for values and appends /unit suffix.
 
 - [ ] **3.4** Create `src/components/CollapsibleSection.tsx` - wrapper using shadcn Collapsible with title, subtitle, `defaultOpen` prop
   - WHY: "Overheads" on Tabs 1 & 2 must be collapsed by default with a note.
