@@ -31,8 +31,9 @@
   - WHY: Used by every shadcn/ui component for conditional Tailwind class composition.
   - NOTE: Created automatically by shadcn init (clsx + tailwind-merge).
 
-- [ ] **1.6** Set up custom Tailwind theme colors: primary green `#2E7D32`, accent blue `#1565C0`, traffic lights (`#2E7D32`/`#F9A825`/`#C62828`), background `#FAFAFA`, card `#FFFFFF`
+- [x] **1.6** Set up custom Tailwind theme colors: primary green `#2E7D32`, accent blue `#1565C0`, traffic lights (`#2E7D32`/`#F9A825`/`#C62828`), background `#FAFAFA`, card `#FFFFFF`
   - WHY: Spec mandates specific farm-themed colors consistent across all components.
+  - NOTE: Updated shadcn CSS variables in index.css. Added `--farm-green`, `--farm-amber`, `--farm-red` custom properties mapped to Tailwind via `@theme inline` as `farm-green`, `farm-amber`, `farm-red`. Primary/accent/destructive/ring also updated. Pre-existing lint warnings in shadcn button.tsx and tabs.tsx (react-refresh/only-export-components) are unrelated.
 
 - [ ] **1.7** Configure global typography: 18px base, sans-serif stack, 800px max-width centered container
   - WHY: Spec requires large readable text and constrained layout for tablet/laptop use.
