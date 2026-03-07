@@ -116,7 +116,7 @@ export function ContractorRatesPanel({
           </div>
 
           {/* Rate table */}
-          <div className="rounded-lg border border-border overflow-hidden">
+          <div className="rounded-lg border border-border overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
@@ -144,7 +144,7 @@ export function ContractorRatesPanel({
                         <button
                           type="button"
                           onClick={() => onApply(r.rate)}
-                          className="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
+                          className="rounded-lg bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
                           aria-label={`Use ${r.operation} rate ${formatRateValue(displayRate, unitLabel)}`}
                         >
                           Use

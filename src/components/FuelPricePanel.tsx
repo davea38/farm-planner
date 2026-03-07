@@ -29,7 +29,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
       >
         <div className="space-y-4 pt-2">
           {/* Price cards */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-lg bg-card p-3 text-center shadow-sm border border-green-200 dark:border-green-900">
               <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Red Diesel
