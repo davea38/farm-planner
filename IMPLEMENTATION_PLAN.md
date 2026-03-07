@@ -14,7 +14,7 @@
 | 04 | Contractor Rates Panel | [x] Done |
 | 05 | Integration & Polish | [x] Done |
 | 06 | UK Units & Labels | [x] Done |
-| 07 | Depreciation Planner | **Partial** — panel exists on Tab 3 only; spec requires embedding on Tabs 1, 2, 5 with prop-driven mode |
+| 07 | Depreciation Planner | [x] Done — prop-driven mode, embedded on Tabs 1, 2, 5 |
 | 08 | Machine Profile Loading | [x] Done |
 | 09 | Complete NAAC Data | [x] Done — 121 entries across 12 categories, 6 dual-rate ops, 3 new unit types |
 | 10 | Contracting Income | [x] Done |
@@ -47,40 +47,14 @@ SPEC-11 (Tab 7)          ──── final
 
 _Currently DepreciationPanel lives only on Tab 3 with zero props (fully internal state). Spec requires it embedded on Tabs 1, 2, and 5 with optional prop-driven mode._
 
-### B1: Refactor DepreciationPanel to accept optional props
+### B1–B5: All complete
 
-- [ ] Add optional props to DepreciationPanel: `purchasePrice?: number`, `yearsOwned?: number`, `onApplySalePrice?: (value: number) => void`, `onYearsChange?: (years: number) => void`
-  - **Why:** When embedded in other tabs, the panel should read from and write to the parent form's state; when standalone on Tab 3, it continues using internal state
-- [ ] When `purchasePrice` prop is provided, use it instead of internal state (controlled mode)
-  - **Why:** On Tabs 1/2, the purchase price already exists on the form — the depreciation panel should reflect it
-- [ ] When `yearsOwned` prop is provided, sync the year slider bidirectionally
-  - **Why:** Changing the slider calls `onYearsChange`; changing yearsOwned on the parent form updates the slider
-- [ ] Show "Use as sale price" button only when `onApplySalePrice` is provided
-  - **Why:** Button fills the parent form's expected sale price with the depreciation-estimated value
-- [ ] Add tests for prop-driven mode in `DepreciationPanel.test.tsx`: test `onApplySalePrice` callback, controlled `purchasePrice`, controlled `yearsOwned`, `onYearsChange` callback
-  - **Why:** Both standalone (Tab 3) and embedded (Tabs 1/2/5) modes need test coverage
-
-### B2: Embed in CostPerHectare (Tab 1)
-
-- [ ] Add `<CollapsibleSection title="Depreciation Curve">` with `<DepreciationPanel>` below the purchase/sale section in `CostPerHectare.tsx`
-  - **Why:** Helps farmers set a realistic expected sale price based on ASAE depreciation curves
-- [ ] Wire `onApplySalePrice` to update `salePrice` input, pass `purchasePrice` and `yearsOwned` from form inputs
-  - **Why:** Connects the embedded panel to the form's data flow
-
-### B3: Embed in CostPerHour (Tab 2)
-
-- [ ] Add same CollapsibleSection + DepreciationPanel integration as Tab 1 in `CostPerHour.tsx`
-  - **Why:** Tab 2 has the same purchase/sale price inputs and benefits from the same depreciation helper
-
-### B4: Embed in ReplacementPlanner (Tab 5)
-
-- [ ] Add `<CollapsibleSection title="Depreciation Curve">` with standalone `<DepreciationPanel>` (no form wiring) in `ReplacementPlanner.tsx`
-  - **Why:** Reference helper for replacement timing decisions; no need to wire to individual machine rows
-
-### B5: Verify
-
-- [ ] Run `npm test` and `npm run build`
-  - **Why:** Regression check after refactoring a shared component used across 4 tabs
+- [x] Refactored DepreciationPanel to accept optional props: `purchasePrice`, `yearsOwned`, `onApplySalePrice`, `onYearsChange` — controlled mode when props provided, internal state when standalone
+- [x] Purchase price input hidden when `purchasePrice` prop provided; "Use as sale price" button shown only when `onApplySalePrice` provided
+- [x] Embedded in CostPerHectare (Tab 1) with CollapsibleSection, wired to form's `purchasePrice`, `yearsOwned`, and `salePrice`
+- [x] Embedded in CostPerHour (Tab 2) with same integration
+- [x] Embedded in ReplacementPlanner (Tab 5) as standalone reference helper
+- [x] Added 16 tests (10 standalone + 6 prop-driven); all 356 tests pass, `vite build` succeeds
 
 **Files:** `src/components/DepreciationPanel.tsx`, `src/components/__tests__/DepreciationPanel.test.tsx`, `src/components/CostPerHectare.tsx`, `src/components/CostPerHour.tsx`, `src/components/ReplacementPlanner.tsx`
 

@@ -14,6 +14,7 @@ import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
+import { DepreciationPanel } from "./DepreciationPanel"
 
 export function CostPerHectare({
   initialInputs,
@@ -136,6 +137,18 @@ export function CostPerHectare({
           tooltip="Total hectares this machine covers in a year"
           min={0}
         />
+      </div>
+
+      {/* Depreciation Curve */}
+      <div className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection title="Depreciation Curve" defaultOpen={false}>
+          <DepreciationPanel
+            purchasePrice={inputs.purchasePrice}
+            yearsOwned={inputs.yearsOwned}
+            onApplySalePrice={update("salePrice")}
+            onYearsChange={update("yearsOwned")}
+          />
+        </CollapsibleSection>
       </div>
 
       {/* Running Costs */}

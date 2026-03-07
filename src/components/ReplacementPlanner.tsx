@@ -5,6 +5,8 @@ import { calcReplacementSummary } from "@/lib/calculations"
 import { formatGBP, formatPct } from "@/lib/format"
 import { InputField } from "./InputField"
 import { ResultBanner } from "./ResultBanner"
+import { CollapsibleSection } from "./CollapsibleSection"
+import { DepreciationPanel } from "./DepreciationPanel"
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -403,6 +405,12 @@ export function ReplacementPlanner({
         <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
       </div>
 
+      {/* Depreciation Curve — standalone reference helper */}
+      <div className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection title="Depreciation Curve" defaultOpen={false}>
+          <DepreciationPanel />
+        </CollapsibleSection>
+      </div>
     </div>
   )
 }

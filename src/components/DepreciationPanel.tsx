@@ -14,10 +14,37 @@ import { DepreciationCurve } from "./DepreciationCurve"
 
 const CATEGORIES = Object.entries(DEPRECIATION_PROFILES) as [MachineCategory, typeof DEPRECIATION_PROFILES[MachineCategory]][]
 
-export function DepreciationPanel() {
+interface DepreciationPanelProps {
+  /** Fills the "Expected sale price" input on the parent form */
+  onApplySalePrice?: (value: number) => void
+  /** Current purchase price from the form (drives the £ scale) */
+  purchasePrice?: number
+  /** Current years owned from the form (positions the "you are here" marker) */
+  yearsOwned?: number
+  /** Callback when the user changes years on the slider */
+  onYearsChange?: (years: number) => void
+}
+
+export function DepreciationPanel({
+  onApplySalePrice,
+  purchasePrice: propPurchasePrice,
+  yearsOwned: propYearsOwned,
+  onYearsChange,
+}: DepreciationPanelProps = {}) {
   const [category, setCategory] = useState<MachineCategory>("tractors_large")
-  const [purchasePrice, setPurchasePrice] = useState(100000)
-  const [years, setYears] = useState(5)
+  const [internalPurchasePrice, setInternalPurchasePrice] = useState(100000)
+  const [internalYears, setInternalYears] = useState(5)
+
+  const purchasePrice = propPurchasePrice ?? internalPurchasePrice
+  const years = propYearsOwned ?? internalYears
+
+  const handleYearsChange = (value: number) => {
+    if (propYearsOwned !== undefined) {
+      onYearsChange?.(value)
+    } else {
+      setInternalYears(value)
+    }
+  }
 
   const profile = DEPRECIATION_PROFILES[category]
   const sweetSpot = useMemo(() => findSweetSpot(category), [category])
@@ -48,19 +75,21 @@ export function DepreciationPanel() {
             ))}
           </select>
         </div>
-        <div>
-          <label className="text-xs font-medium text-muted-foreground block mb-1">
-            Purchase price (£):
-          </label>
-          <input
-            type="number"
-            value={purchasePrice}
-            onChange={(e) => setPurchasePrice(Number(e.target.value) || 0)}
-            className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
-            min={0}
-            step={1000}
-          />
-        </div>
+        {propPurchasePrice === undefined && (
+          <div>
+            <label className="text-xs font-medium text-muted-foreground block mb-1">
+              Purchase price (£):
+            </label>
+            <input
+              type="number"
+              value={internalPurchasePrice}
+              onChange={(e) => setInternalPurchasePrice(Number(e.target.value) || 0)}
+              className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
+              min={0}
+              step={1000}
+            />
+          </div>
+        )}
       </div>
 
       {/* SVG Depreciation Curve — prominent */}
@@ -87,7 +116,7 @@ export function DepreciationPanel() {
           min={0}
           max={12}
           value={years}
-          onChange={(e) => setYears(Number(e.target.value))}
+          onChange={(e) => handleYearsChange(Number(e.target.value))}
           className="w-full accent-green-600"
           aria-label="Machine age in years"
         />
@@ -151,6 +180,16 @@ export function DepreciationPanel() {
           the machine longer past this point.
         </span>
       </div>
+
+      {/* Use as sale price button — only when parent provides callback */}
+      {onApplySalePrice && (
+        <button
+          onClick={() => onApplySalePrice(estimatedValue)}
+          className="w-full rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 min-h-[44px]"
+        >
+          Use {formatGBP(estimatedValue)} as sale price
+        </button>
+      )}
 
       {/* Source footer */}
       <div className="text-xs text-muted-foreground text-center">
