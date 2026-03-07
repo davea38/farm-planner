@@ -62,7 +62,7 @@ export function SaveLoadToolbar<T>({
       {savedMachines.length > 0 && (
         <div className="flex items-center gap-2">
           <Select
-            value={selectedIndex !== null ? String(selectedIndex) : undefined}
+            value={selectedIndex !== null ? String(selectedIndex) : null}
             onValueChange={(v) => {
               const idx = Number(v)
               setSelectedIndex(idx)

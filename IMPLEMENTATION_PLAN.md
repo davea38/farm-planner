@@ -1,6 +1,6 @@
 # Implementation Plan — Farm Machinery Planner
 
-**Priority order:** SPEC-01 → SPEC-02 → SPEC-03 → SPEC-04 → SPEC-07 → SPEC-06 → SPEC-05
+**Priority order:** SPEC-01 → SPEC-02 → SPEC-03 → SPEC-04 → SPEC-07 → SPEC-06 → SPEC-05 → SPEC-08
 
 ## Gap Analysis Summary
 
@@ -184,14 +184,31 @@ _Must be last. Depends on SPEC-01 through SPEC-04 (and ideally SPEC-06/07)._
   - **Changes:** FuelPricePanel responsive grid, ContractorRatesPanel horizontal scroll on mobile
 - [x] Verify `npm run build` succeeds with zero TypeScript errors
   - **Why:** Final type-safety gate check
-  - **Note:** Pre-existing TS error in untracked `SaveLoadToolbar.test.tsx` (SPEC-08 WIP); all production and existing test code clean
+  - **Note:** All production and test code clean
 - [x] Verify all tests pass (unit + integration) with `npm test`
   - **Why:** Complete regression check
-  - **Note:** 132/135 tests pass; 3 pre-existing failures in `SaveLoadToolbar.test.tsx` and `machineProfileLoading.test.tsx` (SPEC-08 WIP)
+  - **Note:** All 135 tests pass
 
 ---
 
-## New Files (28)
+## Phase H: SPEC-08 — Machine Profile Loading Bug Fix
+
+_Depends on: SPEC-01._
+
+- [x] Create `src/components/__tests__/SaveLoadToolbar.test.tsx` — test onLoad callback with correct index, re-fire after delete
+  - **Why:** RED tests to verify Select controlled mode and callback behavior
+- [x] Create `src/components/__tests__/machineProfileLoading.test.tsx` — integration tests for profile load across both tabs
+  - **Why:** RED tests to verify parent state updates when profiles are loaded
+- [x] Modify `src/components/SaveLoadToolbar.tsx` — fix Select `value` prop from `undefined` to `null` (Base UI controlled mode)
+  - **Why:** `undefined` makes Base UI Select uncontrolled; `null` keeps it controlled with no selection, preventing missed `onValueChange` fires when re-selecting the same index after delete
+- [x] Modify `src/App.tsx` — add `onLoadCostPerHectareMachine` and `onLoadCostPerHourMachine` callbacks; pass as `onLoadMachine` prop
+  - **Why:** Without these, child components' local state updates on profile load but parent `appState` never updates, causing stale state to overwrite on next re-render
+- [x] Verify all 135 tests pass and build succeeds with zero TypeScript errors
+  - **Why:** Full regression and type-safety check
+
+---
+
+## New Files (30)
 
 | File | Spec | Type |
 |------|------|------|
@@ -199,6 +216,8 @@ _Must be last. Depends on SPEC-01 through SPEC-04 (and ideally SPEC-06/07)._
 | `src/setupTests.ts` | 01 | Config |
 | `src/lib/__tests__/calculations.test.ts` | 01 | Test |
 | `src/components/__tests__/ResultBanner.test.tsx` | 01 | Test |
+| `src/components/__tests__/SaveLoadToolbar.test.tsx` | 08 | Test |
+| `src/components/__tests__/machineProfileLoading.test.tsx` | 08 | Test |
 | `src/lib/fuel-data.ts` | 02 | Data |
 | `src/lib/__tests__/fuel-data.test.ts` | 02 | Test |
 | `src/components/Sparkline.tsx` | 02 | Component |
@@ -224,13 +243,14 @@ _Must be last. Depends on SPEC-01 through SPEC-04 (and ideally SPEC-06/07)._
 | `src/components/__tests__/CostPerHectare.integration.test.tsx` | 05 | Test |
 | `src/components/__tests__/CostPerHour.integration.test.tsx` | 05 | Test |
 
-## Modified Files (12)
+## Modified Files (14)
 
 | File | Modified By Specs |
 |------|-------------------|
 | `package.json` | 01 |
 | `tsconfig.app.json` | 01 |
-| `src/App.tsx` | 06 |
+| `src/App.tsx` | 06, 08 |
+| `src/components/SaveLoadToolbar.tsx` | 08 |
 | `src/components/CostPerHectare.tsx` | 02, 03, 04, 06, 07 |
 | `src/components/CostPerHour.tsx` | 02, 03, 04, 06, 07 |
 | `src/components/InputField.tsx` | 06 |
