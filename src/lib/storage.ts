@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { AppState } from "./types";
 import {
   defaultCostPerHectare,
@@ -93,6 +94,33 @@ export function exportToFile(state: AppState): void {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+export function useAutoSave(data: AppState, delayMs = 1000): void {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Skip saving on initial mount — the data is already from localStorage or defaults
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(() => {
+      saveState(data);
+    }, delayMs);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [data, delayMs]);
 }
 
 export function importFromFile(file: File): Promise<AppState> {

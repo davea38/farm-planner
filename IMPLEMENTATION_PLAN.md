@@ -81,8 +81,9 @@
   - WHY: All four tabs auto-save to localStorage and share export/import.
   - NOTE: Uses STORAGE_KEY="farmPlanner", CURRENT_VERSION=1. loadState() returns defaults on missing/invalid data. saveState() stamps version+lastSaved. exportToFile() creates downloadable .json via Blob URL. importFromFile() validates, saves to localStorage, and returns parsed state. isValidState() performs structural validation.
 
-- [ ] **2.10** Add debounced auto-save hook `useAutoSave(data, delayMs=1000)` in storage module
+- [x] **2.10** Add debounced auto-save hook `useAutoSave(data, delayMs=1000)` in storage module
   - WHY: Spec requires auto-save on every change, debounced to 1 second.
+  - NOTE: Added useAutoSave React hook to storage.ts. Uses useRef for debounce timer and skips initial render to avoid redundant save on mount. Accepts AppState data and optional delay (default 1000ms).
 
 ---
 
