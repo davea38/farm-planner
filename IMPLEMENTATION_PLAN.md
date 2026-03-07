@@ -94,21 +94,21 @@ _Depends on: SPEC-01_
 
 _Depends on: SPEC-01. Before SPEC-06 so unit support can be applied in one pass._
 
-- [ ] Create `src/lib/depreciation-data.ts` with 8 `DEPRECIATION_PROFILES`, `getRemainingValuePct()`, `getEstimatedValue()`, `getDepreciationLoss()`, `getAnnualDepreciation()`, `findSweetSpot()`
+- [x] Create `src/lib/depreciation-data.ts` with 8 `DEPRECIATION_PROFILES`, `getRemainingValuePct()`, `getEstimatedValue()`, `getDepreciationLoss()`, `getAnnualDepreciation()`, `findSweetSpot()`
   - **Why:** Core ASAE D497 depreciation data; 8 machine categories with 13-entry curves (years 0–12)
-- [ ] Create `src/lib/__tests__/depreciation-data.test.ts` — test 8 categories, all start at 100%, 13 entries, monotonically decreasing, specific lookups, clamping, estimated values, loss, annual depreciation, sweet spot range
+- [x] Create `src/lib/__tests__/depreciation-data.test.ts` — test 8 categories, all start at 100%, 13 entries, monotonically decreasing, specific lookups, clamping, estimated values, loss, annual depreciation, sweet spot range
   - **Why:** Extensive data integrity and calculation function tests
-- [ ] Create `src/components/DepreciationCurve.tsx` — pure SVG line chart with gradient fill, dot markers, steep-zone shading, "you are here" marker, dashed value line, axis labels
+- [x] Create `src/components/DepreciationCurve.tsx` — pure SVG line chart with gradient fill, dot markers, steep-zone shading, "you are here" marker, dashed value line, axis labels
   - **Why:** Reusable SVG chart; separated from panel logic
-- [ ] Create `src/components/DepreciationPanel.tsx` — collapsible panel with category dropdown, DepreciationCurve SVG, summary card, percentage bar, sweet spot callout, year slider (0–12), "Use as sale price" button, source footer
+- [x] Create `src/components/DepreciationPanel.tsx` — collapsible panel with category dropdown, DepreciationCurve SVG, summary card, percentage bar, sweet spot callout, year slider (0–12), "Use as sale price" button, source footer
   - **Why:** Interactive panel; year slider syncs bidirectionally with parent form
-- [ ] Create `src/components/__tests__/DepreciationPanel.test.tsx` — test title, dropdown, SVG, values, percentage, sweet spot, onApplySalePrice, source, slider, slider change
+- [x] Create `src/components/__tests__/DepreciationPanel.test.tsx` — test title, dropdown, SVG, values, percentage, sweet spot, onApplySalePrice, source, slider, slider change
   - **Why:** Component interaction and display tests
-- [ ] Modify `src/components/CostPerHectare.tsx` — add `<DepreciationPanel>` below "What Did You Pay" section
+- [x] Modify `src/components/CostPerHectare.tsx` — add `<DepreciationPanel>` below "What Did You Pay" section
   - **Why:** Helps farmers set a realistic expected sale price
-- [ ] Modify `src/components/CostPerHour.tsx` — same DepreciationPanel integration
+- [x] Modify `src/components/CostPerHour.tsx` — same DepreciationPanel integration
   - **Why:** Tab 2 has the same purchase/sale inputs
-- [ ] Modify `src/components/ReplacementPlanner.tsx` — add `<DepreciationPanel>` as a reference helper at the bottom
+- [x] Modify `src/components/ReplacementPlanner.tsx` — add `<DepreciationPanel>` as a reference helper at the bottom
   - **Why:** Complements "when to replace" with "how much value is lost" data
 
 ---

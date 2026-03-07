@@ -11,6 +11,7 @@ import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
+import { DepreciationPanel } from "./DepreciationPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 
 export function CostPerHectare({
@@ -127,6 +128,14 @@ export function CostPerHectare({
           min={0}
         />
       </div>
+
+      {/* Depreciation Curve */}
+      <DepreciationPanel
+        onApplySalePrice={update("salePrice")}
+        purchasePrice={inputs.purchasePrice}
+        yearsOwned={inputs.yearsOwned}
+        onYearsChange={update("yearsOwned")}
+      />
 
       {/* Running Costs */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
