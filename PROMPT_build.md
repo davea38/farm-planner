@@ -7,6 +7,7 @@ You are in BUILDING mode. You will implement exactly ONE task, then stop.
 1. Study `AGENTS.md` for operational guidance.
 2. Study `IMPLEMENTATION_PLAN.md` to see all tasks.
 3. Study relevant files in `specs/` using up to 500 parallel Sonnet subagents to understand requirements for the task you will pick.
+4. Analyze this task using BDI and OODA loops. Trigger agents to look for gaps, TODOs, and half-implemented features.
 
 ## Phase 1 - Pick One Task
 
