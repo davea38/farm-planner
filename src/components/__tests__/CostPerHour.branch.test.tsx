@@ -161,4 +161,102 @@ describe("CostPerHour – branch coverage", () => {
 
     expect(onChange).toHaveBeenCalled()
   })
+
+  it("clears source badge when user manually edits a field that had a source", async () => {
+    const user = userEvent.setup()
+    renderWithUnits(<CostPerHour />)
+
+    // Expand the AHDB Fuel Prices collapsible section first
+    await user.click(screen.getByText(/AHDB Fuel Prices/))
+    // Click "Use red diesel price" to set a source badge on fuelPrice
+    await user.click(screen.getByRole("button", { name: /use red diesel/i }))
+    // Source badge should now be visible
+    expect(screen.getByText("AHDB fuel price")).toBeInTheDocument()
+
+    // Find the fuel price input and manually edit it to trigger update("fuelPrice")
+    const fuelPriceInput = screen.getByDisplayValue(/0\.\d+/)
+    await user.clear(fuelPriceInput)
+    await user.type(fuelPriceInput, "0.99")
+
+    // Source badge should be removed after manual edit
+    expect(screen.queryByText("AHDB fuel price")).not.toBeInTheDocument()
+  })
+
+  it("sets source badges on all fields when loading a saved machine", async () => {
+    const onLoad = vi.fn()
+    const user = userEvent.setup()
+    const savedInputs: CostPerHourInputs = {
+      purchasePrice: 150000,
+      yearsOwned: 6,
+      salePrice: 60000,
+      hoursPerYear: 800,
+      interestRate: 3,
+      insuranceRate: 2,
+      storageRate: 1,
+      fuelConsumptionPerHr: 18,
+      fuelPrice: 0.7,
+      repairsPct: 2,
+      labourCost: 16,
+      contractorCharge: 50,
+    }
+    renderWithUnits(
+      <CostPerHour
+        savedMachines={[{ name: "Test Loader", inputs: savedInputs }]}
+        onLoadMachine={onLoad}
+      />
+    )
+
+    await user.click(screen.getByText("Load a saved machine..."))
+    await user.click(screen.getByText("Test Loader"))
+
+    // handleLoad sets source badges on all fields
+    expect(screen.getAllByText("Saved: Test Loader").length).toBeGreaterThan(0)
+  })
+
+  it("resets isDirty on save and calls onDirtyChange(false)", async () => {
+    const onDirtyChange = vi.fn()
+    const onSave = vi.fn()
+    const user = userEvent.setup()
+    renderWithUnits(
+      <CostPerHour onDirtyChange={onDirtyChange} onSaveMachine={onSave} />
+    )
+
+    // Make an edit to set isDirty = true
+    const purchaseInput = screen.getByDisplayValue("92751")
+    await user.clear(purchaseInput)
+    await user.type(purchaseInput, "100000")
+
+    // onDirtyChange should have been called with true
+    expect(onDirtyChange).toHaveBeenCalledWith(true)
+    onDirtyChange.mockClear()
+
+    // Save the machine
+    const nameInput = screen.getByPlaceholderText("Name this machine...")
+    await user.type(nameInput, "Saved Machine")
+    await user.click(screen.getByText("Save"))
+
+    // handleSave should reset isDirty and call onDirtyChange(false)
+    expect(onDirtyChange).toHaveBeenCalledWith(false)
+    expect(onSave).toHaveBeenCalledWith("Saved Machine", expect.any(Object))
+  })
+
+  it("calls onDirtyChange only once on first edit", async () => {
+    const onDirtyChange = vi.fn()
+    const user = userEvent.setup()
+    renderWithUnits(<CostPerHour onDirtyChange={onDirtyChange} />)
+
+    // First edit
+    const purchaseInput = screen.getByDisplayValue("92751")
+    await user.clear(purchaseInput)
+    await user.type(purchaseInput, "100000")
+
+    // Second edit
+    const saleInput = screen.getByDisplayValue("40000")
+    await user.clear(saleInput)
+    await user.type(saleInput, "50000")
+
+    // onDirtyChange(true) should have been called exactly once
+    const trueCalls = onDirtyChange.mock.calls.filter((c: [boolean]) => c[0] === true)
+    expect(trueCalls).toHaveLength(1)
+  })
 })

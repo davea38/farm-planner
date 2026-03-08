@@ -79,21 +79,21 @@ export function SaveLoadToolbar<T>({
       {savedMachines.length > 0 ? (
         <div className="flex items-center gap-2">
           <Select
-            value={selectedIndex !== null ? String(selectedIndex) : null}
+            value={selectedIndex !== null ? savedMachines[selectedIndex]?.name : undefined}
             onValueChange={(v) => {
-              const idx = Number(v)
+              const idx = savedMachines.findIndex((m) => m.name === v)
+              if (idx < 0) return
               setSelectedIndex(idx)
               onLoad(idx)
-              const machineName = savedMachines[idx]?.name ?? "Machine"
-              showToast(`Loaded "${machineName}" — inputs updated on this tab.`)
+              showToast(`Loaded "${v}" — inputs updated on this tab.`)
             }}
           >
             <SelectTrigger className="flex-1 min-h-[44px]">
               <SelectValue placeholder="Load a saved machine..." />
             </SelectTrigger>
             <SelectContent>
-              {savedMachines.map((machine, idx) => (
-                <SelectItem key={idx} value={String(idx)}>
+              {savedMachines.map((machine) => (
+                <SelectItem key={machine.name} value={machine.name}>
                   {machine.name}
                 </SelectItem>
               ))}

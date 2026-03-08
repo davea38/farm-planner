@@ -102,3 +102,39 @@ describe("DepreciationPanel — prop-driven mode", () => {
     expect(onApply).toHaveBeenCalledWith(45360)
   })
 })
+
+describe("DepreciationPanel — category control", () => {
+  it("calls onCategoryChange when category prop is controlled", () => {
+    const onCategoryChange = vi.fn()
+    renderPanel({ category: "tractors_large", onCategoryChange })
+    const select = screen.getByRole("combobox")
+    fireEvent.change(select, { target: { value: "combines" } })
+    expect(onCategoryChange).toHaveBeenCalledWith("combines")
+  })
+
+  it("updates internal category when not controlled", () => {
+    renderPanel()
+    const select = screen.getByRole("combobox")
+    fireEvent.change(select, { target: { value: "combines" } })
+    // Verify the select now shows "combines"
+    expect(select).toHaveValue("combines")
+  })
+
+  it("updates internal purchase price when no prop provided", () => {
+    renderPanel()
+    const priceInput = screen.getByRole("spinbutton") // purchase price input
+    fireEvent.change(priceInput, { target: { value: "200000" } })
+    // Verify the value updates
+    expect(priceInput).toHaveValue(200000)
+  })
+
+  it("shows singular 'year' for 1 year", () => {
+    renderPanel({ purchasePrice: 100000, yearsOwned: 1 })
+    expect(screen.getByText(/after 1 year$/i)).toBeInTheDocument()
+  })
+
+  it("shows plural 'years' for multiple years", () => {
+    renderPanel({ purchasePrice: 100000, yearsOwned: 5 })
+    expect(screen.getByText(/after 5 years/i)).toBeInTheDocument()
+  })
+})

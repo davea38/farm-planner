@@ -191,4 +191,44 @@ describe("CostPerHectare – branch coverage", () => {
     expect(screen.getByText(/work rate/)).toBeInTheDocument()
     expect(screen.getByText(/years owned/)).toBeInTheDocument()
   })
+
+  it("clears source badge when user manually edits a field that had a source", async () => {
+    const user = userEvent.setup()
+    renderWithUnits(<CostPerHectare />)
+
+    // Expand the AHDB Fuel Prices collapsible section first
+    await user.click(screen.getByText(/AHDB Fuel Prices/))
+    // Click "Use red diesel price" to set a source badge on fuelPrice
+    await user.click(screen.getByRole("button", { name: /use red diesel/i }))
+    // Source badge should now be visible
+    expect(screen.getByText("AHDB fuel price")).toBeInTheDocument()
+
+    // Find the fuel price input and manually edit it
+    const fuelPriceInput = screen.getByDisplayValue(/0\.\d+/)
+    await user.clear(fuelPriceInput)
+    await user.type(fuelPriceInput, "0.99")
+
+    // Source badge should be removed after manual edit
+    expect(screen.queryByText("AHDB fuel price")).not.toBeInTheDocument()
+  })
+
+  it("calls onDirtyChange only once on first edit", async () => {
+    const onDirtyChange = vi.fn()
+    const user = userEvent.setup()
+    renderWithUnits(<CostPerHectare onDirtyChange={onDirtyChange} />)
+
+    // First edit — should trigger onDirtyChange(true)
+    const purchaseInput = screen.getByDisplayValue("126000")
+    await user.clear(purchaseInput)
+    await user.type(purchaseInput, "200000")
+
+    // Second edit — should NOT trigger onDirtyChange again
+    const saleInput = screen.getByDisplayValue("34000")
+    await user.clear(saleInput)
+    await user.type(saleInput, "50000")
+
+    // onDirtyChange should have been called exactly once with true
+    const trueCalls = onDirtyChange.mock.calls.filter((c: [boolean]) => c[0] === true)
+    expect(trueCalls).toHaveLength(1)
+  })
 })
