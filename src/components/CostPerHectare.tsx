@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import type { CostPerHectareInputs, SavedMachine } from "@/lib/types"
+import type { CostPerHectareInputs, SavedMachine, DepreciationCategory } from "@/lib/types"
 import { defaultCostPerHectare } from "@/lib/defaults"
 import { calcCostPerHectare } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
@@ -32,7 +32,7 @@ export function CostPerHectare({
   onChange?: (inputs: CostPerHectareInputs) => void
   onDirtyChange?: (dirty: boolean) => void
   savedMachines?: SavedMachine<CostPerHectareInputs>[]
-  onSaveMachine?: (name: string, inputs: CostPerHectareInputs) => void
+  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHectareInputs) => void
   onLoadMachine?: (index: number) => void
   onDeleteMachine?: (index: number) => void
   onResetMachine?: () => void
@@ -125,8 +125,8 @@ export function CostPerHectare({
     onDirtyChange?.(false)
   }
 
-  const handleSave = (name: string) => {
-    onSaveMachine?.(name, inputs)
+  const handleSave = (name: string, machineType: DepreciationCategory) => {
+    onSaveMachine?.(name, machineType, inputs)
     setIsDirty(false)
     onDirtyChange?.(false)
   }

@@ -13,9 +13,9 @@ describe("SaveLoadToolbar - delete loads first remaining or resets", () => {
     render(
       <SaveLoadToolbar
         savedMachines={[
-          { name: "Tractor", inputs: {} },
-          { name: "Combine", inputs: {} },
-          { name: "Sprayer", inputs: {} },
+          { name: "Tractor", machineType: "tractors_large", inputs: {} },
+          { name: "Combine", machineType: "tractors_large", inputs: {} },
+          { name: "Sprayer", machineType: "tractors_large", inputs: {} },
         ]}
         onSave={() => {}}
         onLoad={onLoad}
@@ -48,8 +48,8 @@ describe("SaveLoadToolbar - delete loads first remaining or resets", () => {
     render(
       <SaveLoadToolbar
         savedMachines={[
-          { name: "Tractor", inputs: {} },
-          { name: "Combine", inputs: {} },
+          { name: "Tractor", machineType: "tractors_large", inputs: {} },
+          { name: "Combine", machineType: "tractors_large", inputs: {} },
         ]}
         onSave={() => {}}
         onLoad={onLoad}
@@ -81,7 +81,7 @@ describe("SaveLoadToolbar - delete loads first remaining or resets", () => {
 
     render(
       <SaveLoadToolbar
-        savedMachines={[{ name: "Tractor", inputs: {} }]}
+        savedMachines={[{ name: "Tractor", machineType: "tractors_large", inputs: {} }]}
         onSave={() => {}}
         onLoad={onLoad}
         onDelete={onDelete}
@@ -108,7 +108,7 @@ describe("SaveLoadToolbar - delete loads first remaining or resets", () => {
 
     render(
       <SaveLoadToolbar
-        savedMachines={[{ name: "Tractor", inputs: {} }]}
+        savedMachines={[{ name: "Tractor", machineType: "tractors_large", inputs: {} }]}
         onSave={() => {}}
         onLoad={() => {}}
         onDelete={() => {}}
@@ -129,8 +129,8 @@ describe("SaveLoadToolbar - delete loads first remaining or resets", () => {
     render(
       <SaveLoadToolbar
         savedMachines={[
-          { name: "Tractor", inputs: {} },
-          { name: "Combine", inputs: {} },
+          { name: "Tractor", machineType: "tractors_large", inputs: {} },
+          { name: "Combine", machineType: "tractors_large", inputs: {} },
         ]}
         onSave={() => {}}
         onLoad={() => {}}

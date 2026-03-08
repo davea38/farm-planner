@@ -117,11 +117,15 @@ describe("CostPerHectare – branch coverage", () => {
       <CostPerHectare onSaveMachine={onSave} />
     )
 
+    // Select a machine type first
+    const machineTypeSelect = screen.getByDisplayValue("Please select...")
+    await user.selectOptions(machineTypeSelect, "tractors_large")
+
     const nameInput = screen.getByPlaceholderText("Name this machine...")
     await user.type(nameInput, "Test Machine")
     await user.click(screen.getByText("Save"))
 
-    expect(onSave).toHaveBeenCalledWith("Test Machine", expect.any(Object))
+    expect(onSave).toHaveBeenCalledWith("Test Machine", "tractors_large", expect.any(Object))
   })
 
   it("loads a saved machine profile", async () => {
@@ -144,7 +148,7 @@ describe("CostPerHectare – branch coverage", () => {
     }
     renderWithUnits(
       <CostPerHectare
-        savedMachines={[{ name: "Saved Tractor", inputs: savedInputs }]}
+        savedMachines={[{ name: "Saved Tractor", machineType: "miscellaneous", inputs: savedInputs }]}
         onLoadMachine={onLoad}
       />
     )
@@ -168,7 +172,7 @@ describe("CostPerHectare – branch coverage", () => {
     }
     renderWithUnits(
       <CostPerHectare
-        savedMachines={[{ name: "Old Tractor", inputs: savedInputs }]}
+        savedMachines={[{ name: "Old Tractor", machineType: "miscellaneous", inputs: savedInputs }]}
         onLoadMachine={onLoad}
         onDeleteMachine={onDelete}
       />

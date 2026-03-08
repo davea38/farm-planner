@@ -1,3 +1,5 @@
+import type { MachineCategory as DepreciationCategory } from "./depreciation-data";
+
 export interface CostPerHectareInputs {
   purchasePrice: number;
   yearsOwned: number;
@@ -123,8 +125,11 @@ export interface ReplacementSummary {
   pctOfIncome: number;
 }
 
+export type { DepreciationCategory };
+
 export interface SavedMachine<T> {
   name: string;
+  machineType: DepreciationCategory;
   inputs: T;
 }
 

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import type { CostPerHourInputs, SavedMachine } from "@/lib/types"
+import type { CostPerHourInputs, SavedMachine, DepreciationCategory } from "@/lib/types"
 import { defaultCostPerHour } from "@/lib/defaults"
 import { calcCostPerHour } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
@@ -30,7 +30,7 @@ export function CostPerHour({
   onChange?: (inputs: CostPerHourInputs) => void
   onDirtyChange?: (dirty: boolean) => void
   savedMachines?: SavedMachine<CostPerHourInputs>[]
-  onSaveMachine?: (name: string, inputs: CostPerHourInputs) => void
+  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs) => void
   onLoadMachine?: (index: number) => void
   onDeleteMachine?: (index: number) => void
   onResetMachine?: () => void
@@ -119,8 +119,8 @@ export function CostPerHour({
     onDirtyChange?.(false)
   }
 
-  const handleSave = (name: string) => {
-    onSaveMachine?.(name, inputs)
+  const handleSave = (name: string, machineType: DepreciationCategory) => {
+    onSaveMachine?.(name, machineType, inputs)
     setIsDirty(false)
     onDirtyChange?.(false)
   }

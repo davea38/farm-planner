@@ -15,7 +15,7 @@ import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
 import type { UnitPreferences } from '@/lib/units'
 import { defaultCostPerHectare, defaultCostPerHour } from '@/lib/defaults'
-import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState, ContractingIncomeState } from '@/lib/types'
+import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState, ContractingIncomeState, DepreciationCategory } from '@/lib/types'
 
 function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
@@ -36,12 +36,12 @@ function App() {
     }))
   }, [])
 
-  const onSaveCostPerHectareMachine = useCallback((name: string, inputs: CostPerHectareInputs) => {
+  const onSaveCostPerHectareMachine = useCallback((name: string, machineType: DepreciationCategory, inputs: CostPerHectareInputs) => {
     setAppState((prev) => ({
       ...prev,
       costPerHectare: {
         ...prev.costPerHectare,
-        savedMachines: [...prev.costPerHectare.savedMachines, { name, inputs }],
+        savedMachines: [...prev.costPerHectare.savedMachines, { name, machineType, inputs }],
       },
     }))
   }, [])
@@ -81,12 +81,12 @@ function App() {
     }))
   }, [])
 
-  const onSaveCostPerHourMachine = useCallback((name: string, inputs: CostPerHourInputs) => {
+  const onSaveCostPerHourMachine = useCallback((name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs) => {
     setAppState((prev) => ({
       ...prev,
       costPerHour: {
         ...prev.costPerHour,
-        savedMachines: [...prev.costPerHour.savedMachines, { name, inputs }],
+        savedMachines: [...prev.costPerHour.savedMachines, { name, machineType, inputs }],
       },
     }))
   }, [])

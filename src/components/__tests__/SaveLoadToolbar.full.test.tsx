@@ -29,7 +29,7 @@ describe("SaveLoadToolbar - save functionality", () => {
     expect(screen.getByText("Save")).toBeDisabled()
   })
 
-  it("calls onSave with trimmed name and clears input", async () => {
+  it("calls onSave with trimmed name, machineType and clears input", async () => {
     const onSave = vi.fn()
     const user = userEvent.setup()
     render(
@@ -41,11 +41,15 @@ describe("SaveLoadToolbar - save functionality", () => {
       />
     )
 
+    // Select a machine type first
+    const machineTypeSelect = screen.getByDisplayValue("Please select...")
+    await user.selectOptions(machineTypeSelect, "tractors_large")
+
     const input = screen.getByPlaceholderText("Name this machine...")
     await user.type(input, "  My Tractor  ")
     await user.click(screen.getByText("Save"))
 
-    expect(onSave).toHaveBeenCalledWith("My Tractor")
+    expect(onSave).toHaveBeenCalledWith("My Tractor", "tractors_large")
     expect(input).toHaveValue("")
   })
 
@@ -60,6 +64,10 @@ describe("SaveLoadToolbar - save functionality", () => {
         onDelete={() => {}}
       />
     )
+
+    // Even with machine type selected, whitespace name should disable save
+    const machineTypeSelect = screen.getByDisplayValue("Please select...")
+    await user.selectOptions(machineTypeSelect, "tractors_large")
 
     const input = screen.getByPlaceholderText("Name this machine...")
     await user.type(input, "   ")
@@ -82,7 +90,7 @@ describe("SaveLoadToolbar - save functionality", () => {
   it("shows delete button when machines exist", () => {
     render(
       <SaveLoadToolbar
-        savedMachines={[{ name: "Tractor", inputs: {} }]}
+        savedMachines={[{ name: "Tractor", machineType: "tractors_large", inputs: {} }]}
         onSave={() => {}}
         onLoad={() => {}}
         onDelete={() => {}}
@@ -99,8 +107,8 @@ describe("SaveLoadToolbar - save functionality", () => {
     render(
       <SaveLoadToolbar
         savedMachines={[
-          { name: "Tractor 1", inputs: {} },
-          { name: "Combine", inputs: {} },
+          { name: "Tractor 1", machineType: "tractors_large", inputs: {} },
+          { name: "Combine", machineType: "combines", inputs: {} },
         ]}
         onSave={() => {}}
         onLoad={onLoad}

@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { SaveLoadToolbar } from '@/components/SaveLoadToolbar'
 
 const twoMachines = [
-  { name: 'Drill', inputs: { purchasePrice: 50000 } },
-  { name: 'Sprayer', inputs: { purchasePrice: 80000 } },
+  { name: 'Drill', machineType: 'drills' as const, inputs: { purchasePrice: 50000 } },
+  { name: 'Sprayer', machineType: 'sprayers' as const, inputs: { purchasePrice: 80000 } },
 ]
 
 describe('SaveLoadToolbar', () => {

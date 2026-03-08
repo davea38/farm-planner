@@ -6,7 +6,7 @@ import type { AppState } from "@/lib/types";
 
 function createTestState(overrides?: Partial<AppState>): AppState {
   return {
-    version: 3,
+    version: 4,
     lastSaved: new Date().toISOString(),
     costPerHectare: {
       current: {
@@ -493,8 +493,8 @@ describe("ProfitabilityOverview", () => {
           labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
         },
         savedMachines: [
-          { name: "Drill A", inputs: machineInputs },
-          { name: "Drill B", inputs: machineInputs },
+          { name: "Drill A", machineType: "miscellaneous", inputs: machineInputs },
+          { name: "Drill B", machineType: "miscellaneous", inputs: machineInputs },
         ],
       },
     });

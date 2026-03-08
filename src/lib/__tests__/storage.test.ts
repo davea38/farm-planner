@@ -18,7 +18,7 @@ vi.stubGlobal("crypto", {
 
 function createValidState(): AppState {
   return {
-    version: 3,
+    version: 4,
     lastSaved: "2026-01-01T00:00:00.000Z",
     costPerHectare: {
       current: {
@@ -95,7 +95,7 @@ describe("loadState", () => {
 
   it("returns default state when localStorage is empty", () => {
     const state = loadState()
-    expect(state.version).toBe(3)
+    expect(state.version).toBe(4)
     expect(state.costPerHectare).toBeDefined()
     expect(state.costPerHour).toBeDefined()
     expect(state.compareMachines).toBeDefined()
@@ -112,13 +112,13 @@ describe("loadState", () => {
   it("returns default state for invalid JSON", () => {
     localStorage.setItem("farmPlanner", "not json")
     const state = loadState()
-    expect(state.version).toBe(3)
+    expect(state.version).toBe(4)
   })
 
   it("returns default state for invalid structure", () => {
     localStorage.setItem("farmPlanner", JSON.stringify({ foo: "bar" }))
     const state = loadState()
-    expect(state.version).toBe(3)
+    expect(state.version).toBe(4)
   })
 
   it("migrates v0 data to v2", () => {
@@ -130,7 +130,7 @@ describe("loadState", () => {
     }
     localStorage.setItem("farmPlanner", JSON.stringify(v0Data))
     const state = loadState()
-    expect(state.version).toBe(3)
+    expect(state.version).toBe(4)
     expect(state.lastSaved).toBeDefined()
     expect(state.contractingIncome).toEqual({ services: [] })
   })
@@ -143,7 +143,7 @@ describe("loadState", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(futureData))
     const state = loadState()
     // Should fall back to defaults since migration returns null for future versions
-    expect(state.version).toBe(3)
+    expect(state.version).toBe(4)
   })
 })
 
@@ -158,7 +158,7 @@ describe("saveState", () => {
     const raw = localStorage.getItem("farmPlanner")
     expect(raw).toBeTruthy()
     const parsed = JSON.parse(raw!)
-    expect(parsed.version).toBe(3)
+    expect(parsed.version).toBe(4)
     expect(parsed.lastSaved).toBeDefined()
   })
 })
@@ -255,7 +255,7 @@ describe("importFromFile", () => {
     const file = new File([blob], "test.json", { type: "application/json" })
 
     const result = await importFromFile(file)
-    expect(result.version).toBe(3)
+    expect(result.version).toBe(4)
     expect(result.costPerHectare).toBeDefined()
   })
 

@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import type { SavedMachine } from "@/lib/types"
+import type { MachineCategory } from "@/lib/depreciation-data"
+import { DEPRECIATION_PROFILES } from "@/lib/depreciation-data"
 import {
   Select,
   SelectContent,
@@ -10,9 +12,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+const MACHINE_TYPE_OPTIONS = Object.entries(DEPRECIATION_PROFILES) as [MachineCategory, (typeof DEPRECIATION_PROFILES)[MachineCategory]][]
+
 interface SaveLoadToolbarProps<T> {
   savedMachines: SavedMachine<T>[]
-  onSave: (name: string) => void
+  onSave: (name: string, machineType: MachineCategory) => void
   onLoad: (index: number) => void
   onDelete: (index: number) => void
   onReset?: () => void
@@ -26,6 +30,7 @@ export function SaveLoadToolbar<T>({
   onReset,
 }: SaveLoadToolbarProps<T>) {
   const [name, setName] = useState("")
+  const [machineType, setMachineType] = useState<MachineCategory | "">("")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -42,6 +47,17 @@ export function SaveLoadToolbar<T>({
     toastTimer.current = setTimeout(() => setToast(null), 3500)
   }
 
+  // When a machine is loaded, update the machineType state
+  const handleLoad = (index: number) => {
+    const machine = savedMachines[index]
+    if (machine) {
+      setMachineType(machine.machineType)
+      setName(machine.name)
+    }
+    setSelectedIndex(index)
+    onLoad(index)
+  }
+
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
       <h2 className="text-sm font-semibold">Saved Machines</h2>
@@ -52,6 +68,29 @@ export function SaveLoadToolbar<T>({
           {toast}
         </div>
       )}
+
+      {/* Machine type dropdown */}
+      <div>
+        <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
+          Machine type
+        </label>
+        <select
+          id="machine-type-select"
+          value={machineType}
+          onChange={(e) => setMachineType(e.target.value as MachineCategory | "")}
+          className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
+          required
+        >
+          <option value="" disabled>
+            Please select...
+          </option>
+          {MACHINE_TYPE_OPTIONS.map(([key, p]) => (
+            <option key={key} value={key}>
+              {p.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Save row */}
       <div className="flex items-center gap-2">
@@ -64,13 +103,14 @@ export function SaveLoadToolbar<T>({
         />
         <Button
           onClick={() => {
-            if (name.trim()) {
-              onSave(name.trim())
+            if (name.trim() && machineType) {
+              onSave(name.trim(), machineType)
               showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
               setName("")
+              setMachineType("")
             }
           }}
-          disabled={!name.trim()}
+          disabled={!name.trim() || !machineType}
           className="min-h-[44px]"
         >
           Save
@@ -85,8 +125,7 @@ export function SaveLoadToolbar<T>({
             onValueChange={(v) => {
               const idx = savedMachines.findIndex((m) => m.name === v)
               if (idx < 0) return
-              setSelectedIndex(idx)
-              onLoad(idx)
+              handleLoad(idx)
               showToast(`Loaded "${v}" — inputs updated on this tab.`)
             }}
           >
@@ -108,13 +147,17 @@ export function SaveLoadToolbar<T>({
                 const machineName = savedMachines[selectedIndex]?.name ?? "Machine"
                 onDelete(selectedIndex)
                 if (savedMachines.length > 1) {
-                  // Load the first machine from the remaining list
-                  setSelectedIndex(0)
-                  onLoad(0)
+                  const nextIndex = 0
                   const firstRemaining = savedMachines[selectedIndex === 0 ? 1 : 0]
+                  setSelectedIndex(nextIndex)
+                  setMachineType(firstRemaining?.machineType ?? "")
+                  setName(firstRemaining?.name ?? "")
+                  onLoad(nextIndex)
                   showToast(`Deleted "${machineName}" — loaded "${firstRemaining?.name}".`)
                 } else {
                   setSelectedIndex(null)
+                  setMachineType("")
+                  setName("")
                   onReset?.()
                   showToast(`Deleted "${machineName}" — form reset to defaults.`)
                 }

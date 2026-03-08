@@ -138,7 +138,7 @@ describe("CostPerHour – branch coverage", () => {
     }
     renderWithUnits(
       <CostPerHour
-        savedMachines={[{ name: "Big Loader", inputs: savedInputs }]}
+        savedMachines={[{ name: "Big Loader", machineType: "miscellaneous", inputs: savedInputs }]}
         onLoadMachine={onLoad}
       />
     )
@@ -201,7 +201,7 @@ describe("CostPerHour – branch coverage", () => {
     }
     renderWithUnits(
       <CostPerHour
-        savedMachines={[{ name: "Test Loader", inputs: savedInputs }]}
+        savedMachines={[{ name: "Test Loader", machineType: "miscellaneous", inputs: savedInputs }]}
         onLoadMachine={onLoad}
       />
     )
@@ -230,14 +230,17 @@ describe("CostPerHour – branch coverage", () => {
     expect(onDirtyChange).toHaveBeenCalledWith(true)
     onDirtyChange.mockClear()
 
-    // Save the machine
+    // Save the machine — select machine type first
+    const machineTypeSelect = screen.getByDisplayValue("Please select...")
+    await user.selectOptions(machineTypeSelect, "tractors_large")
+
     const nameInput = screen.getByPlaceholderText("Name this machine...")
     await user.type(nameInput, "Saved Machine")
     await user.click(screen.getByText("Save"))
 
     // handleSave should reset isDirty and call onDirtyChange(false)
     expect(onDirtyChange).toHaveBeenCalledWith(false)
-    expect(onSave).toHaveBeenCalledWith("Saved Machine", expect.any(Object))
+    expect(onSave).toHaveBeenCalledWith("Saved Machine", "tractors_large", expect.any(Object))
   })
 
   it("calls onDirtyChange only once on first edit", async () => {
