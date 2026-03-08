@@ -163,7 +163,7 @@ export function ContractingIncomePlanner({
     <Card>
       <CardHeader>
         <CardTitle className="text-xl sm:text-2xl">
-          Contracting Income Planner
+          Will contracting pay?
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Model income from offering your machinery to others.
@@ -230,7 +230,7 @@ export function ContractingIncomePlanner({
                     >
                       <option value="">Select...</option>
                       {savedHectareMachines.length > 0 && (
-                        <optgroup label="Cost per Hectare">
+                        <optgroup label="Cost / Hectare">
                           {savedHectareMachines.map((m, i) => {
                             const r = calcCostPerHectare(m.inputs)
                             return (
@@ -242,7 +242,7 @@ export function ContractingIncomePlanner({
                         </optgroup>
                       )}
                       {savedHourMachines.length > 0 && (
-                        <optgroup label="Cost per Hour">
+                        <optgroup label="Cost / Hour">
                           {savedHourMachines.map((m, i) => {
                             const r = calcCostPerHour(m.inputs)
                             return (

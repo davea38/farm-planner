@@ -80,7 +80,7 @@ describe("ProfitabilityOverview", () => {
   it("renders tab title", () => {
     render(<ProfitabilityOverview appState={createTestState()} />);
     expect(
-      screen.getByText(/Profitability Overview/i),
+      screen.getByText(/Is it all worth it/i),
     ).toBeInTheDocument();
   });
 

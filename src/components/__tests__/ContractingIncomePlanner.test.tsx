@@ -14,7 +14,7 @@ describe("ContractingIncomePlanner", () => {
         savedHourMachines={[]}
       />,
     )
-    expect(screen.getByText(/Contracting Income/i)).toBeInTheDocument()
+    expect(screen.getByText(/Will contracting pay/i)).toBeInTheDocument()
   })
 
   it('shows "Add Service" button', () => {

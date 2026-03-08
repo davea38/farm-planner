@@ -181,43 +181,43 @@ function App() {
                 value="cost-per-hectare"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                {unitPrefs.area === 'acres' ? 'Cost per Acre' : 'Cost per Hectare'}
+                {unitPrefs.area === 'acres' ? 'Cost / Acre' : 'Cost / Hectare'}
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hour"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Cost per Hour
+                Cost / Hour
               </TabsTrigger>
               <TabsTrigger
                 value="depreciation"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Depreciation
+                Value Loss
               </TabsTrigger>
               <TabsTrigger
                 value="compare-machines"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Compare Machines
+                Compare
               </TabsTrigger>
               <TabsTrigger
                 value="replacement-planner"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Replacement Planner
+                Replacements
               </TabsTrigger>
               <TabsTrigger
                 value="contracting-income"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Contracting Income
+                Contracting
               </TabsTrigger>
               <TabsTrigger
                 value="profitability"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
-                Profitability
+                Worth It?
               </TabsTrigger>
             </TabsList>
 

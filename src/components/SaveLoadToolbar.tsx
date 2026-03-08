@@ -64,7 +64,7 @@ export function SaveLoadToolbar<T>({
           onClick={() => {
             if (name.trim()) {
               onSave(name.trim())
-              showToast(`Saved! This machine's costs now feed into the Profitability overview.`)
+              showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
               setName("")
             }
           }}

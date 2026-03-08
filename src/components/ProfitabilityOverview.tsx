@@ -122,7 +122,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
     <Card>
       <CardHeader>
         <CardTitle className="text-xl sm:text-2xl">
-          Profitability Overview
+          Is it all worth it?
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           All figures are pulled from your other tabs. Change your inputs there
@@ -370,8 +370,8 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
         {/* Empty state message */}
         {!hasMachines && !hasServices && (
           <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-            Save machines on the Cost per Hectare and Cost per Hour tabs, and add
-            services on the Contracting Income tab, to see your full
+            Save machines on the Cost / Hectare and Cost / Hour tabs, and add
+            services on the Contracting tab, to see your full
             profitability picture here.
           </div>
         )}
