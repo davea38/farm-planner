@@ -296,7 +296,7 @@ export function ContractingIncomePlanner({
                 {/* Annual volume */}
                 <div className="space-y-1">
                   <Label>
-                    Annual volume ({service.chargeUnit})
+                    Work you&apos;ll do per year ({service.chargeUnit})
                   </Label>
                   <Input
                     type="number"
@@ -313,7 +313,7 @@ export function ContractingIncomePlanner({
                 {/* Own cost per unit */}
                 <div className="space-y-1">
                   <Label>
-                    Own cost per unit (£/{service.chargeUnit})
+                    Your cost per {service.chargeUnit} (£)
                   </Label>
                   <Input
                     type="number"

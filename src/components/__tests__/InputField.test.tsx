@@ -19,9 +19,9 @@ function renderWithUnits(ui: React.ReactElement, units: UnitPreferences = metric
 describe("InputField", () => {
   it("renders label and value", () => {
     renderWithUnits(
-      <InputField label="Work rate" value={4} onChange={() => {}} unit="ha/hr" />
+      <InputField label="Coverage speed" value={4} onChange={() => {}} unit="ha/hr" />
     )
-    expect(screen.getByText("Work rate")).toBeInTheDocument()
+    expect(screen.getByText("Coverage speed")).toBeInTheDocument()
     expect(screen.getByDisplayValue("4")).toBeInTheDocument()
   })
 

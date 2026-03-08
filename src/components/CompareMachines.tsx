@@ -269,11 +269,11 @@ function MachineInputs({
         min={0}
       />
       <InputField
-        label="Field efficiency"
+        label="Time actually working"
         value={inputs.fieldEfficiency}
         onChange={onUpdate("fieldEfficiency")}
         unit="%"
-        tooltip="How much time is actual work vs turns, overlaps. 65-80% is normal"
+        tooltip="What percentage of field time is actual work, not turning or overlapping. 65–80% is normal for most operations."
         min={0}
         max={100}
       />

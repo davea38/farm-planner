@@ -205,11 +205,11 @@ export function CostPerHectare({
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">Running Costs</h2>
         <InputField
-          label="Work rate"
+          label="Coverage speed"
           value={inputs.workRate}
           onChange={update("workRate")}
           metricUnit="ha/hr"
-          tooltip="How many hectares per hour this machine covers"
+          tooltip="How many hectares (or acres) this machine covers per hour of field work"
           min={0}
         />
         <InputField
@@ -264,11 +264,11 @@ export function CostPerHectare({
         >
           <div className="space-y-1 mt-2">
             <InputField
-              label="Interest rate"
+              label="Finance / opportunity cost"
               value={inputs.interestRate}
               onChange={update("interestRate")}
               unit="%"
-              tooltip="The return you could earn if you invested the money instead of buying this machine. Usually 2–4%. If you borrowed to buy the machine, use your loan interest rate instead."
+              tooltip="If you borrowed to buy this machine, enter your loan rate. If you paid cash, enter what that money could earn elsewhere (usually 2–4%)."
               min={0}
             />
             <InputField
@@ -276,7 +276,7 @@ export function CostPerHectare({
               value={inputs.insuranceRate}
               onChange={update("insuranceRate")}
               unit="%"
-              tooltip="Annual insurance as a percentage of purchase price. Note: this follows the AHDB method — in practice, you may insure based on current market value, which could be lower."
+              tooltip="Annual insurance as a percentage of what you paid. In practice you may insure based on current market value, which could be lower."
               min={0}
             />
             <InputField
