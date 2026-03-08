@@ -118,7 +118,7 @@
 - [x] **4.3** Add data-source badges to inputs populated from other tabs or NAAC data (e.g. a small "From saved profile" or "NAAC rate" badge next to the field).
   WHY: Users need to know where a pre-filled number came from.
 
-- [ ] **4.4** Add an unsaved-changes indicator (dot or asterisk) on tab headers when inputs have been modified but not yet saved.
+- [x] **4.4** Add an unsaved-changes indicator (dot or asterisk) on tab headers when inputs have been modified but not yet saved.
   WHY: Prevents users from navigating away and losing work unknowingly.
 
 - [ ] **4.5** Improve empty states with icons and action buttons — replace plain-text empty states (e.g. "No machines saved") with an icon plus a primary action button (e.g. "Add your first machine").
@@ -167,6 +167,6 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
 | Priority 3 — High-Priority Design | 7 | 0 |
-| Priority 4 — Medium-Priority Design | 3 | 2 |
+| Priority 4 — Medium-Priority Design | 4 | 1 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **47** | **5** |
+| **Total** | **48** | **4** |

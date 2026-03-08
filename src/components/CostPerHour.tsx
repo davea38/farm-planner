@@ -19,6 +19,7 @@ import { CostComparisonBar } from "./CostComparisonBar"
 export function CostPerHour({
   initialInputs,
   onChange,
+  onDirtyChange,
   savedMachines = [],
   onSaveMachine,
   onLoadMachine,
@@ -26,6 +27,7 @@ export function CostPerHour({
 }: {
   initialInputs?: CostPerHourInputs
   onChange?: (inputs: CostPerHourInputs) => void
+  onDirtyChange?: (dirty: boolean) => void
   savedMachines?: SavedMachine<CostPerHourInputs>[]
   onSaveMachine?: (name: string, inputs: CostPerHourInputs) => void
   onLoadMachine?: (index: number) => void
@@ -33,6 +35,7 @@ export function CostPerHour({
 }) {
   const [inputs, setInputs] = useState<CostPerHourInputs>(initialInputs ?? defaultCostPerHour)
   const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
+  const [isDirty, setIsDirty] = useState(false)
 
   const update = (field: keyof CostPerHourInputs) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
@@ -42,11 +45,19 @@ export function CostPerHour({
       delete next[field]
       return next
     })
+    if (!isDirty) {
+      setIsDirty(true)
+      onDirtyChange?.(true)
+    }
   }
 
   const applyFromSource = (field: keyof CostPerHourInputs, source: string) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
     setFieldSources((prev) => ({ ...prev, [field]: source }))
+    if (!isDirty) {
+      setIsDirty(true)
+      onDirtyChange?.(true)
+    }
   }
 
   const isFirstRender = useRef(true)
@@ -102,6 +113,14 @@ export function CostPerHour({
       setFieldSources(sources)
     }
     onLoadMachine?.(index)
+    setIsDirty(false)
+    onDirtyChange?.(false)
+  }
+
+  const handleSave = (name: string) => {
+    onSaveMachine?.(name, inputs)
+    setIsDirty(false)
+    onDirtyChange?.(false)
   }
 
   return (
@@ -109,7 +128,7 @@ export function CostPerHour({
       {/* Save / Load Toolbar */}
       <SaveLoadToolbar
         savedMachines={savedMachines}
-        onSave={(name) => onSaveMachine?.(name, inputs)}
+        onSave={handleSave}
         onLoad={handleLoad}
         onDelete={(index) => onDeleteMachine?.(index)}
       />

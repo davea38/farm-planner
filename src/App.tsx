@@ -18,6 +18,7 @@ import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs,
 function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
   const [unitPrefs, setUnitPrefs] = useState<UnitPreferences>(loadUnitPreferences)
+  const [dirtyTabs, setDirtyTabs] = useState<Record<string, boolean>>({})
 
   useAutoSave(appState)
 
@@ -182,12 +183,18 @@ function App() {
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
                 {unitPrefs.area === 'acres' ? 'Cost / Acre' : 'Cost / Hectare'}
+                {dirtyTabs['cost-per-hectare'] && (
+                  <span className="ml-1 inline-block h-2 w-2 rounded-full bg-farm-amber" aria-label="unsaved changes" />
+                )}
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hour"
                 className="text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
               >
                 Cost / Hour
+                {dirtyTabs['cost-per-hour'] && (
+                  <span className="ml-1 inline-block h-2 w-2 rounded-full bg-farm-amber" aria-label="unsaved changes" />
+                )}
               </TabsTrigger>
               <TabsTrigger
                 value="depreciation"
@@ -225,6 +232,7 @@ function App() {
               <CostPerHectare
                 initialInputs={appState.costPerHectare.current}
                 onChange={onCostPerHectareChange}
+                onDirtyChange={(dirty) => setDirtyTabs((prev) => ({ ...prev, 'cost-per-hectare': dirty }))}
                 savedMachines={appState.costPerHectare.savedMachines}
                 onSaveMachine={onSaveCostPerHectareMachine}
                 onLoadMachine={onLoadCostPerHectareMachine}
@@ -236,6 +244,7 @@ function App() {
               <CostPerHour
                 initialInputs={appState.costPerHour.current}
                 onChange={onCostPerHourChange}
+                onDirtyChange={(dirty) => setDirtyTabs((prev) => ({ ...prev, 'cost-per-hour': dirty }))}
                 savedMachines={appState.costPerHour.savedMachines}
                 onSaveMachine={onSaveCostPerHourMachine}
                 onLoadMachine={onLoadCostPerHourMachine}
