@@ -58,6 +58,12 @@ export function SaveLoadToolbar<T>({
     onLoad(index)
   }
 
+  // Check for duplicate name (exclude the currently selected machine when editing)
+  const trimmedName = name.trim().toLowerCase()
+  const nameDuplicate = trimmedName !== "" && savedMachines.some((m, i) =>
+    m.name.toLowerCase() === trimmedName && i !== selectedIndex
+  )
+
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
       <h2 className="text-sm font-semibold">Saved Machines</h2>
@@ -69,61 +75,64 @@ export function SaveLoadToolbar<T>({
         </div>
       )}
 
-      {/* Machine type dropdown */}
-      <div>
-        <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
-          Machine type <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="machine-type-select"
-          value={machineType}
-          onChange={(e) => setMachineType(e.target.value as MachineCategory | "")}
-          className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
-          required
-        >
-          <option value="" disabled>
-            Please select...
-          </option>
-          {MACHINE_TYPE_OPTIONS.map(([key, p]) => (
-            <option key={key} value={key}>
-              {p.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Save row */}
-      <div>
-        <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
-          Name <span className="text-red-500">*</span>
-        </label>
-        <div className="flex items-center gap-2">
+      {/* Name + Machine type row */}
+      <div className="grid grid-cols-[1fr_1fr] gap-2">
+        <div>
+          <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
+            Name <span className="text-red-500">*</span>
+          </label>
           <Input
             id="machine-name-input"
             type="text"
             placeholder="Name this machine..."
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="flex-1 min-h-[44px]"
-          />
-          <Button
-            onClick={() => {
-              if (name.trim() && machineType) {
-                onSave(name.trim(), machineType, selectedIndex)
-                if (selectedIndex !== null) {
-                  showToast(`Updated "${name.trim()}" — changes saved.`)
-                } else {
-                  showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
-                }
-              }
-            }}
-            disabled={!name.trim() || !machineType}
             className="min-h-[44px]"
+          />
+        </div>
+        <div>
+          <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
+            Machine type <span className="text-red-500">*</span>
+          </label>
+          <select
+            id="machine-type-select"
+            value={machineType}
+            onChange={(e) => setMachineType(e.target.value as MachineCategory | "")}
+            className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
+            required
           >
-            {selectedIndex !== null ? "Update" : "Save"}
-          </Button>
+            <option value="" disabled>
+              Please select...
+            </option>
+            {MACHINE_TYPE_OPTIONS.map(([key, p]) => (
+              <option key={key} value={key}>
+                {p.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
+
+      {/* Save button + duplicate warning */}
+      {nameDuplicate && (
+        <p className="text-xs text-red-500">A machine with this name already exists.</p>
+      )}
+      <Button
+        onClick={() => {
+          if (name.trim() && machineType && !nameDuplicate) {
+            onSave(name.trim(), machineType, selectedIndex)
+            if (selectedIndex !== null) {
+              showToast(`Updated "${name.trim()}" — changes saved.`)
+            } else {
+              showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
+            }
+          }
+        }}
+        disabled={!name.trim() || !machineType || nameDuplicate}
+        className="w-full min-h-[44px]"
+      >
+        {selectedIndex !== null ? "Update" : "Save"}
+      </Button>
 
       {/* Load / Delete row */}
       {savedMachines.length > 0 ? (
