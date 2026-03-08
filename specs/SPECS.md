@@ -16,11 +16,16 @@ Based on the AHDB Machinery Costing Calculator spreadsheet and the AHDB Machiner
 
 ## Design Principles
 
-- **Dead simple.** One question per screen. No jargon without a plain-English tooltip.
-- **Big text, big buttons, big numbers.** This runs on a tablet in a farmhouse kitchen, not a Bloomberg terminal.
+- **Answer first.** Every tab shows the result at the top — the farmer sees the answer before touching a single input. Inputs live in collapsible sections below.
+- **Questions, not labels.** Each tab is framed as a question the farmer is asking: "What does it cost per hectare?" not "Cost per Hectare". The app speaks the farmer's language.
+- **Dead simple.** One question per screen. No jargon without a plain-English tooltip. Labels are self-explanatory; tooltips are a safety net, not the primary explanation.
+- **Show, don't just tell.** Key numbers are supported by visual breakdowns — donut charts for cost splits, comparison bars for own vs contractor, sparklines for depreciation. Numbers alone aren't enough for visual thinkers.
+- **Big text, big buttons, big numbers.** This runs on a tablet in a farmhouse kitchen, not a Bloomberg terminal. Result numbers are 36-40px, unmissable. Warm colours, generous spacing, rounded corners.
 - **No account, no login, no cloud.** Runs locally. Data saved in the browser (localStorage) so it survives closing the tab.
 - **Opinionated defaults.** Every field starts pre-filled with sensible UK farming defaults (from the AHDB examples). The farmer only changes what they know.
 - **Traffic-light answers.** Green = good, amber = think about it, red = you're losing money. No ambiguity.
+- **Warm and approachable.** Off-white backgrounds, harvest-gold accents, friendly empty states with illustrations and action buttons. This is a kitchen-table tool, not a corporate dashboard.
+- **Connected tabs.** Visual cues show how data flows between tabs. Save confirmations explain where the data goes. Source badges on receiving tabs link back to the origin.
 
 ---
 
@@ -40,15 +45,17 @@ Based on the AHDB Machinery Costing Calculator spreadsheet and the AHDB Machiner
 
 The app has **7 tabs** across the top:
 
-| Tab | Purpose |
-|-----|---------|
-| **Cost per Hectare** | "What does this machine cost me for every hectare it works?" |
-| **Cost per Hour** | "What does this machine cost me for every hour it runs?" |
-| **Depreciation** | "How fast does my machine lose value, and when's the sweet spot to sell?" |
-| **Compare Two Machines** | "Which of these two machines gets more work done?" |
-| **Replacement Planner** | "When do I need to replace each machine on my farm?" |
-| **Contracting Income** | "If I offer my machinery as a service, will it make money?" (SPEC-10) |
-| **Profitability** | "Overall, is owning all this machinery profitable or loss-making?" (SPEC-11) |
+| Tab | Label | Purpose |
+|-----|-------|---------|
+| 1 | **What does it cost per hectare?** | Per-hectare ownership cost, own vs contractor comparison |
+| 2 | **What does it cost per hour?** | Per-hour ownership cost, own vs contractor comparison |
+| 3 | **How fast does it lose value?** | Depreciation curves, sweet-spot sell timing |
+| 4 | **Which machine is better?** | Side-by-side workrate comparison of two machines |
+| 5 | **When do I replace things?** | Whole-farm replacement timeline and budget |
+| 6 | **Will contracting pay?** | Per-service contracting profitability with NAAC benchmarks (SPEC-10) |
+| 7 | **Is it all worth it?** | Combined income vs costs dashboard (SPEC-11) |
+
+On narrow/mobile screens, tabs fall back to short labels: Cost/Hectare, Cost/Hour, Value Loss, Compare, Replacements, Contracting, Worth It?
 
 A **Repair Budget** mini-tool is embedded as a helper within the Cost tabs (not a separate tab).
 
@@ -59,59 +66,67 @@ A **Repair Budget** mini-tool is embedded as a helper within the Cost tabs (not 
 ### Purpose
 Calculate the total cost of owning and running a machine per hectare, and compare it against hiring a contractor.
 
-### Screen Layout
+### Screen Layout (Results-First)
+
+The results section sits **at the top** so the farmer sees the answer immediately. Input sections are collapsible below.
 
 ```
-+----------------------------------------------------------+
-|  COST PER HECTARE                              [?] Help   |
-+----------------------------------------------------------+
-|                                                           |
-|  WHAT DID YOU PAY / WHAT WILL YOU GET?                    |
-|  +-----------------------+----+                           |
-|  | Purchase price        | £126,000 |                    |
-|  | Sell after            | 8 years  |                    |
-|  | Expected sale price   | £34,000  |                    |
-|  | Hectares worked/year  | 1,200    |                    |
-|  +-----------------------+----------+                    |
-|                                                           |
-|  RUNNING COSTS                                            |
-|  +-----------------------+----------+                    |
-|  | Work rate             | 4 ha/hr  |                    |
-|  | Labour cost           | £14/hr   |                    |
-|  | Fuel price            | 53p/litre|                    |
-|  | Fuel use              | 20 L/ha  |                    |
-|  | Spares & repairs      | 2%       |                    |
-|  +-----------------------+----------+                    |
-|                                                           |
-|  OVERHEADS (usually leave these alone)    [collapsed]     |
-|  +-----------------------+----------+                    |
-|  | Interest rate         | 2%       |                    |
-|  | Insurance             | 2%       |                    |
-|  | Storage               | 1%       |                    |
-|  +-----------------------+----------+                    |
-|                                                           |
-|  CONTRACTOR COMPARISON                                    |
-|  +-----------------------+----------+                    |
-|  | Contractor charges    | £76/ha   |                    |
-|  +-----------------------+----------+                    |
-|                                                           |
-|  =================================================       |
-|  RESULTS                                                  |
-|  =================================================       |
-|                                                           |
-|  Your cost:        £30.27 per hectare                     |
-|    Fixed costs:    £14.07/ha                              |
-|    Running costs:  £16.20/ha                              |
-|                                                           |
-|  Contractor cost:  £76.00 per hectare                     |
-|                                                           |
-|  [GREEN BANNER]                                           |
-|  YOU SAVE £54,880/year BY OWNING THIS MACHINE             |
-|                                                           |
-|  or [RED BANNER] if contractor is cheaper:                |
-|  YOU WOULD SAVE £X,XXX/year USING A CONTRACTOR            |
-|                                                           |
-+----------------------------------------------------------+
+┌──────────────────────────────────────────────────────────┐
+│  What does it cost per hectare?                 [?] Help │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │  YOUR COST          £30.27 / hectare               │  │
+│  │  ▸ Fixed: £14.07/ha    ▸ Running: £16.20/ha        │  │
+│  │  ▸ Total annual cost: £36,324/year                 │  │
+│  │                                                    │  │
+│  │  [🟢 YOU SAVE £54,880/YEAR vs A CONTRACTOR]        │  │
+│  │                                                    │  │
+│  │  ┌──────────────────┬─────────────────────────┐    │  │
+│  │  │ 🍩 Cost breakdown│ 📊 Own vs contractor     │    │  │
+│  │  │                  │                         │    │  │
+│  │  │  Depreciation 38%│ Your cost   ████ £30/ha │    │  │
+│  │  │  Fuel        22% │ Contractor  ██████████  │    │  │
+│  │  │  Labour      12% │              £76/ha     │    │  │
+│  │  │  Repairs      8% │                         │    │  │
+│  │  │  Interest     7% │                         │    │  │
+│  │  │  Insurance    5% │                         │    │  │
+│  │  │  Storage      4% │                         │    │  │
+│  │  │  Shed costs   4% │                         │    │  │
+│  │  └──────────────────┴─────────────────────────┘    │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                          │
+│  ▾ Purchase & ownership                                  │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │ Purchase price .................. £126,000         │  │
+│  │ Years before selling ............ 8 years          │  │
+│  │ What you'll get when you sell ... £34,000          │  │
+│  │ Hectares worked/year ............ 1,200            │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                          │
+│  ▾ Running costs                                         │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │ Ground covered (ha/hr) .......... 4                │  │
+│  │ Labour cost ..................... £14/hr            │  │
+│  │ Fuel price ...................... 74.91p/litre      │  │
+│  │ Fuel use ........................ 20 L/ha           │  │
+│  │ Repairs (% of price) ........... 2%                │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                          │
+│  ▸ Overheads (most farmers leave these as-is)            │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │ Money tied up (%) ............... 2%               │  │
+│  │ Insurance (% of price) ......... 2%               │  │
+│  │ Shed costs (% of price) ........ 1%               │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                          │
+│  ▾ Compare with a contractor                             │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │ Contractor quote (£/ha) ......... £76              │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                          │
+│  This data also appears on: Profitability, Contracting   │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ### Inputs (user-editable fields)
@@ -166,6 +181,9 @@ All results recalculate instantly as the user types. No "Calculate" button neede
 
 ### Purpose
 Same idea as Tab 1, but for machines where you think in hours not hectares (e.g. a loader, a telehandler).
+
+### Screen Layout (Results-First)
+Same results-first pattern as Tab 1: the answer (cost per hour, annual saving vs contractor) sits at the top with a donut chart showing the cost breakdown and a comparison bar for own vs contractor. Inputs are in collapsible sections below. The tab heading reads "What does it cost per hour?"
 
 ### Inputs (user-editable fields)
 
@@ -586,39 +604,76 @@ Note: Tractors use hour brackets 500/750/1000/1500 while other machinery uses 50
 
 ### Layout
 - **Max width 800px**, centred. Comfortable on a laptop, readable on a tablet.
-- **Tab bar** across the top with 7 clearly-labelled tabs.
+- **Results-first pattern:** On every cost/analysis tab, the answer (verdict banner, cost summary, charts) sits at the top. Inputs are in collapsible sections below, organised by topic (Purchase & ownership, Running costs, Overheads, Contractor comparison).
+- **Tab bar** across the top with 7 question-based tab labels. On narrow screens, short labels are used.
 - Active tab highlighted in green.
 
 ### Typography
-- Large sans-serif font (18px base, 24px for results, 32px for the big verdict banner).
+- Large sans-serif font. **20px** base for inputs and body text.
+- **Primary result numbers** (e.g. "£30.27/ha"): **36-40px**, bold, dark green on light green background card.
+- **Secondary results** (breakdown lines): **20-24px**, medium weight.
+- **Verdict banner**: **28-32px**, white on green/red/amber, with rounded corners (8px radius).
+- **Section headers**: Sentence case ("Purchase & ownership"), not ALL CAPS. Friendly, not clinical.
 - All currency values formatted with `£` prefix and commas (e.g. `£126,000`).
 - All percentages shown with one decimal place.
 
 ### Inputs
 - Every input field is a plain number input with:
-  - A clear label to the left
+  - A clear, farmer-friendly label to the left (see SPEC-12 finding #33 for label audit)
   - The unit to the right (£, %, ha, hrs, L, etc.)
   - A `[?]` icon that shows a plain-English tooltip on hover/tap
-- Fields grouped under collapsible sections with bold headers.
-- "Overheads" section (interest, insurance, storage) is **collapsed by default** with a note: "Most farmers leave these as they are."
+- Input text size: 20px. Warmer border colour (`#D4C5A9`). Focus state: warm gold border.
+- Fields grouped under **collapsible sections** with sentence-case headers and subtle bottom borders.
+- "Overheads" section (interest, insurance, storage) is **collapsed by default** with a note: "Most farmers leave these as-is."
+- Generous vertical spacing between sections (32px).
 
-### Results
-- Results section has a light grey background to visually separate it from inputs.
+### Results & Visual Elements
+- Results section sits at the **top of each tab** with a warm off-white background card and generous padding (24px).
 - The main verdict (own vs contractor) is a full-width coloured banner:
   - **Green background, white text**: owning is cheaper
   - **Red background, white text**: contractor is cheaper
   - **Amber background, dark text**: roughly break-even
-- Breakdown shown below the banner in smaller text.
+- **Donut chart** (Tabs 1 & 2): Shows cost breakdown by category (depreciation, fuel, labour, repairs, interest, insurance, storage). Inline SVG, compact, using the existing colour palette.
+- **Comparison bar** (Tabs 1 & 2): Horizontal bars comparing own cost vs contractor cost side by side, with the saving highlighted.
+- **Stacked bar** (Tab 7): Income vs costs visual — farm income + contracting income stacked against total costs.
+- **Donut chart** (Tab 7): Cost category split showing where money goes (replacements, running costs, contracting costs).
+- **Before/after bars** (Tab 7): Grouped bars showing profit with and without contracting services.
+- All charts use lightweight inline SVG (same pattern as DepreciationCurve.tsx). No external charting library.
+
+### Empty States
+- Each tab has a warm, illustrated empty state with:
+  - A simple icon or illustration (tractor silhouette, field pattern, handshake, etc.)
+  - A friendly headline in the farmer's language
+  - One sentence explaining what this tab does
+  - A prominent action button navigating to the right place
+- See SPEC-12 finding #32 for specific examples per tab.
+
+### Inter-Tab Wayfinding
+- **Save confirmation toasts** explain where the data flows: "Saved! This feeds into your Profitability overview."
+- **Data-source badges** on receiving tabs (e.g. Tab 7): "Running costs: £36,324 ← 3 saved machines" — clickable, navigates to source tab.
+- **Unsaved-changes indicator**: Subtle dot/badge on tabs with non-default unsaved inputs.
+- **Connected-tabs footer**: "This data also appears on: Profitability, Contracting" at the bottom of source tabs.
+
+### Welcome / First Visit
+- A brief welcome hero appears on first visit (dismissable, tracked in localStorage):
+  - App name and one-sentence description
+  - Question cards linking to each tab
+  - "Get started" button
+  - Note: "Based on AHDB methodology. No login required. Your data stays on this device."
+- See SPEC-12 finding #29 for detailed mockup.
 
 ### Colours
 - Primary: `#2E7D32` (farm green)
-- Accent: `#1565C0` (AHDB blue - used for editable fields)
+- Accent: `#8B6914` (harvest gold — highlights, callouts, interactive elements)
+- Editable fields: `#1565C0` (AHDB blue) — retained for field focus on legacy elements; new focus state uses harvest gold
 - Traffic lights: `#2E7D32` green, `#F9A825` amber, `#C62828` red
-- Background: `#FAFAFA` light grey
-- Cards/sections: `#FFFFFF` white with subtle shadow
+- Background: `#F5F0E8` (warm off-white)
+- Cards/sections: `#FFFDF7` (warm white) with subtle shadow and 8-12px rounded corners
+- Input borders: `#D4C5A9` (warm neutral)
 
 ### Mobile
 - Responsive. On narrow screens, the two-machine comparison stacks vertically.
+- Tab labels switch to short form (Cost/Hectare, Cost/Hour, Value Loss, Compare, Replacements, Contracting, Worth It?).
 - All tap targets at least 44px.
 
 ---
