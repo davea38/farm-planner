@@ -121,19 +121,26 @@ export function MachinesTab({
     setCostMode(entry.costMode)
   }
 
+  const [confirmDelete, setConfirmDelete] = useState<MachineEntry | null>(null)
+
   const handleDelete = (entry: MachineEntry) => {
-    if (entry.costMode === "hectare") {
-      onDeleteHectareMachine(entry.index)
+    setConfirmDelete(entry)
+  }
+
+  const confirmDeleteAction = () => {
+    if (!confirmDelete) return
+    if (confirmDelete.costMode === "hectare") {
+      onDeleteHectareMachine(confirmDelete.index)
     } else {
-      onDeleteHourMachine(entry.index)
+      onDeleteHourMachine(confirmDelete.index)
     }
-    // Clear selection if we deleted the selected machine
-    if (selectedMachine && selectedMachine.costMode === entry.costMode && selectedMachine.index === entry.index) {
+    if (selectedMachine && selectedMachine.costMode === confirmDelete.costMode && selectedMachine.index === confirmDelete.index) {
       onSelectMachine(null)
       setName("")
       setMachineType("")
     }
-    showToast(`Deleted "${entry.name}".`)
+    showToast(`Deleted "${confirmDelete.name}".`)
+    setConfirmDelete(null)
   }
 
   const handleNewMachine = () => {
@@ -269,6 +276,24 @@ export function MachinesTab({
           </div>
         )}
       </div>
+
+      {/* Delete confirmation */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setConfirmDelete(null)}>
+          <div className="rounded-lg bg-card p-6 shadow-lg max-w-sm mx-4 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-semibold text-sm">Delete "{confirmDelete.name}"?</h3>
+            <p className="text-sm text-muted-foreground">This will permanently remove this machine and its saved data.</p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setConfirmDelete(null)} className="min-h-[44px]">
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDeleteAction} className="min-h-[44px]">
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
