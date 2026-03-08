@@ -75,8 +75,11 @@ export function SaveLoadToolbar<T>({
         </div>
       )}
 
-      {/* Name + Machine type row */}
-      <div className="grid grid-cols-[1fr_1fr] gap-2">
+      {/* Name + Machine type + Save row */}
+      {nameDuplicate && (
+        <p className="text-xs text-red-500">A machine with this name already exists.</p>
+      )}
+      <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
         <div>
           <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
             Name <span className="text-red-500">*</span>
@@ -111,28 +114,23 @@ export function SaveLoadToolbar<T>({
             ))}
           </select>
         </div>
-      </div>
-
-      {/* Save button + duplicate warning */}
-      {nameDuplicate && (
-        <p className="text-xs text-red-500">A machine with this name already exists.</p>
-      )}
-      <Button
-        onClick={() => {
-          if (name.trim() && machineType && !nameDuplicate) {
-            onSave(name.trim(), machineType, selectedIndex)
-            if (selectedIndex !== null) {
-              showToast(`Updated "${name.trim()}" — changes saved.`)
-            } else {
-              showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
+        <Button
+          onClick={() => {
+            if (name.trim() && machineType && !nameDuplicate) {
+              onSave(name.trim(), machineType, selectedIndex)
+              if (selectedIndex !== null) {
+                showToast(`Updated "${name.trim()}" — changes saved.`)
+              } else {
+                showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
+              }
             }
-          }
-        }}
-        disabled={!name.trim() || !machineType || nameDuplicate}
-        className="w-full min-h-[44px]"
-      >
-        {selectedIndex !== null ? "Update" : "Save"}
-      </Button>
+          }}
+          disabled={!name.trim() || !machineType || nameDuplicate}
+          className="min-h-[44px]"
+        >
+          Save
+        </Button>
+      </div>
 
       {/* Load / Delete row */}
       {savedMachines.length > 0 ? (
