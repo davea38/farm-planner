@@ -5,6 +5,7 @@ import type {
   ReplacementMachine,
   ReplacementPlannerState,
 } from "./types";
+import { FUEL_PRICES } from "./fuel-data";
 
 export const defaultCostPerHectare: CostPerHectareInputs = {
   purchasePrice: 126000,
@@ -16,7 +17,7 @@ export const defaultCostPerHectare: CostPerHectareInputs = {
   storageRate: 1,
   workRate: 4,
   labourCost: 14,
-  fuelPrice: 0.53,
+  fuelPrice: FUEL_PRICES.redDiesel.current / 100,
   fuelUse: 20,
   repairsPct: 2,
   contractorCharge: 76,
@@ -30,9 +31,8 @@ export const defaultCostPerHour: CostPerHourInputs = {
   interestRate: 2,
   insuranceRate: 2,
   storageRate: 1,
-  haPerHr: 4,
   fuelConsumptionPerHr: 14,
-  fuelPrice: 0.6,
+  fuelPrice: FUEL_PRICES.redDiesel.current / 100,
   repairsPct: 1,
   labourCost: 14,
   contractorCharge: 45,
