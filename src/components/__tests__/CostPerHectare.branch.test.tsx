@@ -94,7 +94,7 @@ describe("CostPerHectare – branch coverage", () => {
       contractorCharge: 30.27, // Matches AHDB example cost ~£30.27/ha
     }
     renderWithUnits(<CostPerHectare initialInputs={inputs} />)
-    expect(screen.getByText(/break-even/)).toBeInTheDocument()
+    expect(screen.getAllByText(/break-even/).length).toBeGreaterThanOrEqual(1)
   })
 
   it("shows green banner when owning is much cheaper", () => {

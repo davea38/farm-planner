@@ -95,7 +95,7 @@ describe("CostPerHour – branch coverage", () => {
       contractorCharge: 23,
     }
     renderWithUnits(<CostPerHour initialInputs={inputs} />)
-    expect(screen.getByText(/break-even/)).toBeInTheDocument()
+    expect(screen.getAllByText(/break-even/).length).toBeGreaterThanOrEqual(1)
   })
 
   it("shows green banner when owning is cheaper", () => {

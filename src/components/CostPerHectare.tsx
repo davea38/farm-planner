@@ -16,6 +16,7 @@ import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 import { DepreciationPanel } from "./DepreciationPanel"
 import { CostDonutChart } from "./CostDonutChart"
+import { CostComparisonBar } from "./CostComparisonBar"
 
 export function CostPerHectare({
   initialInputs,
@@ -140,10 +141,10 @@ export function CostPerHectare({
               <span className="tabular-nums whitespace-nowrap">{formatGBP(results.totalAnnualCost)}/year</span>
             </div>
 
-            <CostBreakdown
-              rows={[
-                { label: "Contractor cost", value: inputs.contractorCharge, unit: "ha", bold: true },
-              ]}
+            <CostComparisonBar
+              ownCost={results.totalCostPerHa}
+              contractorCost={inputs.contractorCharge}
+              unit={areaUnit}
             />
 
             <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />

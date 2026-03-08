@@ -14,6 +14,7 @@ import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 import { DepreciationPanel } from "./DepreciationPanel"
 import { CostDonutChart } from "./CostDonutChart"
+import { CostComparisonBar } from "./CostComparisonBar"
 
 export function CostPerHour({
   initialInputs,
@@ -134,10 +135,10 @@ export function CostPerHour({
               <span className="tabular-nums whitespace-nowrap">{formatGBP(results.totalAnnualCost)}/year</span>
             </div>
 
-            <CostBreakdown
-              rows={[
-                { label: "Contractor cost", value: inputs.contractorCharge, unit: "hr", bold: true },
-              ]}
+            <CostComparisonBar
+              ownCost={results.totalCostPerHr}
+              contractorCost={inputs.contractorCharge}
+              unit="hr"
             />
 
             <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
