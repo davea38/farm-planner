@@ -13,6 +13,7 @@ import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 import { DepreciationPanel } from "./DepreciationPanel"
+import { CostDonutChart } from "./CostDonutChart"
 
 export function CostPerHour({
   initialInputs,
@@ -112,6 +113,20 @@ export function CostPerHour({
                 { label: "Fixed costs", value: results.fixedCostPerHr, unit: "hr" },
                 { label: "Running costs", value: runningCostPerHr, unit: "hr" },
               ]}
+            />
+
+            <CostDonutChart
+              segments={[
+                { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
+                { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
+                { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
+                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
+                { label: "Fuel", value: results.fuelPerHr * inputs.hoursPerYear, color: "#f9a825" },
+                { label: "Labour", value: results.labourPerHr * inputs.hoursPerYear, color: "#ffcc80" },
+                { label: "Repairs", value: results.repairsPerHr * inputs.hoursPerYear, color: "#ef6c00" },
+              ]}
+              centerLabel="Total/year"
+              centerValue={results.totalAnnualCost}
             />
 
             <div className="flex items-baseline justify-between gap-2 sm:gap-4 font-semibold text-base">

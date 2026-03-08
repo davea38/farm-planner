@@ -93,7 +93,7 @@
 - [x] **3.3** Rename tabs from technical labels to question-based names (e.g. "Cost per Hectare" becomes "What does it cost per hectare?", "Depreciation" becomes "How fast does it lose value?").
   WHY: Question framing tells users what each tab answers, reducing the learning curve.
 
-- [ ] **3.4** Add a donut chart to the cost breakdown on both cost tabs (CostPerHectare, CostPerHour) showing the split of depreciation, interest, insurance, storage, fuel, labour, and repairs.
+- [x] **3.4** Add a donut chart to the cost breakdown on both cost tabs (CostPerHectare, CostPerHour) showing the split of depreciation, interest, insurance, storage, fuel, labour, and repairs.
   WHY: A visual breakdown is faster to parse than a table of numbers.
 
 - [ ] **3.5** Add a comparison bar (own cost vs contractor cost) on both cost tabs — two side-by-side horizontal bars with the difference highlighted.
@@ -166,7 +166,7 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
-| Priority 3 — High-Priority Design | 3 | 4 |
+| Priority 3 — High-Priority Design | 4 | 3 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **40** | **12** |
+| **Total** | **41** | **11** |

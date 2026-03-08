@@ -15,6 +15,7 @@ import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { SaveLoadToolbar } from "./SaveLoadToolbar"
 import { DepreciationPanel } from "./DepreciationPanel"
+import { CostDonutChart } from "./CostDonutChart"
 
 export function CostPerHectare({
   initialInputs,
@@ -118,6 +119,20 @@ export function CostPerHectare({
                 { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
                 { label: "Running costs", value: runningCostPerHa, unit: "ha" },
               ]}
+            />
+
+            <CostDonutChart
+              segments={[
+                { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
+                { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
+                { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
+                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
+                { label: "Fuel", value: results.fuelPerHa * inputs.hectaresPerYear, color: "#f9a825" },
+                { label: "Labour", value: results.labourPerHa * inputs.hectaresPerYear, color: "#ffcc80" },
+                { label: "Repairs", value: results.repairsPerHa * inputs.hectaresPerYear, color: "#ef6c00" },
+              ]}
+              centerLabel="Total/year"
+              centerValue={results.totalAnnualCost}
             />
 
             <div className="flex items-baseline justify-between gap-2 sm:gap-4 font-semibold text-base">
