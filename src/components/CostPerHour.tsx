@@ -127,6 +127,16 @@ export function CostPerHour({
 
   return (
     <div className="space-y-6">
+
+      {/* Save / Load Toolbar */}
+      <SaveLoadToolbar
+        savedMachines={savedMachines}
+        onSave={handleSave}
+        onLoad={handleLoad}
+        onDelete={(index) => onDeleteMachine?.(index)}
+        onReset={onResetMachine}
+      />
+      
       {/* What Did You Pay? */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">What Did You Pay / What Will You Get?</h2>
@@ -331,14 +341,6 @@ export function CostPerHour({
         )}
       </div>
 
-      {/* Save / Load Toolbar */}
-      <SaveLoadToolbar
-        savedMachines={savedMachines}
-        onSave={handleSave}
-        onLoad={handleLoad}
-        onDelete={(index) => onDeleteMachine?.(index)}
-        onReset={onResetMachine}
-      />
     </div>
   )
 }
