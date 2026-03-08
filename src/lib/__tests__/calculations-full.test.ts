@@ -79,7 +79,7 @@ describe("calcCostPerHour", () => {
     interestRate: 2,
     insuranceRate: 2,
     storageRate: 1,
-    haPerHr: 4,
+
     fuelConsumptionPerHr: 14,
     fuelPrice: 0.6,
     repairsPct: 1,
@@ -109,9 +109,8 @@ describe("calcCostPerHour", () => {
     expect(r.fuelPerHr).toBeCloseTo(14 * 0.6)
   })
 
-  it("fuel cost is non-zero even when haPerHr is 0 (e.g. hauling)", () => {
-    const r = calcCostPerHour({ ...base, haPerHr: 0 })
-    // Machine still burns fuel even if not covering area
+  it("fuel cost is consumption × price (e.g. hauling burns fuel without covering area)", () => {
+    const r = calcCostPerHour(base)
     expect(r.fuelPerHr).toBeGreaterThan(0)
     expect(r.fuelPerHr).toBeCloseTo(14 * 0.6)
   })

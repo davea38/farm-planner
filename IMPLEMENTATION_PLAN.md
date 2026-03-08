@@ -58,7 +58,7 @@
 - [x] **1.3** Remove `haPerHr: 4` from `defaultCostPerHour` in `src/lib/defaults.ts` (line 33).
   WHY: Field was removed from the type and UI but the default object still ships it.
 
-- [ ] **1.4** Remove all `haPerHr` references from `CostPerHour.branch.test.tsx` and `calculations-full.test.ts`.
+- [x] **1.4** Remove all `haPerHr` references from `CostPerHour.branch.test.tsx` and `calculations-full.test.ts`.
   WHY: Tests should not reference a removed field.
 
 - [ ] **1.5** Add a storage migration (v2 to v3) that strips `haPerHr` from persisted `CostPerHourInputs` when loading from localStorage.
@@ -164,9 +164,9 @@ Tasks should be executed in roughly this order, respecting dependencies:
 |-------|------|---------|
 | SPEC-01 – SPEC-11 | 11 | 0 |
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
-| Priority 1 — Must-Fix Correctness | 3 | 3 |
+| Priority 1 — Must-Fix Correctness | 4 | 2 |
 | Priority 2 — Should-Fix UX | 0 | 3 |
 | Priority 3 — High-Priority Design | 0 | 7 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **31** | **21** |
+| **Total** | **32** | **20** |

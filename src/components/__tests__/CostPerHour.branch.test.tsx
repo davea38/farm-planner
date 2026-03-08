@@ -25,7 +25,7 @@ describe("CostPerHour – branch coverage", () => {
       interestRate: 2,
       insuranceRate: 2,
       storageRate: 1,
-      haPerHr: 4,
+
       fuelConsumptionPerHr: 14,
       fuelPrice: 0.6,
       repairsPct: 1,
@@ -46,7 +46,7 @@ describe("CostPerHour – branch coverage", () => {
       interestRate: 2,
       insuranceRate: 2,
       storageRate: 1,
-      haPerHr: 4,
+
       fuelConsumptionPerHr: 14,
       fuelPrice: 0.6,
       repairsPct: 1,
@@ -66,7 +66,7 @@ describe("CostPerHour – branch coverage", () => {
       interestRate: 5,
       insuranceRate: 3,
       storageRate: 2,
-      haPerHr: 2,
+
       fuelConsumptionPerHr: 20,
       fuelPrice: 0.75,
       repairsPct: 5,
@@ -87,7 +87,7 @@ describe("CostPerHour – branch coverage", () => {
       interestRate: 2,
       insuranceRate: 1,
       storageRate: 0.5,
-      haPerHr: 0,
+
       fuelConsumptionPerHr: 0,
       fuelPrice: 0,
       repairsPct: 0,
@@ -107,7 +107,7 @@ describe("CostPerHour – branch coverage", () => {
       interestRate: 2,
       insuranceRate: 1,
       storageRate: 0.5,
-      haPerHr: 0,
+
       fuelConsumptionPerHr: 0,
       fuelPrice: 0,
       repairsPct: 0,
@@ -129,7 +129,7 @@ describe("CostPerHour – branch coverage", () => {
       interestRate: 3,
       insuranceRate: 2,
       storageRate: 1,
-      haPerHr: 5,
+
       fuelConsumptionPerHr: 18,
       fuelPrice: 0.7,
       repairsPct: 2,

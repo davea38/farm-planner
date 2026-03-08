@@ -154,7 +154,7 @@ function createTestState() {
         interestRate: 2.5,
         insuranceRate: 2,
         storageRate: 1,
-        haPerHr: 5,
+
         fuelConsumptionPerHr: 18,
         fuelPrice: 0.62,
         repairsPct: 1.5,
@@ -172,7 +172,7 @@ function createTestState() {
             interestRate: 2,
             insuranceRate: 2,
             storageRate: 1,
-            haPerHr: 4,
+
             fuelConsumptionPerHr: 14,
             fuelPrice: 0.6,
             repairsPct: 1,
