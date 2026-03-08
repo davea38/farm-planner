@@ -197,9 +197,19 @@ export function ContractingIncomePlanner({
         </div>
       )}
       <CardContent className="space-y-6">
-        <Button onClick={addService} variant="outline">
-          + Add Service
-        </Button>
+        {services.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-6 text-center space-y-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-muted-foreground/40"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <p className="text-sm font-medium text-muted-foreground">No contracting services yet</p>
+            <Button onClick={addService} variant="outline">
+              Add your first service
+            </Button>
+          </div>
+        ) : (
+          <Button onClick={addService} variant="outline">
+            + Add Service
+          </Button>
+        )}
 
         {services.map((service, idx) => {
           const results = serviceResults[idx]

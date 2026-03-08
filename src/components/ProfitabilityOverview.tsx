@@ -418,10 +418,13 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
 
         {/* Empty state message */}
         {!hasMachines && !hasServices && (
-          <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-            Save machines on the Cost / Hectare and Cost / Hour tabs, and add
-            services on the Contracting tab, to see your full
-            profitability picture here.
+          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-6 text-center space-y-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-muted-foreground/40"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <p className="text-sm font-medium text-muted-foreground">No machines or services yet</p>
+            <p className="text-sm text-muted-foreground/70">
+              Save machines on the <strong>Cost / Hectare</strong> or <strong>Cost / Hour</strong> tabs,
+              and add services on the <strong>Contracting</strong> tab to build your profitability picture.
+            </p>
           </div>
         )}
       </CardContent>

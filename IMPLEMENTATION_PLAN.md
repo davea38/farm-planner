@@ -121,7 +121,7 @@
 - [x] **4.4** Add an unsaved-changes indicator (dot or asterisk) on tab headers when inputs have been modified but not yet saved.
   WHY: Prevents users from navigating away and losing work unknowingly.
 
-- [ ] **4.5** Improve empty states with icons and action buttons — replace plain-text empty states (e.g. "No machines saved") with an icon plus a primary action button (e.g. "Add your first machine").
+- [x] **4.5** Improve empty states with icons and action buttons — replace plain-text empty states (e.g. "No machines saved") with an icon plus a primary action button (e.g. "Add your first machine").
   WHY: Empty states are the first thing new users see; they should guide the next step.
 
 ---
@@ -167,6 +167,6 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
 | Priority 3 — High-Priority Design | 7 | 0 |
-| Priority 4 — Medium-Priority Design | 4 | 1 |
+| Priority 4 — Medium-Priority Design | 5 | 0 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **48** | **4** |
+| **Total** | **49** | **3** |

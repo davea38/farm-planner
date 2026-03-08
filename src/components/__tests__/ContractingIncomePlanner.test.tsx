@@ -27,7 +27,7 @@ describe("ContractingIncomePlanner", () => {
       />,
     )
     expect(
-      screen.getByRole("button", { name: /add service/i }),
+      screen.getByRole("button", { name: /add.*service/i }),
     ).toBeInTheDocument()
   })
 
@@ -41,7 +41,7 @@ describe("ContractingIncomePlanner", () => {
         savedHourMachines={[]}
       />,
     )
-    fireEvent.click(screen.getByRole("button", { name: /add service/i }))
+    fireEvent.click(screen.getByRole("button", { name: /add.*service/i }))
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         services: expect.arrayContaining([
