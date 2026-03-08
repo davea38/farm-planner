@@ -226,12 +226,6 @@ export function MachinesTab({
     setConfirmDelete(null)
   }
 
-  const handleNewMachine = () => {
-    onSelectMachine(null)
-    setName("")
-    setMachineType("")
-  }
-
   const profileLabel = (type: string) => {
     const found = MACHINE_TYPE_OPTIONS.find(([key]) => key === type)
     return found ? found[1].label : type
@@ -241,7 +235,7 @@ export function MachinesTab({
     <div className="space-y-6">
       {/* Create / Edit form */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
-        <h2 className="text-sm font-semibold">{isEditing ? "Edit Machine" : "Add New Machine"}</h2>
+        <h2 className="text-sm font-semibold">Machine Details</h2>
 
         {toast && (
           <div className="rounded-md bg-primary/10 border border-primary/30 px-3 py-2 text-sm text-primary animate-in fade-in slide-in-from-top-1 duration-200">
@@ -290,24 +284,13 @@ export function MachinesTab({
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSave}
-            disabled={!name.trim() || !machineType || nameDuplicate}
-            className="flex-1 min-h-[44px]"
-          >
-            Save
-          </Button>
-          {isEditing && (
-            <Button
-              variant="outline"
-              onClick={handleNewMachine}
-              className="min-h-[44px]"
-            >
-              + New
-            </Button>
-          )}
-        </div>
+        <Button
+          onClick={handleSave}
+          disabled={!name.trim() || !machineType || nameDuplicate}
+          className="w-full min-h-[44px]"
+        >
+          Save
+        </Button>
       </div>
 
       {/* Machine list */}
