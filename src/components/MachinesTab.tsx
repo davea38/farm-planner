@@ -263,16 +263,16 @@ export function MachinesTab({
         )}
 
         <Tabs value={innerTab} onValueChange={(val) => setInnerTab(val)}>
-          <TabsList className="w-full grid grid-cols-2">
-            <TabsTrigger value="machines" className="min-h-[36px] text-xs sm:text-sm">
+          <TabsList variant="segment" className="w-full grid grid-cols-2">
+            <TabsTrigger value="machines">
               Your Machines
               {allMachines.length > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-muted-foreground/15 px-1.5 py-0.5 text-[10px] font-medium leading-none">
+                <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-primary/15 text-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none">
                   {allMachines.length}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="add-new" className="min-h-[36px] text-xs sm:text-sm">
+            <TabsTrigger value="add-new">
               + Add New
             </TabsTrigger>
           </TabsList>

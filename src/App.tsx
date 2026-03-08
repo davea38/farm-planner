@@ -182,9 +182,6 @@ function App() {
     e.target.value = ''
   }, [])
 
-  const disabledTabClass = "text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-  const activeTabClass = "text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
-
   return (
     <UnitContext.Provider value={{ units: unitPrefs, setUnits: handleUnitsChange }}>
     <TooltipProvider>
@@ -221,58 +218,48 @@ function App() {
             if (v !== "machines" && !hasMachineSelected) return
             setActiveTab(v)
           }}>
-            <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8 h-auto gap-1">
-              <TabsTrigger
-                value="machines"
-                className={activeTabClass}
-              >
+            <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8">
+              <TabsTrigger value="machines">
                 Machines
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hectare"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
-                {unitPrefs.area === 'acres' ? 'Cost / Acre' : 'Cost / Hectare'}
+                {unitPrefs.area === 'acres' ? 'Cost/Acre' : 'Cost/Ha'}
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hour"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
-                Cost / Hour
+                Cost/Hr
               </TabsTrigger>
               <TabsTrigger
                 value="depreciation"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
                 Value Loss
               </TabsTrigger>
               <TabsTrigger
                 value="compare-machines"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
                 Compare
               </TabsTrigger>
               <TabsTrigger
                 value="replacement-planner"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
-                Replacements
+                Replace
               </TabsTrigger>
               <TabsTrigger
                 value="contracting-income"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
-                Contracting
+                Contract
               </TabsTrigger>
               <TabsTrigger
                 value="profitability"
-                className={hasMachineSelected ? activeTabClass : disabledTabClass}
                 disabled={!hasMachineSelected}
               >
                 Worth It?
