@@ -84,7 +84,7 @@
 
 ## Priority 3: High-Priority Design (SPEC-12 Phase 2)
 
-- [ ] **3.1** Move the results section above the inputs section on `CostPerHectare.tsx` — current order is `SaveLoadToolbar` then inputs then results; results should render immediately after `SaveLoadToolbar`, before inputs.
+- [x] **3.1** Move the results section above the inputs section on `CostPerHectare.tsx` — current order is `SaveLoadToolbar` then inputs then results; results should render immediately after `SaveLoadToolbar`, before inputs.
   WHY: Farmers care about the answer first; inputs are supporting detail.
 
 - [ ] **3.2** Move the results section above the inputs section on `CostPerHour.tsx` — same reorder as 3.1.
@@ -166,7 +166,7 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
-| Priority 3 — High-Priority Design | 0 | 7 |
+| Priority 3 — High-Priority Design | 1 | 6 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **37** | **15** |
+| **Total** | **38** | **14** |

@@ -102,6 +102,40 @@ export function CostPerHectare({
         onDelete={(index) => onDeleteMachine?.(index)}
       />
 
+      {/* Results */}
+      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+        <h2 className="text-sm font-semibold">Results</h2>
+
+        {hasZeroWarning ? (
+          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
+            Enter a value for {zeroWarnings.join(" and ")} to see results.
+          </div>
+        ) : (
+          <>
+            <CostBreakdown
+              rows={[
+                { label: "Your cost", value: results.totalCostPerHa, unit: "ha", bold: true },
+                { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
+                { label: "Running costs", value: runningCostPerHa, unit: "ha" },
+              ]}
+            />
+
+            <div className="flex items-baseline justify-between gap-2 sm:gap-4 font-semibold text-base">
+              <span>Total annual cost</span>
+              <span className="tabular-nums whitespace-nowrap">{formatGBP(results.totalAnnualCost)}/year</span>
+            </div>
+
+            <CostBreakdown
+              rows={[
+                { label: "Contractor cost", value: inputs.contractorCharge, unit: "ha", bold: true },
+              ]}
+            />
+
+            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
+          </>
+        )}
+      </div>
+
       {/* What Did You Pay? */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">What Did You Pay / What Will You Get?</h2>
@@ -257,40 +291,6 @@ export function CostPerHectare({
           currentRate={inputs.contractorCharge}
           unitFilter="ha"
         />
-      </div>
-
-      {/* Results */}
-      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-        <h2 className="text-sm font-semibold">Results</h2>
-
-        {hasZeroWarning ? (
-          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
-            Enter a value for {zeroWarnings.join(" and ")} to see results.
-          </div>
-        ) : (
-          <>
-            <CostBreakdown
-              rows={[
-                { label: "Your cost", value: results.totalCostPerHa, unit: "ha", bold: true },
-                { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
-                { label: "Running costs", value: runningCostPerHa, unit: "ha" },
-              ]}
-            />
-
-            <div className="flex items-baseline justify-between gap-2 sm:gap-4 font-semibold text-base">
-              <span>Total annual cost</span>
-              <span className="tabular-nums whitespace-nowrap">{formatGBP(results.totalAnnualCost)}/year</span>
-            </div>
-
-            <CostBreakdown
-              rows={[
-                { label: "Contractor cost", value: inputs.contractorCharge, unit: "ha", bold: true },
-              ]}
-            />
-
-            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
-          </>
-        )}
       </div>
     </div>
   )
