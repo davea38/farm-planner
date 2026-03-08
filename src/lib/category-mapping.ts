@@ -2,6 +2,22 @@ import type { MachineCategory as ReplacementCategory } from "./types"
 import type { MachineCategory as DepreciationCategory } from "./depreciation-data"
 
 /**
+ * Canonical display labels for each replacement category.
+ * This is the single source of truth — MACHINE_CATEGORIES in defaults.ts
+ * is derived from this record so the two can never drift apart.
+ */
+export const CATEGORY_LABELS: Record<ReplacementCategory, string> = {
+  tractor: "Tractor",
+  combine: "Combine",
+  sprayer: "Sprayer",
+  drill: "Drill",
+  cultivator: "Cultivator",
+  trailer: "Trailer",
+  handler: "Handler",
+  other: "Other",
+}
+
+/**
  * Maps each replacement planner category to its default depreciation category.
  *
  * Tractors default to "tractors_large" because most farm tractors in a replacement

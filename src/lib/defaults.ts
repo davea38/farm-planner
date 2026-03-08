@@ -6,6 +6,7 @@ import type {
   ReplacementPlannerState,
 } from "./types";
 import { FUEL_PRICES } from "./fuel-data";
+import { CATEGORY_LABELS } from "./category-mapping";
 
 export const defaultCostPerHectare: CostPerHectareInputs = {
   purchasePrice: 126000,
@@ -93,16 +94,12 @@ export function createDefaultReplacementMachines(): ReplacementMachine[] {
   return defaultReplacementMachines.map((m) => makeReplacementMachine(m.name, m.category));
 }
 
-export const MACHINE_CATEGORIES: { value: ReplacementMachine["category"]; label: string }[] = [
-  { value: "tractor", label: "Tractor" },
-  { value: "combine", label: "Combine" },
-  { value: "sprayer", label: "Sprayer" },
-  { value: "drill", label: "Drill" },
-  { value: "cultivator", label: "Cultivator" },
-  { value: "trailer", label: "Trailer" },
-  { value: "handler", label: "Handler" },
-  { value: "other", label: "Other" },
-];
+// Derived from CATEGORY_LABELS (the single source of truth in category-mapping.ts)
+// so that replacement categories and depreciation mappings can never drift apart.
+export const MACHINE_CATEGORIES: { value: ReplacementMachine["category"]; label: string }[] =
+  (Object.entries(CATEGORY_LABELS) as [ReplacementMachine["category"], string][]).map(
+    ([value, label]) => ({ value, label })
+  );
 
 export const defaultReplacementPlanner: ReplacementPlannerState = {
   machines: createDefaultReplacementMachines(),

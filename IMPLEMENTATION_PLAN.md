@@ -64,7 +64,7 @@
 - [x] **1.5** Add a storage migration (v2 to v3) that strips `haPerHr` from persisted `CostPerHourInputs` when loading from localStorage.
   WHY: Existing users have the obsolete field in saved data; it should be cleaned on load.
 
-- [ ] **1.6** Unify replacement and depreciation category lists: either generate `MACHINE_CATEGORIES` in `src/lib/defaults.ts` from `category-mapping.ts`, or replace it with a single canonical list.
+- [x] **1.6** Unify replacement and depreciation category lists: either generate `MACHINE_CATEGORIES` in `src/lib/defaults.ts` from `category-mapping.ts`, or replace it with a single canonical list.
   WHY: Two diverging category arrays (`MACHINE_CATEGORIES` in defaults vs `DEPRECIATION_PROFILES` keys in depreciation-data) will drift apart over time. The mapping in `src/lib/category-mapping.ts` already bridges them but `MACHINE_CATEGORIES` is still independently maintained.
 
 ---
@@ -164,9 +164,9 @@ Tasks should be executed in roughly this order, respecting dependencies:
 |-------|------|---------|
 | SPEC-01 – SPEC-11 | 11 | 0 |
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
-| Priority 1 — Must-Fix Correctness | 5 | 1 |
+| Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 0 | 3 |
 | Priority 3 — High-Priority Design | 0 | 7 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **33** | **19** |
+| **Total** | **34** | **18** |
