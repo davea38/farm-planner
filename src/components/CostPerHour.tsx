@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import type { CostPerHourInputs, SavedMachine, DepreciationCategory } from "@/lib/types"
+import type { CostPerHourInputs } from "@/lib/types"
 import { defaultCostPerHour } from "@/lib/defaults"
 import { calcCostPerHour } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
@@ -11,7 +11,6 @@ import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
-import { SaveLoadToolbar } from "./SaveLoadToolbar"
 import { DepreciationPanel } from "./DepreciationPanel"
 import { CostDonutChart } from "./CostDonutChart"
 import { CostComparisonBar } from "./CostComparisonBar"
@@ -19,25 +18,12 @@ import { CostComparisonBar } from "./CostComparisonBar"
 export function CostPerHour({
   initialInputs,
   onChange,
-  onDirtyChange,
-  savedMachines = [],
-  onSaveMachine,
-  onLoadMachine,
-  onDeleteMachine,
-  onResetMachine,
 }: {
   initialInputs?: CostPerHourInputs
   onChange?: (inputs: CostPerHourInputs) => void
-  onDirtyChange?: (dirty: boolean) => void
-  savedMachines?: SavedMachine<CostPerHourInputs>[]
-  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs, selectedIndex?: number | null) => void
-  onLoadMachine?: (index: number) => void
-  onDeleteMachine?: (index: number) => void
-  onResetMachine?: () => void
 }) {
   const [inputs, setInputs] = useState<CostPerHourInputs>(initialInputs ?? defaultCostPerHour)
   const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
-  const [isDirty, setIsDirty] = useState(false)
 
   const update = (field: keyof CostPerHourInputs) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
@@ -47,19 +33,11 @@ export function CostPerHour({
       delete next[field]
       return next
     })
-    if (!isDirty) {
-      setIsDirty(true)
-      onDirtyChange?.(true)
-    }
   }
 
   const applyFromSource = (field: keyof CostPerHourInputs, source: string) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
     setFieldSources((prev) => ({ ...prev, [field]: source }))
-    if (!isDirty) {
-      setIsDirty(true)
-      onDirtyChange?.(true)
-    }
   }
 
   const isFirstRender = useRef(true)
@@ -105,38 +83,9 @@ export function CostPerHour({
     bannerSub = `Contractor is ${formatGBP(perHourDiff)}/hr cheaper`
   }
 
-  const handleLoad = (index: number) => {
-    const machine = savedMachines[index]
-    if (machine) {
-      setInputs(machine.inputs)
-      const src = `Saved: ${machine.name}`
-      const sources: Record<string, string> = {}
-      for (const key of Object.keys(machine.inputs)) sources[key] = src
-      setFieldSources(sources)
-    }
-    onLoadMachine?.(index)
-    setIsDirty(false)
-    onDirtyChange?.(false)
-  }
-
-  const handleSave = (name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
-    onSaveMachine?.(name, machineType, inputs, selectedIndex)
-    setIsDirty(false)
-    onDirtyChange?.(false)
-  }
-
   return (
     <div className="space-y-6">
 
-      {/* Save / Load Toolbar */}
-      <SaveLoadToolbar
-        savedMachines={savedMachines}
-        onSave={handleSave}
-        onLoad={handleLoad}
-        onDelete={(index) => onDeleteMachine?.(index)}
-        onReset={onResetMachine}
-      />
-      
       {/* What Did You Pay? */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">What Did You Pay / What Will You Get?</h2>
