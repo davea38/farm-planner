@@ -24,6 +24,7 @@ export function CostPerHour({
   onSaveMachine,
   onLoadMachine,
   onDeleteMachine,
+  onResetMachine,
 }: {
   initialInputs?: CostPerHourInputs
   onChange?: (inputs: CostPerHourInputs) => void
@@ -32,6 +33,7 @@ export function CostPerHour({
   onSaveMachine?: (name: string, inputs: CostPerHourInputs) => void
   onLoadMachine?: (index: number) => void
   onDeleteMachine?: (index: number) => void
+  onResetMachine?: () => void
 }) {
   const [inputs, setInputs] = useState<CostPerHourInputs>(initialInputs ?? defaultCostPerHour)
   const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
@@ -131,6 +133,7 @@ export function CostPerHour({
         onSave={handleSave}
         onLoad={handleLoad}
         onDelete={(index) => onDeleteMachine?.(index)}
+        onReset={onResetMachine}
       />
 
       {/* Results */}

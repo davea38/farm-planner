@@ -14,6 +14,7 @@ import { WelcomePanel } from '@/components/WelcomePanel'
 import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
 import type { UnitPreferences } from '@/lib/units'
+import { defaultCostPerHectare, defaultCostPerHour } from '@/lib/defaults'
 import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState, ContractingIncomeState } from '@/lib/types'
 
 function App() {
@@ -66,6 +67,13 @@ function App() {
     }))
   }, [])
 
+  const onResetCostPerHectare = useCallback(() => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHectare: { ...prev.costPerHectare, current: defaultCostPerHectare },
+    }))
+  }, [])
+
   const onCostPerHourChange = useCallback((inputs: CostPerHourInputs) => {
     setAppState((prev) => ({
       ...prev,
@@ -101,6 +109,13 @@ function App() {
         ...prev.costPerHour,
         savedMachines: prev.costPerHour.savedMachines.filter((_, i) => i !== index),
       },
+    }))
+  }, [])
+
+  const onResetCostPerHour = useCallback(() => {
+    setAppState((prev) => ({
+      ...prev,
+      costPerHour: { ...prev.costPerHour, current: defaultCostPerHour },
     }))
   }, [])
 
@@ -240,6 +255,7 @@ function App() {
                 onSaveMachine={onSaveCostPerHectareMachine}
                 onLoadMachine={onLoadCostPerHectareMachine}
                 onDeleteMachine={onDeleteCostPerHectareMachine}
+                onResetMachine={onResetCostPerHectare}
               />
             </TabsContent>
 
@@ -252,6 +268,7 @@ function App() {
                 onSaveMachine={onSaveCostPerHourMachine}
                 onLoadMachine={onLoadCostPerHourMachine}
                 onDeleteMachine={onDeleteCostPerHourMachine}
+                onResetMachine={onResetCostPerHour}
               />
             </TabsContent>
 

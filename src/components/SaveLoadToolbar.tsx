@@ -15,6 +15,7 @@ interface SaveLoadToolbarProps<T> {
   onSave: (name: string) => void
   onLoad: (index: number) => void
   onDelete: (index: number) => void
+  onReset?: () => void
 }
 
 export function SaveLoadToolbar<T>({
@@ -22,6 +23,7 @@ export function SaveLoadToolbar<T>({
   onSave,
   onLoad,
   onDelete,
+  onReset,
 }: SaveLoadToolbarProps<T>) {
   const [name, setName] = useState("")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
@@ -105,8 +107,17 @@ export function SaveLoadToolbar<T>({
               if (selectedIndex !== null) {
                 const machineName = savedMachines[selectedIndex]?.name ?? "Machine"
                 onDelete(selectedIndex)
-                setSelectedIndex(null)
-                showToast(`Deleted "${machineName}" — removed from "Worth It?" overview.`)
+                if (savedMachines.length > 1) {
+                  // Load the first machine from the remaining list
+                  setSelectedIndex(0)
+                  onLoad(0)
+                  const firstRemaining = savedMachines[selectedIndex === 0 ? 1 : 0]
+                  showToast(`Deleted "${machineName}" — loaded "${firstRemaining?.name}".`)
+                } else {
+                  setSelectedIndex(null)
+                  onReset?.()
+                  showToast(`Deleted "${machineName}" — form reset to defaults.`)
+                }
               }
             }}
             disabled={selectedIndex === null}

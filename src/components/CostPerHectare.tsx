@@ -26,6 +26,7 @@ export function CostPerHectare({
   onSaveMachine,
   onLoadMachine,
   onDeleteMachine,
+  onResetMachine,
 }: {
   initialInputs?: CostPerHectareInputs
   onChange?: (inputs: CostPerHectareInputs) => void
@@ -34,6 +35,7 @@ export function CostPerHectare({
   onSaveMachine?: (name: string, inputs: CostPerHectareInputs) => void
   onLoadMachine?: (index: number) => void
   onDeleteMachine?: (index: number) => void
+  onResetMachine?: () => void
 }) {
   const [inputs, setInputs] = useState<CostPerHectareInputs>(initialInputs ?? defaultCostPerHectare)
   const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
@@ -137,6 +139,7 @@ export function CostPerHectare({
         onSave={handleSave}
         onLoad={handleLoad}
         onDelete={(index) => onDeleteMachine?.(index)}
+        onReset={onResetMachine}
       />
 
       {/* Results */}
