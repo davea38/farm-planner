@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import type { SavedMachine } from "@/lib/types"
 import {
   Select,
@@ -25,10 +25,31 @@ export function SaveLoadToolbar<T>({
 }: SaveLoadToolbarProps<T>) {
   const [name, setName] = useState("")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current)
+    }
+  }, [])
+
+  const showToast = (message: string) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    setToast(message)
+    toastTimer.current = setTimeout(() => setToast(null), 3500)
+  }
 
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
       <h2 className="text-sm font-semibold">Saved Machines</h2>
+
+      {/* Save confirmation toast */}
+      {toast && (
+        <div className="rounded-md bg-primary/10 border border-primary/30 px-3 py-2 text-sm text-primary animate-in fade-in slide-in-from-top-1 duration-200">
+          {toast}
+        </div>
+      )}
 
       {/* Save row */}
       <div className="flex items-center gap-2">
@@ -43,6 +64,7 @@ export function SaveLoadToolbar<T>({
           onClick={() => {
             if (name.trim()) {
               onSave(name.trim())
+              showToast(`Saved! This machine's costs now feed into the Profitability overview.`)
               setName("")
             }
           }}
