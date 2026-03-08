@@ -110,7 +110,7 @@ export function MachinesTab({
         const newIndex = hourMachines.length
         onSelectMachine({ costMode: "hour", index: newIndex })
       }
-      showToast(`Saved "${name.trim()}" — now edit its costs on the ${costMode === "hectare" ? "Cost / Hectare" : "Cost / Hour"} tab.`)
+      showToast(`Saved "${name.trim()}" — now edit its costs on the other tabs.`)
     }
   }
 
@@ -200,39 +200,6 @@ export function MachinesTab({
           </div>
         </div>
 
-        {/* Cost mode - only when adding new */}
-        {!isEditing && (
-          <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1">
-              Cost calculation <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setCostMode("hectare")}
-                className={`rounded-md border px-3 py-2 text-sm min-h-[44px] transition-colors ${
-                  costMode === "hectare"
-                    ? "border-primary bg-primary/10 text-primary font-medium"
-                    : "border-border bg-card text-muted-foreground hover:bg-muted/50"
-                }`}
-              >
-                Cost per Hectare
-              </button>
-              <button
-                type="button"
-                onClick={() => setCostMode("hour")}
-                className={`rounded-md border px-3 py-2 text-sm min-h-[44px] transition-colors ${
-                  costMode === "hour"
-                    ? "border-primary bg-primary/10 text-primary font-medium"
-                    : "border-border bg-card text-muted-foreground hover:bg-muted/50"
-                }`}
-              >
-                Cost per Hour
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="flex gap-2">
           <Button
             onClick={handleSave}
@@ -279,7 +246,7 @@ export function MachinesTab({
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm truncate">{entry.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {profileLabel(entry.machineType)} · {entry.costMode === "hectare" ? "per hectare" : "per hour"}
+                      {profileLabel(entry.machineType)}
                     </div>
                   </div>
                   {isSelected && (

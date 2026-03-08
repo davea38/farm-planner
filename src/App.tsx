@@ -184,10 +184,6 @@ function App() {
   const disabledTabClass = "text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground disabled:opacity-40 disabled:cursor-not-allowed"
   const activeTabClass = "text-xs sm:text-sm py-2 data-active:bg-primary data-active:text-primary-foreground"
 
-  // Determine which cost tab to show based on selected machine
-  const showHectareTab = selectedMachine?.costMode === "hectare"
-  const showHourTab = selectedMachine?.costMode === "hour"
-
   return (
     <UnitContext.Provider value={{ units: unitPrefs, setUnits: handleUnitsChange }}>
     <TooltipProvider>
@@ -233,15 +229,15 @@ function App() {
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hectare"
-                className={hasMachineSelected && showHectareTab ? activeTabClass : disabledTabClass}
-                disabled={!hasMachineSelected || !showHectareTab}
+                className={hasMachineSelected ? activeTabClass : disabledTabClass}
+                disabled={!hasMachineSelected}
               >
                 {unitPrefs.area === 'acres' ? 'Cost / Acre' : 'Cost / Hectare'}
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hour"
-                className={hasMachineSelected && showHourTab ? activeTabClass : disabledTabClass}
-                disabled={!hasMachineSelected || !showHourTab}
+                className={hasMachineSelected ? activeTabClass : disabledTabClass}
+                disabled={!hasMachineSelected}
               >
                 Cost / Hour
               </TabsTrigger>
