@@ -10,6 +10,7 @@ import { DepreciationPanel } from '@/components/DepreciationPanel'
 import { ContractingIncomePlanner } from '@/components/ContractingIncomePlanner'
 import { ProfitabilityOverview } from '@/components/ProfitabilityOverview'
 import { UnitToggle } from '@/components/UnitToggle'
+import { WelcomePanel } from '@/components/WelcomePanel'
 import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
 import type { UnitPreferences } from '@/lib/units'
@@ -175,6 +176,8 @@ function App() {
               </div>
             </div>
           </div>
+
+          <WelcomePanel />
 
           <Tabs defaultValue="cost-per-hectare">
             <TabsList className="grid w-full grid-cols-3 sm:grid-cols-7 h-auto gap-1">
