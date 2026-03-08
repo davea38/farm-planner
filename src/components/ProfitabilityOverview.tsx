@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InputField } from "@/components/InputField";
 import { ResultBanner } from "@/components/ResultBanner";
+import { CostDonutChart } from "@/components/CostDonutChart";
+import { IncomeVsCostsBar } from "@/components/IncomeVsCostsBar";
 import { formatGBP, formatPct } from "@/lib/format";
 import {
   calculateProfitability,
@@ -267,6 +269,47 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
             </CardContent>
           </Card>
         </div>
+
+        {/* Charts */}
+        {(results.totalIncome > 0 || results.totalCosts > 0) && (
+          <div className="space-y-6">
+            <div className="grid gap-6 sm:grid-cols-2">
+              {/* Stacked bar: income vs costs */}
+              <div>
+                <IncomeVsCostsBar
+                  incomeSegments={[
+                    { label: "Farm income", value: results.farmIncomeAmount, color: "#2e7d32" },
+                    { label: "Contracting income", value: results.contractingIncomeAmount, color: "#66bb6a" },
+                  ]}
+                  costSegments={[
+                    { label: "Replacements", value: results.replacementCosts, color: "#c62828" },
+                    { label: "Running costs", value: results.totalRunningCosts, color: "#e57373" },
+                    { label: "Contracting costs", value: results.contractingCosts, color: "#ef9a9a" },
+                  ]}
+                  netPosition={results.netPosition}
+                />
+              </div>
+
+              {/* Donut: cost category split */}
+              {results.totalCosts > 0 && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                    Where your costs go
+                  </p>
+                  <CostDonutChart
+                    segments={[
+                      { label: "Replacements", value: results.replacementCosts, color: "#c62828" },
+                      { label: "Running costs", value: results.totalRunningCosts, color: "#e57373" },
+                      { label: "Contracting costs", value: results.contractingCosts, color: "#ef9a9a" },
+                    ]}
+                    centerLabel="Total costs"
+                    centerValue={results.totalCosts}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* With vs Without Contracting */}
         {hasServices && (

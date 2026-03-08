@@ -99,7 +99,7 @@
 - [x] **3.5** Add a comparison bar (own cost vs contractor cost) on both cost tabs — two side-by-side horizontal bars with the difference highlighted.
   WHY: The own-vs-contractor comparison is the key decision; a visual bar makes the gap obvious.
 
-- [ ] **3.6** Add a stacked bar chart and donut chart to the Profitability tab: stacked bar showing income vs costs, donut showing cost category split (replacements, running costs, contracting).
+- [x] **3.6** Add a stacked bar chart and donut chart to the Profitability tab: stacked bar showing income vs costs, donut showing cost category split (replacements, running costs, contracting).
   WHY: Charts make the profitability picture obvious without reading every number.
 
 - [ ] **3.7** Add inline sparklines per machine on the Replacement Planner (Tab 5) showing depreciation trajectory.
@@ -166,7 +166,7 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
-| Priority 3 — High-Priority Design | 5 | 2 |
+| Priority 3 — High-Priority Design | 6 | 1 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **42** | **10** |
+| **Total** | **43** | **9** |
