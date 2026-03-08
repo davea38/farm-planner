@@ -74,7 +74,7 @@
 - [x] **2.1** Add a save-machine-feeds-profitability indicator: after saving a machine on Tab 1 or Tab 2, show a brief toast confirming the data now feeds the Profitability tab.
   WHY: Users cannot tell that saving on one tab updates another; the cross-tab data flow is invisible.
 
-- [ ] **2.2** Add an interest rate tooltip on `CostPerHectare.tsx` and `CostPerHour.tsx` explaining that this represents the opportunity cost of capital (or loan rate if financed).
+- [x] **2.2** Add an interest rate tooltip on `CostPerHectare.tsx` and `CostPerHour.tsx` explaining that this represents the opportunity cost of capital (or loan rate if financed).
   WHY: "Interest rate" is ambiguous — farmers may enter their savings rate (2%) or their loan rate (6-8%), which significantly changes results.
 
 - [ ] **2.3** Add a contracting cost-base warning on the Contracting Income tab when the same machine is used for own-farm work and contracting, noting that per-unit costs may be double-counted.
@@ -165,8 +165,8 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | SPEC-01 – SPEC-11 | 11 | 0 |
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
-| Priority 2 — Should-Fix UX | 1 | 2 |
+| Priority 2 — Should-Fix UX | 2 | 1 |
 | Priority 3 — High-Priority Design | 0 | 7 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **35** | **17** |
+| **Total** | **36** | **16** |

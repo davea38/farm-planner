@@ -204,7 +204,7 @@ export function CostPerHour({
               value={inputs.interestRate}
               onChange={update("interestRate")}
               unit="%"
-              tooltip="The return you could earn if you invested the money instead. Usually 2–4%. If you borrowed, use your loan rate instead."
+              tooltip="The return you could earn if you invested the money instead of buying this machine. Usually 2–4%. If you borrowed to buy the machine, use your loan interest rate instead."
               min={0}
             />
             <InputField
