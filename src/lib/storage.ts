@@ -12,7 +12,7 @@ import {
 
 const STORAGE_KEY = "farmPlanner";
 const UNITS_STORAGE_KEY = "farmPlannerUnits";
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 function createDefaultState(): AppState {
   return {
@@ -80,6 +80,25 @@ const migrations: Migration[] = [
     version: 2,
     contractingIncome: { services: [] },
   }),
+  // v2 → v3: Strip obsolete haPerHr from costPerHour inputs
+  (state) => {
+    const cph = state.costPerHour as Record<string, unknown> | undefined;
+    if (cph) {
+      const current = cph.current as Record<string, unknown> | undefined;
+      if (current) {
+        delete current.haPerHr;
+      }
+      const saved = cph.savedMachines as Array<{ inputs?: Record<string, unknown> }> | undefined;
+      if (Array.isArray(saved)) {
+        for (const machine of saved) {
+          if (machine.inputs) {
+            delete machine.inputs.haPerHr;
+          }
+        }
+      }
+    }
+    return { ...state, version: 3 };
+  },
 ];
 
 function migrateState(data: Record<string, unknown>): AppState | null {
