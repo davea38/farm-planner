@@ -133,65 +133,6 @@ export function CostPerHectare({
 
   return (
     <div className="space-y-6">
-      {/* Save / Load Toolbar */}
-      <SaveLoadToolbar
-        savedMachines={savedMachines}
-        onSave={handleSave}
-        onLoad={handleLoad}
-        onDelete={(index) => onDeleteMachine?.(index)}
-        onReset={onResetMachine}
-      />
-
-      {/* Results */}
-      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-        <h2 className="text-sm font-semibold">Results</h2>
-
-        {hasZeroWarning ? (
-          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
-            Enter a value for {zeroWarnings.join(" and ")} to see results.
-          </div>
-        ) : (
-          <>
-            <CostBreakdown
-              rows={[
-                { label: "Your cost", value: results.totalCostPerHa, unit: "ha", bold: true },
-                { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
-                { label: "Running costs", value: runningCostPerHa, unit: "ha" },
-              ]}
-            />
-
-            <CostDonutChart
-              segments={[
-                { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
-                { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
-                { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
-                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
-                { label: "Fuel", value: results.fuelPerHa * inputs.hectaresPerYear, color: "#f9a825" },
-                { label: "Labour", value: results.labourPerHa * inputs.hectaresPerYear, color: "#ffcc80" },
-                { label: "Repairs", value: results.repairsPerHa * inputs.hectaresPerYear, color: "#ef6c00" },
-              ]}
-              centerLabel="Total/year"
-              centerValue={results.totalAnnualCost}
-            />
-
-            <div className="space-y-0.5">
-              <span className="text-sm text-muted-foreground">Total annual cost</span>
-              <div className="text-4xl font-bold tabular-nums">
-                {formatGBP(results.totalAnnualCost)}<span className="text-lg font-semibold text-muted-foreground">/year</span>
-              </div>
-            </div>
-
-            <CostComparisonBar
-              ownCost={results.totalCostPerHa}
-              contractorCost={inputs.contractorCharge}
-              unit={areaUnit}
-            />
-
-            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
-          </>
-        )}
-      </div>
-
       {/* What Did You Pay? */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">What Did You Pay / What Will You Get?</h2>
@@ -352,6 +293,65 @@ export function CostPerHectare({
           unitFilter="ha"
         />
       </div>
+
+      {/* Results */}
+      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+        <h2 className="text-sm font-semibold">Results</h2>
+
+        {hasZeroWarning ? (
+          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
+            Enter a value for {zeroWarnings.join(" and ")} to see results.
+          </div>
+        ) : (
+          <>
+            <CostBreakdown
+              rows={[
+                { label: "Your cost", value: results.totalCostPerHa, unit: "ha", bold: true },
+                { label: "Fixed costs", value: results.fixedCostPerHa, unit: "ha" },
+                { label: "Running costs", value: runningCostPerHa, unit: "ha" },
+              ]}
+            />
+
+            <CostDonutChart
+              segments={[
+                { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
+                { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
+                { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
+                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
+                { label: "Fuel", value: results.fuelPerHa * inputs.hectaresPerYear, color: "#f9a825" },
+                { label: "Labour", value: results.labourPerHa * inputs.hectaresPerYear, color: "#ffcc80" },
+                { label: "Repairs", value: results.repairsPerHa * inputs.hectaresPerYear, color: "#ef6c00" },
+              ]}
+              centerLabel="Total/year"
+              centerValue={results.totalAnnualCost}
+            />
+
+            <div className="space-y-0.5">
+              <span className="text-sm text-muted-foreground">Total annual cost</span>
+              <div className="text-4xl font-bold tabular-nums">
+                {formatGBP(results.totalAnnualCost)}<span className="text-lg font-semibold text-muted-foreground">/year</span>
+              </div>
+            </div>
+
+            <CostComparisonBar
+              ownCost={results.totalCostPerHa}
+              contractorCost={inputs.contractorCharge}
+              unit={areaUnit}
+            />
+
+            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
+          </>
+        )}
+      </div>
+
+      {/* Save / Load Toolbar */}
+      <SaveLoadToolbar
+        savedMachines={savedMachines}
+        onSave={handleSave}
+        onLoad={handleLoad}
+        onDelete={(index) => onDeleteMachine?.(index)}
+        onReset={onResetMachine}
+      />
     </div>
   )
 }
