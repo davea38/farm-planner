@@ -32,6 +32,91 @@ interface MachineEntry {
   index: number
 }
 
+/** SVG icon per machine category */
+function MachineIcon({ type, size = 32, className = "" }: { type: string; size?: number; className?: string }) {
+  const s = size
+  const common = { xmlns: "http://www.w3.org/2000/svg", width: s, height: s, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, className }
+
+  switch (type) {
+    case "tractors_small":
+    case "tractors_large":
+      // Tractor
+      return (
+        <svg {...common}>
+          <circle cx="7" cy="17" r="3" />
+          <circle cx="17.5" cy="15.5" r="4.5" />
+          <path d="M7 14V8h5l4 4v3" />
+          <path d="M3 17h1M12 8V5h2" />
+        </svg>
+      )
+    case "combines":
+      // Combine harvester
+      return (
+        <svg {...common}>
+          <rect x="6" y="6" width="12" height="10" rx="2" />
+          <circle cx="9" cy="19" r="2" />
+          <circle cx="17" cy="19" r="2" />
+          <path d="M2 12h4M6 9h12" />
+          <path d="M11 16v-4" />
+        </svg>
+      )
+    case "forage_harvesters":
+      // Forage / baler
+      return (
+        <svg {...common}>
+          <rect x="4" y="8" width="14" height="8" rx="2" />
+          <circle cx="7" cy="19" r="2" />
+          <circle cx="15" cy="19" r="2" />
+          <path d="M18 12h3v4h-3" />
+          <path d="M4 11h14M11 8v8" />
+        </svg>
+      )
+    case "sprayers":
+      // Sprayer
+      return (
+        <svg {...common}>
+          <rect x="8" y="6" width="8" height="8" rx="1" />
+          <circle cx="10" cy="18" r="2" />
+          <circle cx="18" cy="18" r="2" />
+          <path d="M3 14h5M3 14v4M5 18v-4" />
+          <path d="M3 20v-2M5 20v-2M7 14v6" />
+        </svg>
+      )
+    case "tillage":
+      // Cultivator / tillage
+      return (
+        <svg {...common}>
+          <path d="M4 8h16" />
+          <path d="M6 8v8M10 8v10M14 8v8M18 8v10" />
+          <path d="M6 16l-1 3M10 18l-1 3M14 16l-1 3M18 18l-1 3" />
+          <path d="M4 8l2-4h12l2 4" />
+        </svg>
+      )
+    case "drills":
+      // Seed drill
+      return (
+        <svg {...common}>
+          <rect x="3" y="6" width="18" height="6" rx="2" />
+          <circle cx="6" cy="18" r="2" />
+          <circle cx="18" cy="18" r="2" />
+          <path d="M6 12v4M10 12v6M14 12v6M18 12v4" />
+          <path d="M8 6v-2h8v2" />
+        </svg>
+      )
+    default:
+      // Miscellaneous / generic equipment
+      return (
+        <svg {...common}>
+          <rect x="3" y="8" width="18" height="8" rx="2" />
+          <circle cx="7" cy="19" r="2" />
+          <circle cx="17" cy="19" r="2" />
+          <path d="M10 8V5h4v3" />
+          <path d="M3 12h18" />
+        </svg>
+      )
+  }
+}
+
 export function MachinesTab({
   hectareMachines,
   hourMachines,
@@ -92,7 +177,6 @@ export function MachinesTab({
     if (!name.trim() || !machineType || nameDuplicate) return
 
     if (isEditing) {
-      // Update existing
       if (selectedMachine.costMode === "hectare") {
         onSaveHectareMachine(name.trim(), machineType, selectedMachine.index)
       } else {
@@ -100,7 +184,6 @@ export function MachinesTab({
       }
       showToast(`Updated "${name.trim()}" — changes saved.`)
     } else {
-      // Add new
       if (costMode === "hectare") {
         onSaveHectareMachine(name.trim(), machineType, null)
         const newIndex = hectareMachines.length
@@ -153,6 +236,11 @@ export function MachinesTab({
     const found = MACHINE_TYPE_OPTIONS.find(([key]) => key === type)
     return found ? found[1].label : type
   }
+
+  // Find the full selected entry for the banner
+  const selectedEntry = selectedMachine
+    ? allMachines.find((m) => m.costMode === selectedMachine.costMode && m.index === selectedMachine.index)
+    : null
 
   return (
     <div className="space-y-6">
@@ -227,6 +315,47 @@ export function MachinesTab({
         </div>
       </div>
 
+      {/* Selected machine banner */}
+      {selectedEntry ? (
+        <div className="rounded-lg border-2 border-primary bg-primary/5 p-4 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary shrink-0">
+              <MachineIcon type={selectedEntry.machineType} size={36} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-medium text-primary uppercase tracking-wide mb-0.5">Currently editing</div>
+              <div className="font-semibold text-lg truncate">{selectedEntry.name}</div>
+              <div className="text-sm text-muted-foreground">{profileLabel(selectedEntry.machineType)}</div>
+            </div>
+            <div className="text-xs text-primary font-medium shrink-0 bg-primary/10 rounded-full px-3 py-1">
+              Active
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            Use the tabs above to enter costs and see results for this machine.
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-lg border-2 border-dashed border-farm-amber/50 bg-farm-amber/5 p-5">
+          <div className="flex items-start gap-4">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-farm-amber/10 text-farm-amber shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            </div>
+            <div>
+              <div className="font-semibold text-sm mb-1">No machine selected</div>
+              <p className="text-sm text-muted-foreground">
+                {allMachines.length === 0
+                  ? "Add your first machine using the form above, then you can start entering costs on the other tabs."
+                  : "Select a machine from the list below, or add a new one above. Once selected, the other tabs will unlock so you can enter costs and view results."
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Machine list */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
         <h2 className="text-sm font-semibold">Your Machines</h2>
@@ -250,6 +379,9 @@ export function MachinesTab({
                   }`}
                   onClick={() => handleSelect(entry)}
                 >
+                  <div className={`shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                    <MachineIcon type={entry.machineType} size={24} />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm truncate">{entry.name}</div>
                     <div className="text-xs text-muted-foreground">
