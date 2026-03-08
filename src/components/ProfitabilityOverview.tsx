@@ -233,8 +233,8 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
           </h3>
           <Card className="border-2">
             <CardContent className="py-4 space-y-3 text-center">
-              <p className="text-2xl sm:text-3xl font-bold">
-                Net Position:{" "}
+              <p className="text-sm text-muted-foreground">Net Position</p>
+              <p className="text-4xl sm:text-[40px] font-bold">
                 <span
                   className={
                     results.netPosition >= 0
@@ -243,8 +243,9 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
                   }
                 >
                   {results.netPosition >= 0 ? "+" : ""}
-                  {formatGBP(results.netPosition)}/year
+                  {formatGBP(results.netPosition)}
                 </span>
+                <span className="text-lg font-semibold text-muted-foreground">/year</span>
               </p>
               <div className="grid grid-cols-2 gap-2 text-sm max-w-md mx-auto">
                 <span className="text-muted-foreground text-right">

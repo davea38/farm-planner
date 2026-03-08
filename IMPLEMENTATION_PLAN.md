@@ -134,7 +134,7 @@
 - [x] **5.2** Apply the warm colour palette: page background `#F5F0E8`, card background `#FFFDF7`, gold accent `#8B6914`, border colour `#D4C5A9` — keep existing `farm-green` and `farm-amber` as secondary accents.
   WHY: Warm tones feel more approachable and appropriate for a farming tool.
 
-- [ ] **5.3** Increase primary result-number font sizes to 36-40px on cost tabs and profitability (total cost per hectare, cost per hour, profit margin).
+- [x] **5.3** Increase primary result-number font sizes to 36-40px on cost tabs and profitability (total cost per hectare, cost per hour, profit margin).
   WHY: Large numbers draw the eye and reinforce the results-first layout established in 3.1/3.2.
 
 ---
@@ -168,5 +168,5 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | Priority 2 — Should-Fix UX | 3 | 0 |
 | Priority 3 — High-Priority Design | 7 | 0 |
 | Priority 4 — Medium-Priority Design | 5 | 0 |
-| Priority 5 — Low-Priority Polish | 2 | 1 |
-| **Total** | **51** | **1** |
+| Priority 5 — Low-Priority Polish | 3 | 0 |
+| **Total** | **52** | **0** |

@@ -171,9 +171,11 @@ export function CostPerHectare({
               centerValue={results.totalAnnualCost}
             />
 
-            <div className="flex items-baseline justify-between gap-2 sm:gap-4 font-semibold text-base">
-              <span>Total annual cost</span>
-              <span className="tabular-nums whitespace-nowrap">{formatGBP(results.totalAnnualCost)}/year</span>
+            <div className="space-y-0.5">
+              <span className="text-sm text-muted-foreground">Total annual cost</span>
+              <div className="text-4xl font-bold tabular-nums">
+                {formatGBP(results.totalAnnualCost)}<span className="text-lg font-semibold text-muted-foreground">/year</span>
+              </div>
             </div>
 
             <CostComparisonBar
