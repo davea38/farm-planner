@@ -5,6 +5,7 @@ import { ResultBanner } from "@/components/ResultBanner";
 import { CostDonutChart } from "@/components/CostDonutChart";
 import { IncomeVsCostsBar } from "@/components/IncomeVsCostsBar";
 import { formatGBP, formatPct } from "@/lib/format";
+import { SourceBadge } from "@/components/SourceBadge";
 import {
   calculateProfitability,
   calcCostPerHectare,
@@ -146,8 +147,9 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
               tooltip="Your total annual farm income (excluding contracting)"
               min={0}
             />
-            <span className="text-muted-foreground">
-              Contracting income (from Tab 6):
+            <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
+              Contracting income:
+              {results.contractingIncomeAmount > 0 && <SourceBadge label="Contracting tab" />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.contractingIncomeAmount)}/year
@@ -167,14 +169,16 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
             Costs
           </h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Replacement costs (avg annual):
+              <SourceBadge label="Replacement Planner" />
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.replacementCosts)}/year
             </span>
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Running costs (per-ha machines x {haCountLabel}):
+              {haCountLabel > 0 && <SourceBadge label={`${haCountLabel} saved machine${haCountLabel !== 1 ? "s" : ""}`} />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(runningCostsHa)}/year
@@ -189,8 +193,9 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
                 </span>
               </>
             )}
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Running costs (per-hr machines x {hrCountLabel}):
+              {hrCountLabel > 0 && <SourceBadge label={`${hrCountLabel} saved machine${hrCountLabel !== 1 ? "s" : ""}`} />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(runningCostsHr)}/year
@@ -205,8 +210,9 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
                 </span>
               </>
             )}
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Contracting operating costs:
+              {results.contractingCosts > 0 && <SourceBadge label="Contracting tab" />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.contractingCosts)}/year

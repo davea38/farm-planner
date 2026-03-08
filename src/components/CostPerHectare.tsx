@@ -34,9 +34,21 @@ export function CostPerHectare({
   onDeleteMachine?: (index: number) => void
 }) {
   const [inputs, setInputs] = useState<CostPerHectareInputs>(initialInputs ?? defaultCostPerHectare)
+  const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
 
   const update = (field: keyof CostPerHectareInputs) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
+    setFieldSources((prev) => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  const applyFromSource = (field: keyof CostPerHectareInputs, source: string) => (value: number) => {
+    setInputs((prev) => ({ ...prev, [field]: value }))
+    setFieldSources((prev) => ({ ...prev, [field]: source }))
   }
 
   const isFirstRender = useRef(true)
@@ -90,6 +102,10 @@ export function CostPerHectare({
     const machine = savedMachines[index]
     if (machine) {
       setInputs(machine.inputs)
+      const src = `Saved: ${machine.name}`
+      const sources: Record<string, string> = {}
+      for (const key of Object.keys(machine.inputs)) sources[key] = src
+      setFieldSources(sources)
     }
     onLoadMachine?.(index)
   }
@@ -227,8 +243,9 @@ export function CostPerHectare({
           unit="£/litre"
           tooltip="Current red diesel price per litre"
           min={0}
+          sourceBadge={fieldSources["fuelPrice"]}
         />
-        <FuelPricePanel onApply={update("fuelPrice")} />
+        <FuelPricePanel onApply={applyFromSource("fuelPrice", "AHDB fuel price")} />
         <InputField
           label="Fuel use"
           value={inputs.fuelUse}
@@ -236,9 +253,10 @@ export function CostPerHectare({
           metricUnit="L/ha"
           tooltip="Litres of fuel burned per hectare"
           min={0}
+          sourceBadge={fieldSources["fuelUse"]}
         />
         <FuelConsumptionPanel
-          onApply={update("fuelUse")}
+          onApply={applyFromSource("fuelUse", "Fuel estimate")}
           mode="perHectare"
           workRate={inputs.workRate}
         />
@@ -249,9 +267,10 @@ export function CostPerHectare({
           unit="%"
           tooltip="Annual repair bill as a percentage of what you paid"
           min={0}
+          sourceBadge={fieldSources["repairsPct"]}
         />
         <div className="flex justify-end">
-          <RepairEstimator onApply={update("repairsPct")} />
+          <RepairEstimator onApply={applyFromSource("repairsPct", "Repair estimate")} />
         </div>
       </div>
 
@@ -301,9 +320,10 @@ export function CostPerHectare({
           metricUnit="£/ha"
           tooltip="What a contractor would charge you per hectare for the same job"
           min={0}
+          sourceBadge={fieldSources["contractorCharge"]}
         />
         <ContractorRatesPanel
-          onApply={update("contractorCharge")}
+          onApply={applyFromSource("contractorCharge", "NAAC rate")}
           currentRate={inputs.contractorCharge}
           unitFilter="ha"
         />

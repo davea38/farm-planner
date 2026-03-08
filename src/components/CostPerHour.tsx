@@ -32,9 +32,21 @@ export function CostPerHour({
   onDeleteMachine?: (index: number) => void
 }) {
   const [inputs, setInputs] = useState<CostPerHourInputs>(initialInputs ?? defaultCostPerHour)
+  const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
 
   const update = (field: keyof CostPerHourInputs) => (value: number) => {
     setInputs((prev) => ({ ...prev, [field]: value }))
+    setFieldSources((prev) => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  const applyFromSource = (field: keyof CostPerHourInputs, source: string) => (value: number) => {
+    setInputs((prev) => ({ ...prev, [field]: value }))
+    setFieldSources((prev) => ({ ...prev, [field]: source }))
   }
 
   const isFirstRender = useRef(true)
@@ -84,6 +96,10 @@ export function CostPerHour({
     const machine = savedMachines[index]
     if (machine) {
       setInputs(machine.inputs)
+      const src = `Saved: ${machine.name}`
+      const sources: Record<string, string> = {}
+      for (const key of Object.keys(machine.inputs)) sources[key] = src
+      setFieldSources(sources)
     }
     onLoadMachine?.(index)
   }
@@ -205,9 +221,10 @@ export function CostPerHour({
           unit="L/hr"
           tooltip="Litres of fuel burned per hour of work"
           min={0}
+          sourceBadge={fieldSources["fuelConsumptionPerHr"]}
         />
         <FuelConsumptionPanel
-          onApply={update("fuelConsumptionPerHr")}
+          onApply={applyFromSource("fuelConsumptionPerHr", "Fuel estimate")}
           mode="perHour"
         />
         <InputField
@@ -218,8 +235,9 @@ export function CostPerHour({
           tooltip="Current red diesel price per litre"
           min={0}
           step={0.01}
+          sourceBadge={fieldSources["fuelPrice"]}
         />
-        <FuelPricePanel onApply={update("fuelPrice")} />
+        <FuelPricePanel onApply={applyFromSource("fuelPrice", "AHDB fuel price")} />
         <InputField
           label="Spares & repairs"
           value={inputs.repairsPct}
@@ -227,9 +245,10 @@ export function CostPerHour({
           unit="%"
           tooltip="Annual repair bill as a percentage of what you paid"
           min={0}
+          sourceBadge={fieldSources["repairsPct"]}
         />
         <div className="flex justify-end">
-          <RepairEstimator onApply={update("repairsPct")} />
+          <RepairEstimator onApply={applyFromSource("repairsPct", "Repair estimate")} />
         </div>
         <InputField
           label="Labour cost"
@@ -287,9 +306,10 @@ export function CostPerHour({
           unit="£/hr"
           tooltip="What a contractor would charge you per hour for the same job"
           min={0}
+          sourceBadge={fieldSources["contractorCharge"]}
         />
         <ContractorRatesPanel
-          onApply={update("contractorCharge")}
+          onApply={applyFromSource("contractorCharge", "NAAC rate")}
           currentRate={inputs.contractorCharge}
           unitFilter="hr"
           defaultCategory="Tractor Hire"

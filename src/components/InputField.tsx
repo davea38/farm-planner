@@ -17,6 +17,7 @@ interface InputFieldProps {
   min?: number
   max?: number
   step?: number | "any"
+  sourceBadge?: string
 }
 
 export function InputField({
@@ -29,6 +30,7 @@ export function InputField({
   min,
   max,
   step = "any",
+  sourceBadge,
 }: InputFieldProps) {
   const { units } = useUnits()
 
@@ -80,6 +82,14 @@ export function InputField({
           </span>
         )}
       </div>
+      {sourceBadge && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[11px] font-medium text-primary leading-tight">
+          <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M2 6h8M6 2v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          {sourceBadge}
+        </span>
+      )}
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { CollapsibleSection } from "@/components/CollapsibleSection"
 import { ContractorRatesPanel } from "@/components/ContractorRatesPanel"
 import { ResultBanner } from "@/components/ResultBanner"
+import { SourceBadge } from "@/components/SourceBadge"
 import { formatGBP, formatPct } from "@/lib/format"
 import {
   calculateContractingService,
@@ -333,9 +334,17 @@ export function ContractingIncomePlanner({
 
                 {/* Own cost per unit */}
                 <div className="space-y-1">
-                  <Label>
-                    Your cost per {service.chargeUnit} (£)
-                  </Label>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <Label>
+                      Your cost per {service.chargeUnit} (£)
+                    </Label>
+                    {service.linkedMachineSource && (() => {
+                      const [tab, idxStr] = service.linkedMachineSource.split(":")
+                      const idx = parseInt(idxStr, 10)
+                      const machine = tab === "hectare" ? savedHectareMachines[idx] : savedHourMachines[idx]
+                      return machine ? <SourceBadge label={`Saved: ${machine.name}`} /> : null
+                    })()}
+                  </div>
                   <Input
                     type="number"
                     min={0}
