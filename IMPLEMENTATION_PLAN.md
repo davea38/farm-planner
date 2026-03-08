@@ -112,7 +112,7 @@
 - [x] **4.1** Audit and replace technical input labels with farmer-friendly text across all tabs (e.g. "Field efficiency" becomes "Time actually working in the field (%)", add explanatory tooltips to "Average value").
   WHY: Farmers are not accountants; plain language reduces confusion and errors.
 
-- [ ] **4.2** Add save/load toast notifications across all tabs — when a machine profile is saved or loaded, show a brief toast confirming the action and noting which other tabs are affected.
+- [x] **4.2** Add save/load toast notifications across all tabs — when a machine profile is saved or loaded, show a brief toast confirming the action and noting which other tabs are affected.
   WHY: Cross-tab data flow is invisible without explicit feedback.
 
 - [ ] **4.3** Add data-source badges to inputs populated from other tabs or NAAC data (e.g. a small "From saved profile" or "NAAC rate" badge next to the field).
@@ -167,6 +167,6 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
 | Priority 3 — High-Priority Design | 7 | 0 |
-| Priority 4 — Medium-Priority Design | 1 | 4 |
+| Priority 4 — Medium-Priority Design | 2 | 3 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **45** | **7** |
+| **Total** | **46** | **6** |

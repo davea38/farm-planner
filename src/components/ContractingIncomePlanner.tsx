@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -88,6 +88,20 @@ export function ContractingIncomePlanner({
   savedHourMachines,
 }: ContractingIncomePlannerProps) {
   const { services } = initialState
+  const [toast, setToast] = useState<string | null>(null)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current)
+    }
+  }, [])
+
+  const showToast = (message: string) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    setToast(message)
+    toastTimer.current = setTimeout(() => setToast(null), 3500)
+  }
 
   const serviceResults = useMemo(
     () =>
@@ -147,6 +161,7 @@ export function ContractingIncomePlanner({
         chargeUnit: "ha",
         linkedMachineSource: sourceKey,
       })
+      showToast(`Pulled costs from "${machine.name}" — cost per hectare applied.`)
     } else if (tab === "hour") {
       const machine = savedHourMachines[index]
       if (!machine) return
@@ -156,6 +171,7 @@ export function ContractingIncomePlanner({
         chargeUnit: "hr",
         linkedMachineSource: sourceKey,
       })
+      showToast(`Pulled costs from "${machine.name}" — cost per hour applied.`)
     }
   }
 
@@ -174,6 +190,11 @@ export function ContractingIncomePlanner({
           cost per unit may be lower — and your margin higher.
         </p>
       </CardHeader>
+      {toast && (
+        <div className="mx-6 rounded-md bg-primary/10 border border-primary/30 px-3 py-2 text-sm text-primary animate-in fade-in slide-in-from-top-1 duration-200">
+          {toast}
+        </div>
+      )}
       <CardContent className="space-y-6">
         <Button onClick={addService} variant="outline">
           + Add Service

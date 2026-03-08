@@ -84,6 +84,8 @@ export function SaveLoadToolbar<T>({
               const idx = Number(v)
               setSelectedIndex(idx)
               onLoad(idx)
+              const machineName = savedMachines[idx]?.name ?? "Machine"
+              showToast(`Loaded "${machineName}" — inputs updated on this tab.`)
             }}
           >
             <SelectTrigger className="flex-1 min-h-[44px]">
@@ -101,8 +103,10 @@ export function SaveLoadToolbar<T>({
             variant="destructive"
             onClick={() => {
               if (selectedIndex !== null) {
+                const machineName = savedMachines[selectedIndex]?.name ?? "Machine"
                 onDelete(selectedIndex)
                 setSelectedIndex(null)
+                showToast(`Deleted "${machineName}" — removed from "Worth It?" overview.`)
               }
             }}
             disabled={selectedIndex === null}
