@@ -9,6 +9,7 @@ import { InputField } from "./InputField"
 import { ResultBanner } from "./ResultBanner"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { DepreciationPanel } from "./DepreciationPanel"
+import { DepreciationSparkline } from "./DepreciationSparkline"
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -28,6 +29,10 @@ function MachineRow({
   }
 
   const costToBudget = machine.priceToChange - machine.currentValue
+  const machineAge = machine.yearOfManufacture != null
+    ? CURRENT_YEAR - machine.yearOfManufacture
+    : null
+  const depreciationCategory = getDepreciationCategory(machine.category)
 
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-2">
@@ -181,6 +186,20 @@ function MachineRow({
             </span>
           )}
         </div>
+      </div>
+
+      {/* Depreciation sparkline */}
+      <div className="flex items-center gap-2 px-1 pt-1 border-t border-muted/50">
+        <span className="text-xs text-muted-foreground shrink-0">Depreciation</span>
+        <DepreciationSparkline
+          category={depreciationCategory}
+          ageYears={machineAge}
+        />
+        {machineAge != null && (
+          <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+            {machineAge}yr old
+          </span>
+        )}
       </div>
     </div>
   )

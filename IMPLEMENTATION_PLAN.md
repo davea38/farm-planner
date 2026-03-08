@@ -102,7 +102,7 @@
 - [x] **3.6** Add a stacked bar chart and donut chart to the Profitability tab: stacked bar showing income vs costs, donut showing cost category split (replacements, running costs, contracting).
   WHY: Charts make the profitability picture obvious without reading every number.
 
-- [ ] **3.7** Add inline sparklines per machine on the Replacement Planner (Tab 5) showing depreciation trajectory.
+- [x] **3.7** Add inline sparklines per machine on the Replacement Planner (Tab 5) showing depreciation trajectory.
   WHY: Visual depreciation context directly in the replacement table saves farmers switching tabs.
 
 ---
@@ -166,7 +166,7 @@ Tasks should be executed in roughly this order, respecting dependencies:
 | SPEC-12 Phase 1 — Completed | 17 | 0 |
 | Priority 1 — Must-Fix Correctness | 6 | 0 |
 | Priority 2 — Should-Fix UX | 3 | 0 |
-| Priority 3 — High-Priority Design | 6 | 1 |
+| Priority 3 — High-Priority Design | 7 | 0 |
 | Priority 4 — Medium-Priority Design | 0 | 5 |
 | Priority 5 — Low-Priority Polish | 0 | 3 |
-| **Total** | **43** | **9** |
+| **Total** | **44** | **8** |
