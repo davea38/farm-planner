@@ -33,7 +33,7 @@ interface MachineEntry {
 }
 
 /** SVG icon per machine category */
-function MachineIcon({ type, size = 32, className = "" }: { type: string; size?: number; className?: string }) {
+export function MachineIcon({ type, size = 32, className = "" }: { type: string; size?: number; className?: string }) {
   const s = size
   const common = { xmlns: "http://www.w3.org/2000/svg", width: s, height: s, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, className }
 
@@ -237,11 +237,6 @@ export function MachinesTab({
     return found ? found[1].label : type
   }
 
-  // Find the full selected entry for the banner
-  const selectedEntry = selectedMachine
-    ? allMachines.find((m) => m.costMode === selectedMachine.costMode && m.index === selectedMachine.index)
-    : null
-
   return (
     <div className="space-y-6">
       {/* Create / Edit form */}
@@ -314,47 +309,6 @@ export function MachinesTab({
           )}
         </div>
       </div>
-
-      {/* Selected machine banner */}
-      {selectedEntry ? (
-        <div className="rounded-lg border-2 border-primary bg-primary/5 p-4 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary shrink-0">
-              <MachineIcon type={selectedEntry.machineType} size={36} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium text-primary uppercase tracking-wide mb-0.5">Currently editing</div>
-              <div className="font-semibold text-lg truncate">{selectedEntry.name}</div>
-              <div className="text-sm text-muted-foreground">{profileLabel(selectedEntry.machineType)}</div>
-            </div>
-            <div className="text-xs text-primary font-medium shrink-0 bg-primary/10 rounded-full px-3 py-1">
-              Active
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-3">
-            Use the tabs above to enter costs and see results for this machine.
-          </p>
-        </div>
-      ) : (
-        <div className="rounded-lg border-2 border-dashed border-farm-amber/50 bg-farm-amber/5 p-5">
-          <div className="flex items-start gap-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-farm-amber/10 text-farm-amber shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-              </svg>
-            </div>
-            <div>
-              <div className="font-semibold text-sm mb-1">No machine selected</div>
-              <p className="text-sm text-muted-foreground">
-                {allMachines.length === 0
-                  ? "Add your first machine using the form above, then you can start entering costs on the other tabs."
-                  : "Select a machine from the list below, or add a new one above. Once selected, the other tabs will unlock so you can enter costs and view results."
-                }
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Machine list */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">

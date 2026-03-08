@@ -9,8 +9,9 @@ import { ReplacementPlanner } from '@/components/ReplacementPlanner'
 import { DepreciationPanel } from '@/components/DepreciationPanel'
 import { ContractingIncomePlanner } from '@/components/ContractingIncomePlanner'
 import { ProfitabilityOverview } from '@/components/ProfitabilityOverview'
-import { MachinesTab } from '@/components/MachinesTab'
+import { MachinesTab, MachineIcon } from '@/components/MachinesTab'
 import type { SelectedMachine } from '@/components/MachinesTab'
+import { DEPRECIATION_PROFILES } from '@/lib/depreciation-data'
 import { UnitToggle } from '@/components/UnitToggle'
 import { WelcomePanel } from '@/components/WelcomePanel'
 import { UnitContext } from '@/lib/UnitContext'
@@ -277,6 +278,54 @@ function App() {
                 Worth It?
               </TabsTrigger>
             </TabsList>
+
+            {/* Selected machine banner — shown on all tabs */}
+            {(() => {
+              if (!selectedMachine) {
+                const hasMachines = appState.costPerHectare.savedMachines.length > 0 || appState.costPerHour.savedMachines.length > 0
+                return (
+                  <div className="mt-4 rounded-lg border-2 border-dashed border-farm-amber/50 bg-farm-amber/5 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-farm-amber/10 text-farm-amber shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm mb-0.5">No machine selected</div>
+                        <p className="text-sm text-muted-foreground">
+                          {hasMachines
+                            ? "Select a machine on the Machines tab to unlock the other tabs."
+                            : "Add your first machine on the Machines tab to get started."
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+              const machine = selectedMachine.costMode === "hectare"
+                ? appState.costPerHectare.savedMachines[selectedMachine.index]
+                : appState.costPerHour.savedMachines[selectedMachine.index]
+              if (!machine) return null
+              const profile = DEPRECIATION_PROFILES[machine.machineType]
+              return (
+                <div className="mt-4 rounded-lg border-2 border-primary bg-primary/5 p-3 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary shrink-0">
+                      <MachineIcon type={machine.machineType} size={28} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm truncate">{machine.name}</div>
+                      <div className="text-xs text-muted-foreground">{profile?.label ?? machine.machineType}</div>
+                    </div>
+                    <div className="text-xs text-primary font-medium shrink-0 bg-primary/10 rounded-full px-2.5 py-0.5">
+                      Active
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
 
             <TabsContent value="machines" className="mt-4">
               <MachinesTab
