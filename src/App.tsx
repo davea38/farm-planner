@@ -36,14 +36,17 @@ function App() {
     }))
   }, [])
 
-  const onSaveCostPerHectareMachine = useCallback((name: string, machineType: DepreciationCategory, inputs: CostPerHectareInputs) => {
-    setAppState((prev) => ({
-      ...prev,
-      costPerHectare: {
-        ...prev.costPerHectare,
-        savedMachines: [...prev.costPerHectare.savedMachines, { name, machineType, inputs }],
-      },
-    }))
+  const onSaveCostPerHectareMachine = useCallback((name: string, machineType: DepreciationCategory, inputs: CostPerHectareInputs, selectedIndex?: number | null) => {
+    setAppState((prev) => {
+      const newMachine = { name, machineType, inputs }
+      const machines = selectedIndex != null
+        ? prev.costPerHectare.savedMachines.map((m, i) => i === selectedIndex ? newMachine : m)
+        : [...prev.costPerHectare.savedMachines, newMachine]
+      return {
+        ...prev,
+        costPerHectare: { ...prev.costPerHectare, savedMachines: machines },
+      }
+    })
   }, [])
 
   const onLoadCostPerHectareMachine = useCallback((index: number) => {
@@ -81,14 +84,17 @@ function App() {
     }))
   }, [])
 
-  const onSaveCostPerHourMachine = useCallback((name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs) => {
-    setAppState((prev) => ({
-      ...prev,
-      costPerHour: {
-        ...prev.costPerHour,
-        savedMachines: [...prev.costPerHour.savedMachines, { name, machineType, inputs }],
-      },
-    }))
+  const onSaveCostPerHourMachine = useCallback((name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs, selectedIndex?: number | null) => {
+    setAppState((prev) => {
+      const newMachine = { name, machineType, inputs }
+      const machines = selectedIndex != null
+        ? prev.costPerHour.savedMachines.map((m, i) => i === selectedIndex ? newMachine : m)
+        : [...prev.costPerHour.savedMachines, newMachine]
+      return {
+        ...prev,
+        costPerHour: { ...prev.costPerHour, savedMachines: machines },
+      }
+    })
   }, [])
 
   const onLoadCostPerHourMachine = useCallback((index: number) => {

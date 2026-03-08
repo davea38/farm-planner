@@ -30,7 +30,7 @@ export function CostPerHour({
   onChange?: (inputs: CostPerHourInputs) => void
   onDirtyChange?: (dirty: boolean) => void
   savedMachines?: SavedMachine<CostPerHourInputs>[]
-  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs) => void
+  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHourInputs, selectedIndex?: number | null) => void
   onLoadMachine?: (index: number) => void
   onDeleteMachine?: (index: number) => void
   onResetMachine?: () => void
@@ -119,8 +119,8 @@ export function CostPerHour({
     onDirtyChange?.(false)
   }
 
-  const handleSave = (name: string, machineType: DepreciationCategory) => {
-    onSaveMachine?.(name, machineType, inputs)
+  const handleSave = (name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
+    onSaveMachine?.(name, machineType, inputs, selectedIndex)
     setIsDirty(false)
     onDirtyChange?.(false)
   }

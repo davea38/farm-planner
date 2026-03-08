@@ -16,7 +16,7 @@ const MACHINE_TYPE_OPTIONS = Object.entries(DEPRECIATION_PROFILES) as [MachineCa
 
 interface SaveLoadToolbarProps<T> {
   savedMachines: SavedMachine<T>[]
-  onSave: (name: string, machineType: MachineCategory) => void
+  onSave: (name: string, machineType: MachineCategory, selectedIndex: number | null) => void
   onLoad: (index: number) => void
   onDelete: (index: number) => void
   onReset?: () => void
@@ -72,7 +72,7 @@ export function SaveLoadToolbar<T>({
       {/* Machine type dropdown */}
       <div>
         <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
-          Machine type
+          Machine type <span className="text-red-500">*</span>
         </label>
         <select
           id="machine-type-select"
@@ -93,28 +93,36 @@ export function SaveLoadToolbar<T>({
       </div>
 
       {/* Save row */}
-      <div className="flex items-center gap-2">
-        <Input
-          type="text"
-          placeholder="Name this machine..."
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="flex-1 min-h-[44px]"
-        />
-        <Button
-          onClick={() => {
-            if (name.trim() && machineType) {
-              onSave(name.trim(), machineType)
-              showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
-              setName("")
-              setMachineType("")
-            }
-          }}
-          disabled={!name.trim() || !machineType}
-          className="min-h-[44px]"
-        >
-          Save
-        </Button>
+      <div>
+        <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
+          Name <span className="text-red-500">*</span>
+        </label>
+        <div className="flex items-center gap-2">
+          <Input
+            id="machine-name-input"
+            type="text"
+            placeholder="Name this machine..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="flex-1 min-h-[44px]"
+          />
+          <Button
+            onClick={() => {
+              if (name.trim() && machineType) {
+                onSave(name.trim(), machineType, selectedIndex)
+                if (selectedIndex !== null) {
+                  showToast(`Updated "${name.trim()}" — changes saved.`)
+                } else {
+                  showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
+                }
+              }
+            }}
+            disabled={!name.trim() || !machineType}
+            className="min-h-[44px]"
+          >
+            {selectedIndex !== null ? "Update" : "Save"}
+          </Button>
+        </div>
       </div>
 
       {/* Load / Delete row */}

@@ -32,7 +32,7 @@ export function CostPerHectare({
   onChange?: (inputs: CostPerHectareInputs) => void
   onDirtyChange?: (dirty: boolean) => void
   savedMachines?: SavedMachine<CostPerHectareInputs>[]
-  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHectareInputs) => void
+  onSaveMachine?: (name: string, machineType: DepreciationCategory, inputs: CostPerHectareInputs, selectedIndex?: number | null) => void
   onLoadMachine?: (index: number) => void
   onDeleteMachine?: (index: number) => void
   onResetMachine?: () => void
@@ -125,8 +125,8 @@ export function CostPerHectare({
     onDirtyChange?.(false)
   }
 
-  const handleSave = (name: string, machineType: DepreciationCategory) => {
-    onSaveMachine?.(name, machineType, inputs)
+  const handleSave = (name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
+    onSaveMachine?.(name, machineType, inputs, selectedIndex)
     setIsDirty(false)
     onDirtyChange?.(false)
   }
