@@ -176,7 +176,7 @@ export function CostPerHour({
       <div className="rounded-lg bg-card p-4 shadow-sm">
         <CollapsibleSection
           title="Overheads"
-          subtitle="Most farmers leave these as they are"
+          subtitle="Change interest rate and insurance rate to see how they affect your costs"
           defaultOpen={false}
         >
           <div className="space-y-1 mt-2">
