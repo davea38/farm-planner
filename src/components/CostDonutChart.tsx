@@ -71,7 +71,7 @@ export function CostDonutChart({ segments, centerLabel, centerValue }: CostDonut
       </div>
 
       {/* Legend */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+      <div className="flex flex-col gap-1 text-xs">
         {activeSegments.map((seg) => (
           <div key={seg.label} className="flex items-center gap-1.5">
             <span

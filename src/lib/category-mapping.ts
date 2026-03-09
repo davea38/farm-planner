@@ -52,7 +52,7 @@ const ALL_OPTIONS: Record<ReplacementCategory, DepreciationCategory[]> = {
 
 /** Get the single best-match depreciation category for a replacement category. */
 export function getDepreciationCategory(category: ReplacementCategory): DepreciationCategory {
-  return DEFAULT_MAPPING[category]
+  return DEFAULT_MAPPING[category] ?? "miscellaneous"
 }
 
 /**

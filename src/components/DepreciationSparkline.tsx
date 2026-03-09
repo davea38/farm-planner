@@ -19,7 +19,7 @@ export function DepreciationSparkline({
   width = 120,
   height = 32,
 }: DepreciationSparklineProps) {
-  const profile = DEPRECIATION_PROFILES[category]
+  const profile = DEPRECIATION_PROFILES[category] ?? DEPRECIATION_PROFILES["miscellaneous"]
   const values = profile.remainingValueByAge
   const pad = { top: 3, right: 3, bottom: 3, left: 3 }
   const chartW = width - pad.left - pad.right

@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { CollapsibleSection } from "@/components/CollapsibleSection"
 import { ContractorRatesPanel } from "@/components/ContractorRatesPanel"
 import { ResultBanner } from "@/components/ResultBanner"
 import { SourceBadge } from "@/components/SourceBadge"
@@ -393,18 +392,13 @@ export function ContractingIncomePlanner({
                 </div>
 
                 {/* NAAC Rates Panel */}
-                <CollapsibleSection
-                  title="NAAC Rates (what others charge)"
-                  defaultOpen={false}
-                >
-                  <ContractorRatesPanel
-                    onApply={(rate) =>
-                      updateService(service.id, { chargeRate: rate })
-                    }
-                    currentRate={service.chargeRate}
-                    unitFilter={service.chargeUnit}
-                  />
-                </CollapsibleSection>
+                <ContractorRatesPanel
+                  onApply={(rate) =>
+                    updateService(service.id, { chargeRate: rate })
+                  }
+                  currentRate={service.chargeRate}
+                  unitFilter={service.chargeUnit}
+                />
 
                 {/* Results */}
                 {hasResults && (
