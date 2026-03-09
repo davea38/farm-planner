@@ -4,6 +4,7 @@ import type { MachineCategory } from "@/lib/depreciation-data"
 import { DEPRECIATION_PROFILES } from "@/lib/depreciation-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { CollapsibleSection } from "@/components/CollapsibleSection"
 
 const MACHINE_TYPE_OPTIONS = Object.entries(DEPRECIATION_PROFILES) as [MachineCategory, (typeof DEPRECIATION_PROFILES)[MachineCategory]][]
 
@@ -258,31 +259,14 @@ export function MachinesTab({
       )}
 
       {/* Add New Machine section (collapsible) */}
-      <div className="rounded-lg bg-card shadow-sm">
-        <button
-          type="button"
-          onClick={() => setAddNewOpen(!addNewOpen)}
-          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold hover:bg-muted/50 transition-colors rounded-lg"
+      <div className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection
+          title="Add New Machine"
+          subtitle="Create a new machine to track costs"
+          open={addNewOpen}
+          onOpenChange={setAddNewOpen}
         >
-          <span>+ Add New Machine</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`transition-transform duration-200 ${addNewOpen ? "rotate-180" : ""}`}
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
-
-        {addNewOpen && (
-          <div className="px-4 pb-4 space-y-3">
+          <div className="space-y-3 pt-2">
             {newNameDuplicate && (
               <p className="text-xs text-red-500">A machine with this name already exists.</p>
             )}
@@ -360,62 +344,64 @@ export function MachinesTab({
               Save Machine
             </Button>
           </div>
-        )}
+        </CollapsibleSection>
       </div>
 
       {/* Edit Machine section (only if saved machines exist) */}
       {hasMachines && isEditing && editingEntry && (
-        <div className="rounded-lg bg-card p-4 shadow-sm space-y-3">
-          <h2 className="text-sm font-semibold">Edit Machine</h2>
+        <div className="rounded-lg bg-card p-4 shadow-sm">
+          <CollapsibleSection title="Edit Machine" defaultOpen>
+            <div className="space-y-3 pt-2">
+              {nameDuplicate && (
+                <p className="text-xs text-red-500">A machine with this name already exists.</p>
+              )}
 
-          {nameDuplicate && (
-            <p className="text-xs text-red-500">A machine with this name already exists.</p>
-          )}
+              <div className="grid grid-cols-[1fr_1fr] gap-2">
+                <div>
+                  <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
+                    Name <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="machine-name-input"
+                    type="text"
+                    placeholder="e.g. John Deere 6150R"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="min-h-[44px]"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
+                    Machine type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="machine-type-select"
+                    value={machineType}
+                    onChange={(e) => setMachineType(e.target.value as MachineCategory | "")}
+                    className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
+                    required
+                  >
+                    <option value="" disabled>
+                      Please select...
+                    </option>
+                    {MACHINE_TYPE_OPTIONS.map(([key, p]) => (
+                      <option key={key} value={key}>
+                        {p.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-[1fr_1fr] gap-2">
-            <div>
-              <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
-                Name <span className="text-red-500">*</span>
-              </label>
-              <Input
-                id="machine-name-input"
-                type="text"
-                placeholder="e.g. John Deere 6150R"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="min-h-[44px]"
-              />
-            </div>
-            <div>
-              <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
-                Machine type <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="machine-type-select"
-                value={machineType}
-                onChange={(e) => setMachineType(e.target.value as MachineCategory | "")}
-                className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
-                required
+              <Button
+                onClick={handleSave}
+                disabled={!name.trim() || !machineType || nameDuplicate}
+                className="w-full min-h-[44px]"
               >
-                <option value="" disabled>
-                  Please select...
-                </option>
-                {MACHINE_TYPE_OPTIONS.map(([key, p]) => (
-                  <option key={key} value={key}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
+                Update Machine
+              </Button>
             </div>
-          </div>
-
-          <Button
-            onClick={handleSave}
-            disabled={!name.trim() || !machineType || nameDuplicate}
-            className="w-full min-h-[44px]"
-          >
-            Update Machine
-          </Button>
+          </CollapsibleSection>
         </div>
       )}
 
