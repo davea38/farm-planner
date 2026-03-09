@@ -257,36 +257,6 @@ export function MachinesTab({
         </div>
       )}
 
-      {/* Selected machine banner */}
-      {isEditing && editingEntry && (
-        <div className="rounded-lg bg-card p-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="text-primary shrink-0">
-              <MachineIcon type={editingEntry.machineType} size={28} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium text-muted-foreground">Selected Machine</div>
-              <div className="font-semibold text-sm truncate">{editingEntry.name}</div>
-              <div className="text-xs text-muted-foreground">
-                {profileLabel(editingEntry.machineType)} &middot; Cost / {editingEntry.costMode === "hectare" ? "Hectare" : "Hour"}
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="shrink-0 text-muted-foreground hover:text-foreground h-8 w-8 p-0"
-              onClick={() => {
-                onSelectMachine(null)
-                setName("")
-                setMachineType("")
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Add New Machine section (collapsible) */}
       <div className="rounded-lg bg-card shadow-sm">
         <button
