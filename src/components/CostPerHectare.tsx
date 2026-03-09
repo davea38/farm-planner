@@ -241,17 +241,6 @@ export function CostPerHectare({
         />
       </div>
 
-      {/* Depreciation Curve */}
-      <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
-        <h2 className="text-sm font-semibold mb-3">Depreciation Curve</h2>
-        <DepreciationPanel
-          purchasePrice={inputs.purchasePrice}
-          yearsOwned={inputs.yearsOwned}
-          onApplySalePrice={update("salePrice")}
-          onYearsChange={update("yearsOwned")}
-        />
-      </div>
-
       {/* Results */}
       <div className="rounded-lg bg-muted/50 p-4 space-y-4">
         <h2 className="text-sm font-semibold">Results</h2>
