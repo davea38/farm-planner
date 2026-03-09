@@ -123,18 +123,6 @@ export function CostPerHour({
         />
       </div>
 
-      {/* Depreciation Curve */}
-      <div className="rounded-lg bg-card p-4 shadow-sm">
-        <CollapsibleSection title="Depreciation Curve" defaultOpen={false}>
-          <DepreciationPanel
-            purchasePrice={inputs.purchasePrice}
-            yearsOwned={inputs.yearsOwned}
-            onApplySalePrice={update("salePrice")}
-            onYearsChange={update("yearsOwned")}
-          />
-        </CollapsibleSection>
-      </div>
-
       {/* Running Costs */}
       <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
         <h2 className="text-sm font-semibold mb-3">Running Costs</h2>
@@ -237,6 +225,17 @@ export function CostPerHour({
           currentRate={inputs.contractorCharge}
           unitFilter="hr"
           defaultCategory="Tractor Hire"
+        />
+      </div>
+
+      {/* Depreciation Curve */}
+      <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
+        <h2 className="text-sm font-semibold mb-3">Depreciation Curve</h2>
+        <DepreciationPanel
+          purchasePrice={inputs.purchasePrice}
+          yearsOwned={inputs.yearsOwned}
+          onApplySalePrice={update("salePrice")}
+          onYearsChange={update("yearsOwned")}
         />
       </div>
 
