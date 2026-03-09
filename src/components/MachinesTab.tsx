@@ -174,8 +174,6 @@ export function MachinesTab({
   const [addNewOpen, setAddNewOpen] = useState(false)
   const [newName, setNewName] = useState("")
   const [newMachineType, setNewMachineType] = useState<MachineCategory | "">("")
-  const [newCostMode, setNewCostMode] = useState<CostMode>("hectare")
-
   const [toast, setToast] = useState<string | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -270,19 +268,12 @@ export function MachinesTab({
 
   const handleSaveNew = () => {
     if (!newName.trim() || !newMachineType || newNameDuplicate) return
-    if (newCostMode === "hectare") {
-      onSaveHectareMachine(newName.trim(), newMachineType, null)
-      const newIndex = hectareMachines.length
-      onSelectMachine({ costMode: "hectare", index: newIndex })
-    } else {
-      onSaveHourMachine(newName.trim(), newMachineType, null)
-      const newIndex = hourMachines.length
-      onSelectMachine({ costMode: "hour", index: newIndex })
-    }
+    onSaveHectareMachine(newName.trim(), newMachineType, null)
+    const newIndex = hectareMachines.length
+    onSelectMachine({ costMode: "hectare", index: newIndex })
     showToast(`Saved "${newName.trim()}" — now edit its costs on the other tabs.`)
     setNewName("")
     setNewMachineType("")
-    setNewCostMode("hectare")
     setAddNewOpen(false)
   }
 
@@ -326,7 +317,7 @@ export function MachinesTab({
               <h3 className="text-sm font-semibold">New Machine</h3>
               <button
                 type="button"
-                onClick={() => { setAddNewOpen(false); setNewName(""); setNewMachineType(""); setNewCostMode("hectare") }}
+                onClick={() => { setAddNewOpen(false); setNewName(""); setNewMachineType("") }}
                 className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
               >
                 <XIcon size={16} />
@@ -368,34 +359,6 @@ export function MachinesTab({
                       <option key={key} value={key}>{p.label}</option>
                     ))}
                   </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-muted-foreground block mb-1">Cost mode</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setNewCostMode("hectare")}
-                    className={`rounded-md border px-3 py-2 text-sm min-h-[44px] transition-colors ${
-                      newCostMode === "hectare"
-                        ? "border-primary bg-primary/10 text-primary font-medium"
-                        : "border-border hover:bg-muted/50"
-                    }`}
-                  >
-                    Cost / Hectare
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setNewCostMode("hour")}
-                    className={`rounded-md border px-3 py-2 text-sm min-h-[44px] transition-colors ${
-                      newCostMode === "hour"
-                        ? "border-primary bg-primary/10 text-primary font-medium"
-                        : "border-border hover:bg-muted/50"
-                    }`}
-                  >
-                    Cost / Hour
-                  </button>
                 </div>
               </div>
 
@@ -471,8 +434,6 @@ export function MachinesTab({
                       <div className="font-medium text-sm truncate">{entry.name}</div>
                       <div className="text-xs text-muted-foreground">
                         {profileLabel(entry.machineType)}
-                        <span className="mx-1.5 opacity-40">&middot;</span>
-                        {entry.costMode === "hectare" ? "per hectare" : "per hour"}
                       </div>
                     </button>
 
