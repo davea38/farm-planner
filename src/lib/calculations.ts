@@ -313,8 +313,7 @@ export function calcReplacementSummary(
   }
 
   const totalSpend = annualCosts.reduce((sum, entry) => sum + entry.cost, 0);
-  const numYears = annualCosts.length > 0 ? annualCosts.length : 1;
-  const averageAnnualCost = totalSpend / numYears;
+  const averageAnnualCost = totalSpend / effectiveSpan;
   const pctOfIncome = farmIncome > 0 ? (averageAnnualCost / farmIncome) * 100 : 0;
 
   return {

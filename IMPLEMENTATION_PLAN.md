@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-11
 > Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-08 architecture diverged (improved). SPEC-12 partially complete.
-> Remaining: 9 pending tasks across correctness and UX improvements.
+> Remaining: 8 pending tasks across UX improvements.
 
 ---
 
@@ -75,7 +75,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Wire onFarmIncomeChange in App.tsx so ProfitabilityOverview can actually update farm income state.
   WHY: The prop is defined on ProfitabilityOverview but never connected in App.tsx; users cannot change farm income, which breaks the core profitability calculation.
 
-- [ ] Fix the off-by-one bug in the replacement planner average annual cost calculation (divide by effectiveSpan, not effectiveSpan+1).
+- [x] Fix the off-by-one bug in the replacement planner average annual cost calculation (divide by effectiveSpan, not effectiveSpan+1).
   WHY: Every machine's average annual cost is understated because the denominator is one year too large.
 
 ---
@@ -137,7 +137,7 @@ Tasks must be executed respecting these dependencies:
 | SPEC-08 Machine Profile Loading | partial | tests need rewrite |
 | Priority 1 — TypeScript Errors | 4 | 0 |
 | Priority 2 — Failing Tests | 7 | 0 |
-| Priority 3 — Wire Missing Functionality | 1 | 1 |
+| Priority 3 — Wire Missing Functionality | 2 | 0 |
 | Priority 4 — Results-First Layout | 0 | 2 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |
 | Priority 6 — Save Confirmation Messaging | 0 | 1 |

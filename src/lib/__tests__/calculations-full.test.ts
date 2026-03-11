@@ -298,7 +298,8 @@ describe("calcReplacementSummary", () => {
       makeMachine({ id: "1", name: "A", usePerYear: 500, timeToChange: 1, currentHours: 0, priceToChange: 70000, currentValue: 0 }),
     ]
     const result = calcReplacementSummary(machines, 350000, 2026, 6)
-    const avgCost = result.totalSpend / result.annualCosts.length
+    // effectiveSpan is 6 (the minimum); average divides by effectiveSpan, not annualCosts.length
+    const avgCost = result.totalSpend / 6
     expect(result.pctOfIncome).toBeCloseTo((avgCost / 350000) * 100)
   })
 
