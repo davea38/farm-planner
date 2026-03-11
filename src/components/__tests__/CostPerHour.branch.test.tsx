@@ -118,38 +118,6 @@ describe("CostPerHour – branch coverage", () => {
     expect(screen.getByText(/save.*year by owning/i)).toBeInTheDocument()
   })
 
-  it("loads a saved machine profile", async () => {
-    const onLoad = vi.fn()
-    const user = userEvent.setup()
-    const savedInputs: CostPerHourInputs = {
-      purchasePrice: 150000,
-      yearsOwned: 6,
-      salePrice: 60000,
-      hoursPerYear: 800,
-      interestRate: 3,
-      insuranceRate: 2,
-      storageRate: 1,
-
-      fuelConsumptionPerHr: 18,
-      fuelPrice: 70,
-      repairsPct: 2,
-      labourCost: 16,
-      contractorCharge: 50,
-    }
-    renderWithUnits(
-      <CostPerHour
-        savedMachines={[{ name: "Big Loader", machineType: "miscellaneous", inputs: savedInputs }]}
-        onLoadMachine={onLoad}
-      />
-    )
-
-    await user.click(screen.getByText("Load a saved machine..."))
-    await user.click(screen.getByText("Big Loader"))
-
-    expect(onLoad).toHaveBeenCalledWith(0)
-    expect(screen.getByDisplayValue("150000")).toBeInTheDocument()
-  })
-
   it("calls onChange when input is modified", async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
@@ -182,84 +150,7 @@ describe("CostPerHour – branch coverage", () => {
     expect(screen.queryByText("AHDB fuel price")).not.toBeInTheDocument()
   })
 
-  it("sets source badges on all fields when loading a saved machine", async () => {
-    const onLoad = vi.fn()
-    const user = userEvent.setup()
-    const savedInputs: CostPerHourInputs = {
-      purchasePrice: 150000,
-      yearsOwned: 6,
-      salePrice: 60000,
-      hoursPerYear: 800,
-      interestRate: 3,
-      insuranceRate: 2,
-      storageRate: 1,
-      fuelConsumptionPerHr: 18,
-      fuelPrice: 70,
-      repairsPct: 2,
-      labourCost: 16,
-      contractorCharge: 50,
-    }
-    renderWithUnits(
-      <CostPerHour
-        savedMachines={[{ name: "Test Loader", machineType: "miscellaneous", inputs: savedInputs }]}
-        onLoadMachine={onLoad}
-      />
-    )
-
-    await user.click(screen.getByText("Load a saved machine..."))
-    await user.click(screen.getByText("Test Loader"))
-
-    // handleLoad sets source badges on all fields
-    expect(screen.getAllByText("Saved: Test Loader").length).toBeGreaterThan(0)
-  })
-
-  it("resets isDirty on save and calls onDirtyChange(false)", async () => {
-    const onDirtyChange = vi.fn()
-    const onSave = vi.fn()
-    const user = userEvent.setup()
-    renderWithUnits(
-      <CostPerHour onDirtyChange={onDirtyChange} onSaveMachine={onSave} />
-    )
-
-    // Make an edit to set isDirty = true
-    const purchaseInput = screen.getByDisplayValue("92751")
-    await user.clear(purchaseInput)
-    await user.type(purchaseInput, "100000")
-
-    // onDirtyChange should have been called with true
-    expect(onDirtyChange).toHaveBeenCalledWith(true)
-    onDirtyChange.mockClear()
-
-    // Save the machine — select machine type first
-    const machineTypeSelect = screen.getByDisplayValue("Please select...")
-    await user.selectOptions(machineTypeSelect, "tractors_large")
-
-    const nameInput = screen.getByPlaceholderText("Name this machine...")
-    await user.type(nameInput, "Saved Machine")
-    await user.click(screen.getByText("Save"))
-
-    // handleSave should reset isDirty and call onDirtyChange(false)
-    expect(onDirtyChange).toHaveBeenCalledWith(false)
-    expect(onSave).toHaveBeenCalledWith("Saved Machine", "tractors_large", expect.any(Object))
-  })
-
-  it("calls onDirtyChange only once on first edit", async () => {
-    const onDirtyChange = vi.fn()
-    const user = userEvent.setup()
-    renderWithUnits(<CostPerHour onDirtyChange={onDirtyChange} />)
-
-    // First edit
-    const purchaseInput = screen.getByDisplayValue("92751")
-    await user.clear(purchaseInput)
-    await user.type(purchaseInput, "100000")
-
-    // Second edit
-    const saleInput = screen.getByDisplayValue("40000")
-    await user.clear(saleInput)
-    await user.type(saleInput, "50000")
-
-    // onDirtyChange(true) should have been called exactly once
-    const trueCalls = onDirtyChange.mock.calls.filter((c: [boolean]) => c[0] === true)
-    expect(trueCalls).toHaveLength(1)
-  })
+  // Note: saved machine loading and dirty-state tracking tests were removed.
+  // Save/load/dirty-change functionality moved to MachinesTab (centralized architecture).
+  // Those behaviors are now tested in machineProfileLoading.test.tsx and MachinesTab.test.tsx.
 })
