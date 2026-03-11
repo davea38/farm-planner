@@ -92,8 +92,9 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 
 ## Priority 5: Tab Names and Label Audit
 
-- [ ] Rename tabs to use question-based names per SPEC-12 finding #26 (e.g. "Cost per Hectare" becomes "What does it cost per hectare?").
+- [x] Rename tabs to use question-based names per SPEC-12 finding #26 (e.g. "Cost per Hectare" becomes "What does it cost per hectare?").
   WHY: Question-based names tell users what each tab answers, reducing the learning curve.
+  DONE: Desktop (sm+) shows question-based names ("Cost per hectare?", "Losing value?", etc.); mobile keeps short names ("Cost/Ha", "Value Loss", etc.). Layout changed to 4-col grid on all breakpoints to accommodate longer labels.
 
 - [ ] Rename "Storage" label to "Shed costs" across all cost tabs.
   WHY: "Shed costs" matches the language farmers actually use; "Storage" is ambiguous.

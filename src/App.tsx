@@ -219,7 +219,7 @@ function App() {
             if (v !== "machines" && !hasMachineSelected) return
             setActiveTab(v)
           }}>
-            <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="machines">
                 Machines
               </TabsTrigger>
@@ -227,43 +227,50 @@ function App() {
                 value="cost-per-hectare"
                 disabled={!hasMachineSelected}
               >
-                {unitPrefs.area === 'acres' ? 'Cost/Acre' : 'Cost/Ha'}
+                <span className="sm:hidden">{unitPrefs.area === 'acres' ? 'Cost/Acre' : 'Cost/Ha'}</span>
+                <span className="hidden sm:inline">{unitPrefs.area === 'acres' ? 'Cost per acre?' : 'Cost per hectare?'}</span>
               </TabsTrigger>
               <TabsTrigger
                 value="cost-per-hour"
                 disabled={!hasMachineSelected}
               >
-                Cost/Hr
+                <span className="sm:hidden">Cost/Hr</span>
+                <span className="hidden sm:inline">Cost per hour?</span>
               </TabsTrigger>
               <TabsTrigger
                 value="depreciation"
                 disabled={!hasMachineSelected}
               >
-                Value Loss
+                <span className="sm:hidden">Value Loss</span>
+                <span className="hidden sm:inline">Losing value?</span>
               </TabsTrigger>
               <TabsTrigger
                 value="compare-machines"
                 disabled={!hasMachineSelected}
               >
-                Compare
+                <span className="sm:hidden">Compare</span>
+                <span className="hidden sm:inline">Which is better?</span>
               </TabsTrigger>
               <TabsTrigger
                 value="replacement-planner"
                 disabled={!hasMachineSelected}
               >
-                Replace
+                <span className="sm:hidden">Replace</span>
+                <span className="hidden sm:inline">When to replace?</span>
               </TabsTrigger>
               <TabsTrigger
                 value="contracting-income"
                 disabled={!hasMachineSelected}
               >
-                Contract
+                <span className="sm:hidden">Contract</span>
+                <span className="hidden sm:inline">Contracting pay?</span>
               </TabsTrigger>
               <TabsTrigger
                 value="profitability"
                 disabled={!hasMachineSelected}
               >
-                Worth It?
+                <span className="sm:hidden">Worth It?</span>
+                <span className="hidden sm:inline">Is it worth it?</span>
               </TabsTrigger>
             </TabsList>
 
