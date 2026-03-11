@@ -85,7 +85,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Restructure CostPerHectare so the results section renders above the inputs section.
   WHY: SPEC-12 finding #27; users must scroll past all inputs before seeing output, which is the single biggest UX friction point.
 
-- [ ] Restructure CostPerHour so the results section renders above the inputs section.
+- [x] Restructure CostPerHour so the results section renders above the inputs section.
   WHY: Same results-first rationale; both cost tabs should be consistent.
 
 ---
@@ -138,7 +138,7 @@ Tasks must be executed respecting these dependencies:
 | Priority 1 — TypeScript Errors | 4 | 0 |
 | Priority 2 — Failing Tests | 7 | 0 |
 | Priority 3 — Wire Missing Functionality | 2 | 0 |
-| Priority 4 — Results-First Layout | 0 | 2 |
+| Priority 4 — Results-First Layout | 2 | 0 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |
 | Priority 6 — Save Confirmation Messaging | 0 | 1 |
 | Priority 7 — Typography & Warmth Polish | 0 | 1 |

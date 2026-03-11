@@ -86,89 +86,153 @@ export function CostPerHour({
   return (
     <div className="space-y-6">
 
-      {/* What Did You Pay? */}
-      <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
-        <h2 className="text-sm font-semibold mb-3">What Did You Pay / What Will You Get?</h2>
-        <InputField
-          label="Purchase price"
-          value={inputs.purchasePrice}
-          onChange={update("purchasePrice")}
-          unit="£"
-          tooltip="What you paid (or would pay) for this machine"
-          min={0}
-        />
-        <InputField
-          label="Sell after"
-          value={inputs.yearsOwned}
-          onChange={update("yearsOwned")}
-          unit="years"
-          tooltip="How many years before you plan to sell or trade in"
-          min={0}
-        />
-        <InputField
-          label="Expected sale price"
-          value={inputs.salePrice}
-          onChange={update("salePrice")}
-          unit="£"
-          tooltip="What you expect to get when you sell it"
-          min={0}
-        />
-        <InputField
-          label="Hours worked/year"
-          value={inputs.hoursPerYear}
-          onChange={update("hoursPerYear")}
-          unit="hrs"
-          tooltip="Total hours this machine runs in a year"
-          min={0}
-        />
+      {/* Results — shown first so the answer is visible without scrolling */}
+      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+        <h2 className="text-sm font-semibold">Results</h2>
+
+        {hasZeroWarning ? (
+          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
+            Enter a value for {zeroWarnings.join(" and ")} to see results.
+          </div>
+        ) : (
+          <>
+            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
+
+            <CostBreakdown
+              rows={[
+                { label: "Your cost", value: results.totalCostPerHr, unit: "hr", bold: true },
+                { label: "Fixed costs", value: results.fixedCostPerHr, unit: "hr" },
+                { label: "Running costs", value: runningCostPerHr, unit: "hr" },
+              ]}
+            />
+
+            <CostComparisonBar
+              ownCost={results.totalCostPerHr}
+              contractorCost={inputs.contractorCharge}
+              unit="hr"
+            />
+
+            <div className="space-y-0.5">
+              <span className="text-sm text-muted-foreground">Total annual cost</span>
+              <div className="text-4xl font-bold tabular-nums">
+                {formatGBP(results.totalAnnualCost)}<span className="text-lg font-semibold text-muted-foreground">/year</span>
+              </div>
+            </div>
+
+            <CostDonutChart
+              segments={[
+                { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
+                { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
+                { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
+                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
+                { label: "Fuel", value: results.fuelPerHr * inputs.hoursPerYear, color: "#f9a825" },
+                { label: "Labour", value: results.labourPerHr * inputs.hoursPerYear, color: "#ffcc80" },
+                { label: "Repairs", value: results.repairsPerHr * inputs.hoursPerYear, color: "#ef6c00" },
+              ]}
+              centerLabel="Total/year"
+              centerValue={results.totalAnnualCost}
+            />
+          </>
+        )}
+      </div>
+
+      {/* Purchase & Ownership */}
+      <div className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection
+          title="Purchase & Ownership"
+          subtitle="What you paid and how long you'll keep it"
+          defaultOpen={true}
+        >
+          <div className="space-y-1 mt-2">
+            <InputField
+              label="Purchase price"
+              value={inputs.purchasePrice}
+              onChange={update("purchasePrice")}
+              unit="£"
+              tooltip="What you paid (or would pay) for this machine"
+              min={0}
+            />
+            <InputField
+              label="Sell after"
+              value={inputs.yearsOwned}
+              onChange={update("yearsOwned")}
+              unit="years"
+              tooltip="How many years before you plan to sell or trade in"
+              min={0}
+            />
+            <InputField
+              label="Expected sale price"
+              value={inputs.salePrice}
+              onChange={update("salePrice")}
+              unit="£"
+              tooltip="What you expect to get when you sell it"
+              min={0}
+            />
+            <InputField
+              label="Hours worked/year"
+              value={inputs.hoursPerYear}
+              onChange={update("hoursPerYear")}
+              unit="hrs"
+              tooltip="Total hours this machine runs in a year"
+              min={0}
+            />
+          </div>
+        </CollapsibleSection>
       </div>
 
       {/* Running Costs */}
-      <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
-        <h2 className="text-sm font-semibold mb-3">Running Costs</h2>
-        <InputField
-          label="Fuel consumption"
-          value={inputs.fuelConsumptionPerHr}
-          onChange={update("fuelConsumptionPerHr")}
-          unit="L/hr"
-          tooltip="Litres of fuel burned per hour of work"
-          min={0}
-          sourceBadge={fieldSources["fuelConsumptionPerHr"]}
-        />
-        <FuelConsumptionPanel
-          onApply={applyFromSource("fuelConsumptionPerHr", "Fuel estimate")}
-          mode="perHour"
-        />
-        <InputField
-          label="Fuel price"
-          value={inputs.fuelPrice}
-          onChange={update("fuelPrice")}
-          unit="p/litre"
-          tooltip="Current red diesel price in pence per litre"
-          min={0}
-          sourceBadge={fieldSources["fuelPrice"]}
-        />
-        <FuelPricePanel onApply={applyFromSource("fuelPrice", "AHDB fuel price")} />
-        <InputField
-          label="Spares & repairs"
-          value={inputs.repairsPct}
-          onChange={update("repairsPct")}
-          unit="%"
-          tooltip="Annual repair bill as a percentage of what you paid"
-          min={0}
-          sourceBadge={fieldSources["repairsPct"]}
-        />
-        <div className="flex justify-end">
-          <RepairEstimator onApply={applyFromSource("repairsPct", "Repair estimate")} />
-        </div>
-        <InputField
-          label="Labour cost"
-          value={inputs.labourCost}
-          onChange={update("labourCost")}
-          unit="£/hr"
-          tooltip="Operator cost per hour (including yourself)"
-          min={0}
-        />
+      <div className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection
+          title="Running Costs"
+          subtitle="Fuel, repairs, and labour"
+          defaultOpen={true}
+        >
+          <div className="space-y-1 mt-2">
+            <InputField
+              label="Fuel consumption"
+              value={inputs.fuelConsumptionPerHr}
+              onChange={update("fuelConsumptionPerHr")}
+              unit="L/hr"
+              tooltip="Litres of fuel burned per hour of work"
+              min={0}
+              sourceBadge={fieldSources["fuelConsumptionPerHr"]}
+            />
+            <FuelConsumptionPanel
+              onApply={applyFromSource("fuelConsumptionPerHr", "Fuel estimate")}
+              mode="perHour"
+            />
+            <InputField
+              label="Fuel price"
+              value={inputs.fuelPrice}
+              onChange={update("fuelPrice")}
+              unit="p/litre"
+              tooltip="Current red diesel price in pence per litre"
+              min={0}
+              sourceBadge={fieldSources["fuelPrice"]}
+            />
+            <FuelPricePanel onApply={applyFromSource("fuelPrice", "AHDB fuel price")} />
+            <InputField
+              label="Spares & repairs"
+              value={inputs.repairsPct}
+              onChange={update("repairsPct")}
+              unit="%"
+              tooltip="Annual repair bill as a percentage of what you paid"
+              min={0}
+              sourceBadge={fieldSources["repairsPct"]}
+            />
+            <div className="flex justify-end">
+              <RepairEstimator onApply={applyFromSource("repairsPct", "Repair estimate")} />
+            </div>
+            <InputField
+              label="Labour cost"
+              value={inputs.labourCost}
+              onChange={update("labourCost")}
+              unit="£/hr"
+              tooltip="Operator cost per hour (including yourself)"
+              min={0}
+            />
+          </div>
+        </CollapsibleSection>
       </div>
 
       {/* Overheads (collapsed by default) */}
@@ -208,73 +272,30 @@ export function CostPerHour({
       </div>
 
       {/* Contractor Comparison */}
-      <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
-        <h2 className="text-sm font-semibold mb-3">Contractor Comparison</h2>
-        <InputField
-          label="Contractor charges"
-          value={inputs.contractorCharge}
-          onChange={update("contractorCharge")}
-          unit="£/hr"
-          tooltip="What a contractor would charge you per hour for the same job"
-          min={0}
-          sourceBadge={fieldSources["contractorCharge"]}
-        />
-        <ContractorRatesPanel
-          onApply={applyFromSource("contractorCharge", "NAAC rate")}
-          currentRate={inputs.contractorCharge}
-          unitFilter="hr"
-          defaultCategory="Tractor Hire"
-        />
-      </div>
-
-      {/* Results */}
-      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-        <h2 className="text-sm font-semibold">Results</h2>
-
-        {hasZeroWarning ? (
-          <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
-            Enter a value for {zeroWarnings.join(" and ")} to see results.
+      <div className="rounded-lg bg-card p-4 shadow-sm">
+        <CollapsibleSection
+          title="Contractor Comparison"
+          subtitle="Compare owning vs hiring a contractor"
+          defaultOpen={true}
+        >
+          <div className="space-y-1 mt-2">
+            <InputField
+              label="Contractor charges"
+              value={inputs.contractorCharge}
+              onChange={update("contractorCharge")}
+              unit="£/hr"
+              tooltip="What a contractor would charge you per hour for the same job"
+              min={0}
+              sourceBadge={fieldSources["contractorCharge"]}
+            />
+            <ContractorRatesPanel
+              onApply={applyFromSource("contractorCharge", "NAAC rate")}
+              currentRate={inputs.contractorCharge}
+              unitFilter="hr"
+              defaultCategory="Tractor Hire"
+            />
           </div>
-        ) : (
-          <>
-            <CostBreakdown
-              rows={[
-                { label: "Your cost", value: results.totalCostPerHr, unit: "hr", bold: true },
-                { label: "Fixed costs", value: results.fixedCostPerHr, unit: "hr" },
-                { label: "Running costs", value: runningCostPerHr, unit: "hr" },
-              ]}
-            />
-
-            <CostDonutChart
-              segments={[
-                { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
-                { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
-                { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
-                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
-                { label: "Fuel", value: results.fuelPerHr * inputs.hoursPerYear, color: "#f9a825" },
-                { label: "Labour", value: results.labourPerHr * inputs.hoursPerYear, color: "#ffcc80" },
-                { label: "Repairs", value: results.repairsPerHr * inputs.hoursPerYear, color: "#ef6c00" },
-              ]}
-              centerLabel="Total/year"
-              centerValue={results.totalAnnualCost}
-            />
-
-            <div className="space-y-0.5">
-              <span className="text-sm text-muted-foreground">Total annual cost</span>
-              <div className="text-4xl font-bold tabular-nums">
-                {formatGBP(results.totalAnnualCost)}<span className="text-lg font-semibold text-muted-foreground">/year</span>
-              </div>
-            </div>
-
-            <CostComparisonBar
-              ownCost={results.totalCostPerHr}
-              contractorCost={inputs.contractorCharge}
-              unit="hr"
-            />
-
-            <ResultBanner type={bannerType} mainText={bannerText} subText={bannerSub} />
-          </>
-        )}
+        </CollapsibleSection>
       </div>
 
     </div>
