@@ -56,7 +56,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Fix CostPerHour.branch.test.tsx (4 failures) by removing savedMachines/onSaveMachine/onLoadMachine props and testing saved machine loading through the centralized flow.
   WHY: CostPerHour no longer accepts these props; tests must exercise the new architecture.
 
-- [ ] Fix CostPerHectare.branch.test.tsx (4 failures) by removing save/load/delete callback props and updating dirty state tracking tests for the centralized architecture.
+- [x] Fix CostPerHectare.branch.test.tsx (4 failures) by removing save/load/delete callback props and updating dirty state tracking tests for the centralized architecture.
   WHY: CostPerHectare no longer accepts these props; tests must exercise the new architecture.
 
 - [ ] Fix SaveLoadToolbar.full.test.tsx (1 failure) by supplying machineType when testing the save-with-trimmed-name flow.
@@ -136,7 +136,7 @@ Tasks must be executed respecting these dependencies:
 | SPEC-01 through SPEC-07, SPEC-09 through SPEC-11 | 10 | 0 |
 | SPEC-08 Machine Profile Loading | partial | tests need rewrite |
 | Priority 1 — TypeScript Errors | 4 | 0 |
-| Priority 2 — Failing Tests | 3 | 4 |
+| Priority 2 — Failing Tests | 4 | 3 |
 | Priority 3 — Wire Missing Functionality | 0 | 2 |
 | Priority 4 — Results-First Layout | 0 | 2 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |
