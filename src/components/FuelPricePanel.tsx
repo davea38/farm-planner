@@ -3,7 +3,7 @@ import { CollapsibleSection } from "./CollapsibleSection"
 import { Sparkline } from "./Sparkline"
 
 interface FuelPricePanelProps {
-  onApply: (priceInPounds: number) => void
+  onApply: (priceInPence: number) => void
 }
 
 export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
@@ -18,8 +18,6 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
     label: String(h.year),
     value: h.redDiesel,
   }))
-
-  const redDieselPounds = +(redDiesel.current / 100).toFixed(4)
 
   return (
     <div className="rounded-lg border border-border bg-muted/30">
@@ -61,7 +59,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
           {/* Apply button */}
           <button
             type="button"
-            onClick={() => onApply(redDieselPounds)}
+            onClick={() => onApply(redDiesel.current)}
             className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
             aria-label={`Use red diesel price ${redDiesel.current}p`}
           >

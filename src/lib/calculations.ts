@@ -154,7 +154,7 @@ export function calcCostPerHectare(inputs: CostPerHectareInputs): CostPerHectare
   const fixedCostPerHa = hectaresPerYear > 0 ? totalFixedCostPerYear / hectaresPerYear : 0;
 
   const labourPerHa = workRate > 0 ? labourCost / workRate : 0;
-  const fuelPerHa = fuelUse * fuelPrice;
+  const fuelPerHa = fuelUse * fuelPrice / 100;
   const repairsPerHa = hectaresPerYear > 0 ? (purchasePrice * repairsPct / 100) / hectaresPerYear : 0;
 
   const totalCostPerHa = fixedCostPerHa + labourPerHa + fuelPerHa + repairsPerHa;
@@ -206,7 +206,7 @@ export function calcCostPerHour(inputs: CostPerHourInputs): CostPerHourResults {
   const fixedCostPerHr = hoursPerYear > 0 ? totalFixedCostPerYear / hoursPerYear : 0;
 
   const labourPerHr = labourCost;
-  const fuelPerHr = fuelConsumptionPerHr * fuelPrice;
+  const fuelPerHr = fuelConsumptionPerHr * fuelPrice / 100;
   const repairsPerHr = hoursPerYear > 0 ? (purchasePrice * repairsPct / 100) / hoursPerYear : 0;
 
   const totalCostPerHr = fixedCostPerHr + labourPerHr + fuelPerHr + repairsPerHr;

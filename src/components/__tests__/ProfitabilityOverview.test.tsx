@@ -202,7 +202,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 0, hectaresPerYear: 500,
             interestRate: 5, insuranceRate: 2, storageRate: 1, workRate: 4,
-            labourCost: 14, fuelPrice: 0.7, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
+            labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
           },
         }],
       },
@@ -230,7 +230,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 0, hectaresPerYear: 500,
             interestRate: 5, insuranceRate: 2, storageRate: 1, workRate: 4,
-            labourCost: 14, fuelPrice: 0.7, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
+            labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
           },
         }],
       },
@@ -258,7 +258,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 126000, yearsOwned: 8, salePrice: 34000, hectaresPerYear: 1200,
             interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-            labourCost: 14, fuelPrice: 0.53, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
+            labourCost: 14, fuelPrice: 53, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
           },
         }],
       },
@@ -284,7 +284,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 80000, yearsOwned: 6, salePrice: 20000, hoursPerYear: 800,
             interestRate: 3, insuranceRate: 2, storageRate: 1,
-            fuelConsumptionPerHr: 12, fuelPrice: 0.6, repairsPct: 2,
+            fuelConsumptionPerHr: 12, fuelPrice: 60, repairsPct: 2,
             labourCost: 14, contractorCharge: 50,
           },
         }],
@@ -301,7 +301,7 @@ describe("ProfitabilityOverview", () => {
         current: {
           purchasePrice: 100000, yearsOwned: 5, salePrice: 50000, hectaresPerYear: 500,
           interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-          labourCost: 14, fuelPrice: 0.7, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
+          labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
         },
         savedMachines: [],
       },
@@ -316,7 +316,7 @@ describe("ProfitabilityOverview", () => {
         current: {
           purchasePrice: 60000, yearsOwned: 5, salePrice: 15000, hoursPerYear: 600,
           interestRate: 3, insuranceRate: 2, storageRate: 1,
-          fuelConsumptionPerHr: 10, fuelPrice: 0.6, repairsPct: 2,
+          fuelConsumptionPerHr: 10, fuelPrice: 60, repairsPct: 2,
           labourCost: 14, contractorCharge: 45,
         },
         savedMachines: [],
@@ -358,7 +358,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 100000, yearsOwned: 5, salePrice: 20000, hectaresPerYear: 800,
             interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 6,
-            labourCost: 14, fuelPrice: 0.6, fuelUse: 15, repairsPct: 2, contractorCharge: 50,
+            labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 50,
           },
         }],
       },
@@ -414,7 +414,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 200000, yearsOwned: 10, salePrice: 50000, hectaresPerYear: 400,
             interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 4,
-            labourCost: 14, fuelPrice: 0.7, fuelUse: 25, repairsPct: 2, contractorCharge: 100,
+            labourCost: 14, fuelPrice: 70, fuelUse: 25, repairsPct: 2, contractorCharge: 100,
           },
         }],
       },
@@ -439,7 +439,7 @@ describe("ProfitabilityOverview", () => {
           inputs: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300,
             interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-            labourCost: 14, fuelPrice: 0.6, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
+            labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
           },
         }],
       },
@@ -483,7 +483,7 @@ describe("ProfitabilityOverview", () => {
     const machineInputs = {
       purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300,
       interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-      labourCost: 14, fuelPrice: 0.6, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
+      labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
     };
     const state = createTestState({
       costPerHectare: {
@@ -510,7 +510,7 @@ describe("ProfitabilityOverview", () => {
         current: {
           purchasePrice: 100000, yearsOwned: 5, salePrice: 50000, hectaresPerYear: 500,
           interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-          labourCost: 14, fuelPrice: 0.7, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
+          labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
         },
         savedMachines: [],
       },
@@ -518,7 +518,7 @@ describe("ProfitabilityOverview", () => {
         current: {
           purchasePrice: 60000, yearsOwned: 5, salePrice: 15000, hoursPerYear: 600,
           interestRate: 3, insuranceRate: 2, storageRate: 1,
-          fuelConsumptionPerHr: 10, fuelPrice: 0.6, repairsPct: 2,
+          fuelConsumptionPerHr: 10, fuelPrice: 60, repairsPct: 2,
           labourCost: 14, contractorCharge: 45,
         },
         savedMachines: [],

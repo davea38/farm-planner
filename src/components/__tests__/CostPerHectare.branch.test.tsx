@@ -28,7 +28,7 @@ describe("CostPerHectare – branch coverage", () => {
       storageRate: 1,
       workRate: 4,
       labourCost: 14,
-      fuelPrice: 0.53,
+      fuelPrice: 53,
       fuelUse: 20,
       repairsPct: 2,
       contractorCharge: 76,
@@ -48,7 +48,7 @@ describe("CostPerHectare – branch coverage", () => {
       storageRate: 1,
       workRate: 0,
       labourCost: 14,
-      fuelPrice: 0.53,
+      fuelPrice: 53,
       fuelUse: 20,
       repairsPct: 2,
       contractorCharge: 76,
@@ -68,7 +68,7 @@ describe("CostPerHectare – branch coverage", () => {
       storageRate: 2,
       workRate: 2,
       labourCost: 20,
-      fuelPrice: 0.75,
+      fuelPrice: 75,
       fuelUse: 30,
       repairsPct: 5,
       contractorCharge: 50,
@@ -88,7 +88,7 @@ describe("CostPerHectare – branch coverage", () => {
       storageRate: 1,
       workRate: 4,
       labourCost: 14,
-      fuelPrice: 0.53,
+      fuelPrice: 53,
       fuelUse: 20,
       repairsPct: 2,
       contractorCharge: 30.27, // Matches AHDB example cost ~£30.27/ha
@@ -141,7 +141,7 @@ describe("CostPerHectare – branch coverage", () => {
       storageRate: 1,
       workRate: 5,
       labourCost: 16,
-      fuelPrice: 0.65,
+      fuelPrice: 65,
       fuelUse: 25,
       repairsPct: 3,
       contractorCharge: 90,
@@ -168,7 +168,7 @@ describe("CostPerHectare – branch coverage", () => {
     const savedInputs: CostPerHectareInputs = {
       purchasePrice: 200000, yearsOwned: 5, salePrice: 80000, hectaresPerYear: 800,
       interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 5,
-      labourCost: 16, fuelPrice: 0.65, fuelUse: 25, repairsPct: 3, contractorCharge: 90,
+      labourCost: 16, fuelPrice: 65, fuelUse: 25, repairsPct: 3, contractorCharge: 90,
     }
     renderWithUnits(
       <CostPerHectare
@@ -188,7 +188,7 @@ describe("CostPerHectare – branch coverage", () => {
     const inputs: CostPerHectareInputs = {
       purchasePrice: 126000, yearsOwned: 0, salePrice: 34000, hectaresPerYear: 0,
       interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 0,
-      labourCost: 14, fuelPrice: 0.53, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
+      labourCost: 14, fuelPrice: 53, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
     }
     renderWithUnits(<CostPerHectare initialInputs={inputs} />)
     expect(screen.getByText(/hectares worked per year/)).toBeInTheDocument()
@@ -208,9 +208,9 @@ describe("CostPerHectare – branch coverage", () => {
     expect(screen.getByText("AHDB fuel price")).toBeInTheDocument()
 
     // Find the fuel price input and manually edit it
-    const fuelPriceInput = screen.getByDisplayValue(/0\.\d+/)
+    const fuelPriceInput = screen.getByDisplayValue(/74\.91/)
     await user.clear(fuelPriceInput)
-    await user.type(fuelPriceInput, "0.99")
+    await user.type(fuelPriceInput, "80")
 
     // Source badge should be removed after manual edit
     expect(screen.queryByText("AHDB fuel price")).not.toBeInTheDocument()

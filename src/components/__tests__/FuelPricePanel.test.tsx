@@ -23,12 +23,12 @@ describe("FuelPricePanel", () => {
     expect(container.querySelector("svg")).toBeInTheDocument()
   })
 
-  it("calls onApply with £/L when button clicked", () => {
+  it("calls onApply with p/L when button clicked", () => {
     const onApply = vi.fn()
     render(<FuelPricePanel onApply={onApply} />)
     fireEvent.click(screen.getByText(/AHDB Fuel Prices/))
     fireEvent.click(screen.getByRole("button", { name: /use red diesel/i }))
-    expect(onApply).toHaveBeenCalledWith(0.7491)
+    expect(onApply).toHaveBeenCalledWith(74.91)
   })
 
   it("shows source attribution", () => {

@@ -39,7 +39,7 @@ describe("CostPerHectare reference panel integration", () => {
     fireEvent.click(screen.getByRole("button", { name: /use red diesel/i }))
     // onChange should be called with updated inputs containing the red diesel price
     expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ fuelPrice: 0.7491 })
+      expect.objectContaining({ fuelPrice: 74.91 })
     )
   })
 

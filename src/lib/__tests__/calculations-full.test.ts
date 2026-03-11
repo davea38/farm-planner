@@ -29,7 +29,7 @@ describe("calcCostPerHectare", () => {
     storageRate: 1,
     workRate: 4,
     labourCost: 14,
-    fuelPrice: 0.53,
+    fuelPrice: 53,
     fuelUse: 20,
     repairsPct: 2,
     contractorCharge: 76,
@@ -81,7 +81,7 @@ describe("calcCostPerHour", () => {
     storageRate: 1,
 
     fuelConsumptionPerHr: 14,
-    fuelPrice: 0.6,
+    fuelPrice: 60,
     repairsPct: 1,
     labourCost: 14,
     contractorCharge: 45,
@@ -105,14 +105,14 @@ describe("calcCostPerHour", () => {
 
   it("calculates fuel cost per hour correctly", () => {
     const r = calcCostPerHour(base)
-    // fuelPerHr = fuelConsumptionPerHr * fuelPrice (L/hr * £/L = £/hr)
-    expect(r.fuelPerHr).toBeCloseTo(14 * 0.6)
+    // fuelPerHr = fuelConsumptionPerHr * fuelPrice / 100 (L/hr * p/L / 100 = £/hr)
+    expect(r.fuelPerHr).toBeCloseTo(14 * 60 / 100)
   })
 
   it("fuel cost is consumption × price (e.g. hauling burns fuel without covering area)", () => {
     const r = calcCostPerHour(base)
     expect(r.fuelPerHr).toBeGreaterThan(0)
-    expect(r.fuelPerHr).toBeCloseTo(14 * 0.6)
+    expect(r.fuelPerHr).toBeCloseTo(14 * 60 / 100)
   })
 
   it("labour per hr equals labourCost directly", () => {

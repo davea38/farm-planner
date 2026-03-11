@@ -50,7 +50,7 @@ describe("CostPerHour reference panel integration", () => {
     fireEvent.click(screen.getByText(/AHDB Fuel Prices/i))
     fireEvent.click(screen.getByRole("button", { name: /use red diesel/i }))
     expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ fuelPrice: 0.7491 })
+      expect.objectContaining({ fuelPrice: 74.91 })
     )
   })
 

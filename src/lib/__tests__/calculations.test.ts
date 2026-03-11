@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { calcCostPerHectare } from '@/lib/calculations'
 import type { CostPerHectareInputs } from '@/lib/types'
 
-// Fixed AHDB example inputs (fuel price 0.53 £/l as published in the original example)
+// Fixed AHDB example inputs (fuel price 53 p/l as published in the original example)
 const ahdbExample: CostPerHectareInputs = {
   purchasePrice: 126000,
   yearsOwned: 8,
@@ -13,7 +13,7 @@ const ahdbExample: CostPerHectareInputs = {
   storageRate: 1,
   workRate: 4,
   labourCost: 14,
-  fuelPrice: 0.53,
+  fuelPrice: 53,
   fuelUse: 20,
   repairsPct: 2,
   contractorCharge: 76,

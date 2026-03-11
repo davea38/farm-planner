@@ -27,7 +27,7 @@ describe("CostPerHour – branch coverage", () => {
       storageRate: 1,
 
       fuelConsumptionPerHr: 14,
-      fuelPrice: 0.6,
+      fuelPrice: 60,
       repairsPct: 1,
       labourCost: 14,
       contractorCharge: 45,
@@ -48,7 +48,7 @@ describe("CostPerHour – branch coverage", () => {
       storageRate: 1,
 
       fuelConsumptionPerHr: 14,
-      fuelPrice: 0.6,
+      fuelPrice: 60,
       repairsPct: 1,
       labourCost: 14,
       contractorCharge: 45,
@@ -68,7 +68,7 @@ describe("CostPerHour – branch coverage", () => {
       storageRate: 2,
 
       fuelConsumptionPerHr: 20,
-      fuelPrice: 0.75,
+      fuelPrice: 75,
       repairsPct: 5,
       labourCost: 20,
       contractorCharge: 30,
@@ -131,7 +131,7 @@ describe("CostPerHour – branch coverage", () => {
       storageRate: 1,
 
       fuelConsumptionPerHr: 18,
-      fuelPrice: 0.7,
+      fuelPrice: 70,
       repairsPct: 2,
       labourCost: 16,
       contractorCharge: 50,
@@ -174,9 +174,9 @@ describe("CostPerHour – branch coverage", () => {
     expect(screen.getByText("AHDB fuel price")).toBeInTheDocument()
 
     // Find the fuel price input and manually edit it to trigger update("fuelPrice")
-    const fuelPriceInput = screen.getByDisplayValue(/0\.\d+/)
+    const fuelPriceInput = screen.getByDisplayValue(/74\.91/)
     await user.clear(fuelPriceInput)
-    await user.type(fuelPriceInput, "0.99")
+    await user.type(fuelPriceInput, "80")
 
     // Source badge should be removed after manual edit
     expect(screen.queryByText("AHDB fuel price")).not.toBeInTheDocument()
@@ -194,7 +194,7 @@ describe("CostPerHour – branch coverage", () => {
       insuranceRate: 2,
       storageRate: 1,
       fuelConsumptionPerHr: 18,
-      fuelPrice: 0.7,
+      fuelPrice: 70,
       repairsPct: 2,
       labourCost: 16,
       contractorCharge: 50,

@@ -31,7 +31,7 @@ function createValidState(): AppState {
         storageRate: 1,
         workRate: 4,
         labourCost: 14,
-        fuelPrice: 0.53,
+        fuelPrice: 53,
         fuelUse: 20,
         repairsPct: 2,
         contractorCharge: 76,
@@ -49,7 +49,7 @@ function createValidState(): AppState {
         storageRate: 1,
 
         fuelConsumptionPerHr: 14,
-        fuelPrice: 0.6,
+        fuelPrice: 60,
         repairsPct: 1,
         labourCost: 14,
         contractorCharge: 45,

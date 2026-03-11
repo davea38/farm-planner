@@ -152,8 +152,8 @@ export function CostPerHectare({
           label="Fuel price"
           value={inputs.fuelPrice}
           onChange={update("fuelPrice")}
-          unit="£/litre"
-          tooltip="Current red diesel price per litre"
+          unit="p/litre"
+          tooltip="Current red diesel price in pence per litre"
           min={0}
           sourceBadge={fieldSources["fuelPrice"]}
         />

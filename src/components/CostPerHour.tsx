@@ -143,10 +143,9 @@ export function CostPerHour({
           label="Fuel price"
           value={inputs.fuelPrice}
           onChange={update("fuelPrice")}
-          unit="£/litre"
-          tooltip="Current red diesel price per litre"
+          unit="p/litre"
+          tooltip="Current red diesel price in pence per litre"
           min={0}
-          step={0.01}
           sourceBadge={fieldSources["fuelPrice"]}
         />
         <FuelPricePanel onApply={applyFromSource("fuelPrice", "AHDB fuel price")} />
