@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
+import { useHashRoute } from '@/lib/useHashRoute'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
@@ -24,7 +25,7 @@ function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
   const [unitPrefs, setUnitPrefs] = useState<UnitPreferences>(loadUnitPreferences)
   const [selectedMachine, setSelectedMachine] = useState<SelectedMachine | null>(null)
-  const [activeTab, setActiveTab] = useState("machines")
+  const { activeTab, setActiveTab } = useHashRoute()
 
   useAutoSave(appState)
 
