@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-11
 > Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-08 architecture diverged (improved). SPEC-12 partially complete.
-> Remaining: 14 pending tasks across test fixes, correctness, and UX improvements.
+> Remaining: 9 pending tasks across correctness and UX improvements.
 
 ---
 
@@ -62,7 +62,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Fix SaveLoadToolbar.full.test.tsx (1 failure) by adding the third `selectedIndex` argument to the onSave assertion and fixing the component to clear the name input after save.
   WHY: onSave now takes 3 args (name, machineType, selectedIndex); test only asserted 2. Component also wasn't clearing the input after save.
 
-- [ ] Fix ContractingIncomePlanner.test.tsx (2 failures) by updating NAAC rates filtering assertions and collapsible section interaction tests. Also add missing `machineType` to SavedMachine objects (TS error).
+- [x] Fix ContractingIncomePlanner.test.tsx (2 failures) by updating NAAC rates filtering assertions and collapsible section interaction tests. Also add missing `machineType` to SavedMachine objects (TS error).
   WHY: Filter logic or DOM structure changed since these tests were written. Also has the same missing machineType TS error as ProfitabilityOverview had.
 
 - [x] Fix machineProfileLoading.test.tsx — tests already pass after prior refactors removed stale save/load props.
@@ -136,7 +136,7 @@ Tasks must be executed respecting these dependencies:
 | SPEC-01 through SPEC-07, SPEC-09 through SPEC-11 | 10 | 0 |
 | SPEC-08 Machine Profile Loading | partial | tests need rewrite |
 | Priority 1 — TypeScript Errors | 4 | 0 |
-| Priority 2 — Failing Tests | 6 | 1 |
+| Priority 2 — Failing Tests | 7 | 0 |
 | Priority 3 — Wire Missing Functionality | 0 | 2 |
 | Priority 4 — Results-First Layout | 0 | 2 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |

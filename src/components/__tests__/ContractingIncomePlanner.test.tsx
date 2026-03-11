@@ -160,6 +160,7 @@ describe("ContractingIncomePlanner", () => {
     const hectareMachines = [
       {
         name: "6m Drill",
+        machineType: "tractors_large" as const,
         inputs: {
           purchasePrice: 126000,
           yearsOwned: 8,
@@ -180,6 +181,7 @@ describe("ContractingIncomePlanner", () => {
     const hourMachines = [
       {
         name: "Telehandler",
+        machineType: "tractors_large" as const,
         inputs: {
           purchasePrice: 92751,
           yearsOwned: 7,
@@ -263,8 +265,7 @@ describe("ContractingIncomePlanner", () => {
         savedHourMachines={[]}
       />,
     )
-    // Expand the outer collapsible, then the inner NAAC panel
-    fireEvent.click(screen.getByText(/NAAC Rates/))
+    // Expand the NAAC panel collapsible
     fireEvent.click(screen.getByText(/NAAC Contractor Rates/))
     // Only bale-related categories should be visible — Soil Prep (per-ha) should not
     expect(screen.queryByText("Soil Prep")).not.toBeInTheDocument()
@@ -300,6 +301,7 @@ describe("ContractingIncomePlanner", () => {
   const hectareMachines = [
     {
       name: "6m Drill",
+      machineType: "tractors_large" as const,
       inputs: {
         purchasePrice: 126000,
         yearsOwned: 8,
@@ -321,6 +323,7 @@ describe("ContractingIncomePlanner", () => {
   const hourMachines = [
     {
       name: "Telehandler",
+      machineType: "tractors_large" as const,
       inputs: {
         purchasePrice: 92751,
         yearsOwned: 7,
@@ -795,6 +798,6 @@ describe("ContractingIncomePlanner", () => {
         savedHourMachines={[]}
       />,
     )
-    expect(screen.getByText(/NAAC Rates/)).toBeInTheDocument()
+    expect(screen.getByText(/NAAC Contractor Rates/)).toBeInTheDocument()
   })
 })
