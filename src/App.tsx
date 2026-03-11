@@ -307,9 +307,17 @@ function App() {
                       <div className="font-semibold text-sm truncate">{machine.name}</div>
                       <div className="text-xs text-muted-foreground">{profile?.label ?? machine.machineType}</div>
                     </div>
-                    <div className="text-xs text-primary font-medium shrink-0 bg-primary/10 rounded-full px-2.5 py-0.5">
-                      Active
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("machines")}
+                      className="text-xs font-medium shrink-0 rounded-full px-3 py-1 border border-primary/30 text-primary bg-primary/10 hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all duration-150 cursor-pointer flex items-center gap-1.5"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      Change
+                    </button>
                   </div>
                 </div>
               )
