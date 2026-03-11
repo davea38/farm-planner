@@ -72,7 +72,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 
 ## Priority 3: Wire Missing Functionality
 
-- [ ] Wire onFarmIncomeChange in App.tsx so ProfitabilityOverview can actually update farm income state.
+- [x] Wire onFarmIncomeChange in App.tsx so ProfitabilityOverview can actually update farm income state.
   WHY: The prop is defined on ProfitabilityOverview but never connected in App.tsx; users cannot change farm income, which breaks the core profitability calculation.
 
 - [ ] Fix the off-by-one bug in the replacement planner average annual cost calculation (divide by effectiveSpan, not effectiveSpan+1).
@@ -137,7 +137,7 @@ Tasks must be executed respecting these dependencies:
 | SPEC-08 Machine Profile Loading | partial | tests need rewrite |
 | Priority 1 — TypeScript Errors | 4 | 0 |
 | Priority 2 — Failing Tests | 7 | 0 |
-| Priority 3 — Wire Missing Functionality | 0 | 2 |
+| Priority 3 — Wire Missing Functionality | 1 | 1 |
 | Priority 4 — Results-First Layout | 0 | 2 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |
 | Priority 6 — Save Confirmation Messaging | 0 | 1 |

@@ -379,7 +379,12 @@ function App() {
             </TabsContent>
 
             <TabsContent value="profitability" className="mt-4">
-              <ProfitabilityOverview appState={appState} />
+              <ProfitabilityOverview appState={appState} onFarmIncomeChange={(value) => {
+                setAppState((prev) => ({
+                  ...prev,
+                  replacementPlanner: { ...prev.replacementPlanner, farmIncome: value },
+                }))
+              }} />
             </TabsContent>
           </Tabs>
         </div>
