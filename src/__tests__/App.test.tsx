@@ -173,7 +173,7 @@ async function renderWithMachineAndTab(tab: string) {
   addHectareMachine()
   renderApp()
   act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-  await waitFor(() => { expect(screen.getByText('Active')).toBeInTheDocument() })
+  await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
   if (tab !== 'machines') {
     const user = userEvent.setup()
     await user.click(screen.getByText(tab))
@@ -266,12 +266,12 @@ describe('App', () => {
 
   // --- Active machine banner ---
 
-  it('shows active machine banner with name, Active badge, and profile label', async () => {
+  it('shows active machine banner with name, Change button, and profile label', async () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
     await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
-    expect(screen.getByText('Active')).toBeInTheDocument()
+    expect(screen.getByText('Change')).toBeInTheDocument()
     expect(screen.getByText('Large Tractor')).toBeInTheDocument()
   })
 
@@ -287,7 +287,7 @@ describe('App', () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Active')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     const tab = screen.getByText('Cost/Ha').closest('button')!
     expect(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true').toBe(false)
   })
@@ -304,9 +304,9 @@ describe('App', () => {
     renderApp()
     // Select index 99 which doesn't exist
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 99 }) })
-    // Banner should not show machine name or Active
+    // Banner should not show machine name or Change button
     await waitFor(() => {
-      expect(screen.queryByText('Active')).not.toBeInTheDocument()
+      expect(screen.queryByText('Change')).not.toBeInTheDocument()
     })
   })
 
@@ -316,7 +316,7 @@ describe('App', () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Active')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     act(() => { capturedOnSelectMachine!(null) })
     await waitFor(() => { expect(screen.getByText('No machine selected')).toBeInTheDocument() })
   })
@@ -513,7 +513,7 @@ describe('App', () => {
     renderApp()
     // Select the machine first
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Active')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
 
     // Switch to Cost/Ha tab to get the onChange callback
     const user = userEvent.setup()
@@ -532,7 +532,7 @@ describe('App', () => {
     renderApp()
     // Select and then switch to Cost/Ha
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Active')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByTestId('cost-per-hectare')).toBeInTheDocument() })
@@ -551,7 +551,7 @@ describe('App', () => {
     addHourMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Active')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByText('Hour Machine')).toBeInTheDocument() })
 
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Hr'))
