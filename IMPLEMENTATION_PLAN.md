@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-11
 > Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-08 architecture diverged (improved). SPEC-12 partially complete.
-> Remaining: 16 pending tasks across test fixes, correctness, and UX improvements.
+> Remaining: 15 pending tasks across test fixes, correctness, and UX improvements.
 
 ---
 
@@ -50,7 +50,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Fix App.test.tsx (10 failures) by updating tab switching, machine selection callbacks, and state change handler tests to match the centralized MachinesTab architecture.
   WHY: Tests reference the old per-tab save/load pattern which no longer exists.
 
-- [ ] Fix SaveLoadToolbar.machineType.test.tsx (6 failures) by updating machine type dropdown save/load/delete/reset flow assertions to reflect current SaveLoadToolbar behavior within MachinesTab.
+- [x] Fix SaveLoadToolbar.machineType.test.tsx (6 failures) by updating machine type dropdown save/load/delete/reset flow assertions to reflect current SaveLoadToolbar behavior within MachinesTab.
   WHY: Save/load orchestration moved to MachinesTab; toolbar test expectations are stale.
 
 - [ ] Fix CostPerHour.branch.test.tsx (4 failures) by removing savedMachines/onSaveMachine/onLoadMachine props and testing saved machine loading through the centralized flow.
@@ -136,7 +136,7 @@ Tasks must be executed respecting these dependencies:
 | SPEC-01 through SPEC-07, SPEC-09 through SPEC-11 | 10 | 0 |
 | SPEC-08 Machine Profile Loading | partial | tests need rewrite |
 | Priority 1 — TypeScript Errors | 4 | 0 |
-| Priority 2 — Failing Tests | 1 | 6 |
+| Priority 2 — Failing Tests | 2 | 5 |
 | Priority 3 — Wire Missing Functionality | 0 | 2 |
 | Priority 4 — Results-First Layout | 0 | 2 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |

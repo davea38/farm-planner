@@ -96,10 +96,10 @@ describe("SaveLoadToolbar - machine type dropdown", () => {
     await user.type(screen.getByPlaceholderText("Name this machine..."), "Horsch Pronto")
     await user.click(screen.getByText("Save"))
 
-    expect(onSave).toHaveBeenCalledWith("Horsch Pronto", "drills")
+    expect(onSave).toHaveBeenCalledWith("Horsch Pronto", "drills", null)
   })
 
-  it("resets machine type dropdown to placeholder after saving", async () => {
+  it("retains machine type dropdown value after saving", async () => {
     const user = userEvent.setup()
     render(
       <SaveLoadToolbar
@@ -113,9 +113,9 @@ describe("SaveLoadToolbar - machine type dropdown", () => {
     await user.type(screen.getByPlaceholderText("Name this machine..."), "Cultivator")
     await user.click(screen.getByText("Save"))
 
-    // Dropdown should be back to the empty/placeholder state
-    const select = screen.getByLabelText("Machine type") as HTMLSelectElement
-    expect(select.value).toBe("")
+    // Dropdown retains the selected value after saving (form stays populated for further edits)
+    const select = screen.getByLabelText(/Machine type/) as HTMLSelectElement
+    expect(select.value).toBe("tillage")
   })
 
   // --- Loading populates machineType ---
@@ -137,7 +137,7 @@ describe("SaveLoadToolbar - machine type dropdown", () => {
     await user.click(screen.getByText("Load a saved machine..."))
     await user.click(screen.getByText("Seed Drill"))
 
-    const select = screen.getByLabelText("Machine type") as HTMLSelectElement
+    const select = screen.getByLabelText(/Machine type/) as HTMLSelectElement
     expect(select.value).toBe("drills")
   })
 
@@ -154,7 +154,7 @@ describe("SaveLoadToolbar - machine type dropdown", () => {
         onDelete={() => {}}
       />
     )
-    const machineTypeSelect = screen.getByLabelText("Machine type") as HTMLSelectElement
+    const machineTypeSelect = screen.getByLabelText(/Machine type/) as HTMLSelectElement
     expect(machineTypeSelect.value).toBe("") // initially empty
 
     await user.click(screen.getByText("Load a saved machine..."))
@@ -180,7 +180,7 @@ describe("SaveLoadToolbar - machine type dropdown", () => {
 
     await user.click(screen.getByText("Delete"))
 
-    const select = screen.getByLabelText("Machine type") as HTMLSelectElement
+    const select = screen.getByLabelText(/Machine type/) as HTMLSelectElement
     expect(select.value).toBe("")
   })
 
@@ -205,7 +205,7 @@ describe("SaveLoadToolbar - machine type dropdown", () => {
     await user.click(screen.getByText("Delete"))
 
     // Should now show Tractor's machineType
-    const select = screen.getByLabelText("Machine type") as HTMLSelectElement
+    const select = screen.getByLabelText(/Machine type/) as HTMLSelectElement
     expect(select.value).toBe("tractors_small")
   })
 })
