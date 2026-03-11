@@ -82,7 +82,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 
 ## Priority 4: Results-First Layout
 
-- [ ] Restructure CostPerHectare so the results section renders above the inputs section.
+- [x] Restructure CostPerHectare so the results section renders above the inputs section.
   WHY: SPEC-12 finding #27; users must scroll past all inputs before seeing output, which is the single biggest UX friction point.
 
 - [ ] Restructure CostPerHour so the results section renders above the inputs section.
