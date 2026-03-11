@@ -124,7 +124,7 @@ export function CostPerHour({
                 { label: "Depreciation", value: results.annualDepreciation, color: "#2e7d32" },
                 { label: "Interest", value: results.annualInterest, color: "#66bb6a" },
                 { label: "Insurance", value: results.annualInsurance, color: "#a5d6a7" },
-                { label: "Storage", value: results.annualStorage, color: "#c8e6c9" },
+                { label: "Shed costs", value: results.annualStorage, color: "#c8e6c9" },
                 { label: "Fuel", value: results.fuelPerHr * inputs.hoursPerYear, color: "#f9a825" },
                 { label: "Labour", value: results.labourPerHr * inputs.hoursPerYear, color: "#ffcc80" },
                 { label: "Repairs", value: results.repairsPerHr * inputs.hoursPerYear, color: "#ef6c00" },
@@ -260,7 +260,7 @@ export function CostPerHour({
               min={0}
             />
             <InputField
-              label="Storage"
+              label="Shed costs"
               value={inputs.storageRate}
               onChange={update("storageRate")}
               unit="%"
