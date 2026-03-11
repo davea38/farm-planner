@@ -59,14 +59,14 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Fix CostPerHectare.branch.test.tsx (4 failures) by removing save/load/delete callback props and updating dirty state tracking tests for the centralized architecture.
   WHY: CostPerHectare no longer accepts these props; tests must exercise the new architecture.
 
-- [ ] Fix SaveLoadToolbar.full.test.tsx (1 failure) by supplying machineType when testing the save-with-trimmed-name flow.
-  WHY: SaveLoadToolbar now requires machineType; the test omits it.
+- [x] Fix SaveLoadToolbar.full.test.tsx (1 failure) by adding the third `selectedIndex` argument to the onSave assertion and fixing the component to clear the name input after save.
+  WHY: onSave now takes 3 args (name, machineType, selectedIndex); test only asserted 2. Component also wasn't clearing the input after save.
 
 - [ ] Fix ContractingIncomePlanner.test.tsx (2 failures) by updating NAAC rates filtering assertions and collapsible section interaction tests. Also add missing `machineType` to SavedMachine objects (TS error).
   WHY: Filter logic or DOM structure changed since these tests were written. Also has the same missing machineType TS error as ProfitabilityOverview had.
 
-- [ ] Fix machineProfileLoading.test.tsx (3 failures) by rewriting tests to exercise machine profile loading through MachinesTab rather than passing props directly to cost tab components.
-  WHY: The per-tab save/load architecture no longer exists; tests must use the centralized MachinesTab flow.
+- [x] Fix machineProfileLoading.test.tsx — tests already pass after prior refactors removed stale save/load props.
+  WHY: Tests were already aligned with the centralized MachinesTab architecture.
 
 ---
 
@@ -136,7 +136,7 @@ Tasks must be executed respecting these dependencies:
 | SPEC-01 through SPEC-07, SPEC-09 through SPEC-11 | 10 | 0 |
 | SPEC-08 Machine Profile Loading | partial | tests need rewrite |
 | Priority 1 — TypeScript Errors | 4 | 0 |
-| Priority 2 — Failing Tests | 4 | 3 |
+| Priority 2 — Failing Tests | 6 | 1 |
 | Priority 3 — Wire Missing Functionality | 0 | 2 |
 | Priority 4 — Results-First Layout | 0 | 2 |
 | Priority 5 — Tab Names & Label Audit | 0 | 3 |

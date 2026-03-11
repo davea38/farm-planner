@@ -117,9 +117,11 @@ export function SaveLoadToolbar<T>({
         <Button
           onClick={() => {
             if (name.trim() && machineType && !nameDuplicate) {
-              onSave(name.trim(), machineType, selectedIndex)
+              const trimmedName = name.trim()
+              onSave(trimmedName, machineType, selectedIndex)
+              setName("")
               if (selectedIndex !== null) {
-                showToast(`Updated "${name.trim()}" — changes saved.`)
+                showToast(`Updated "${trimmedName}" — changes saved.`)
               } else {
                 showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
               }

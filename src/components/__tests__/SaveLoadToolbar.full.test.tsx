@@ -49,7 +49,7 @@ describe("SaveLoadToolbar - save functionality", () => {
     await user.type(input, "  My Tractor  ")
     await user.click(screen.getByText("Save"))
 
-    expect(onSave).toHaveBeenCalledWith("My Tractor", "tractors_large")
+    expect(onSave).toHaveBeenCalledWith("My Tractor", "tractors_large", null)
     expect(input).toHaveValue("")
   })
 
