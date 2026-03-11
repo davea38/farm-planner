@@ -100,10 +100,6 @@ export function CostCalculator({
     ? (field: string) => updateHa(field as keyof CostPerHectareInputs)
     : (field: string) => updateHr(field as keyof CostPerHourInputs)
 
-  const applyFromSource = mode === "hectare"
-    ? (field: string, source: string) => applyHaFromSource(field as keyof CostPerHectareInputs, source)
-    : (field: string, source: string) => applyHrFromSource(field as keyof CostPerHourInputs, source)
-
   // Results & derived values based on mode
   const areaUnit = displayUnit("ha", units)
 
@@ -533,7 +529,7 @@ function ModeToggle({
             : "text-muted-foreground hover:text-foreground"
         }`}
       >
-        Per {areaUnit}
+        Per {areaUnit === "acres" ? "acre" : areaUnit}
       </button>
       <button
         type="button"
