@@ -199,6 +199,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "Drill",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 0, hectaresPerYear: 500,
             interestRate: 5, insuranceRate: 2, storageRate: 1, workRate: 4,
@@ -227,6 +228,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "Drill",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 0, hectaresPerYear: 500,
             interestRate: 5, insuranceRate: 2, storageRate: 1, workRate: 4,
@@ -255,6 +257,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "6m Drill",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 126000, yearsOwned: 8, salePrice: 34000, hectaresPerYear: 1200,
             interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
@@ -281,6 +284,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "Telehandler",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 80000, yearsOwned: 6, salePrice: 20000, hoursPerYear: 800,
             interestRate: 3, insuranceRate: 2, storageRate: 1,
@@ -355,6 +359,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "Sprayer",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 100000, yearsOwned: 5, salePrice: 20000, hectaresPerYear: 800,
             interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 6,
@@ -411,6 +416,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "Combine",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 200000, yearsOwned: 10, salePrice: 50000, hectaresPerYear: 400,
             interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 4,
@@ -436,6 +442,7 @@ describe("ProfitabilityOverview", () => {
         },
         savedMachines: [{
           name: "Drill",
+          machineType: "miscellaneous" as const,
           inputs: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300,
             interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,

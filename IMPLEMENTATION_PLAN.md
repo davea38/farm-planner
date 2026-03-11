@@ -1,8 +1,8 @@
 # Farm Machinery Planner — Implementation Plan
 
-> Updated: 2026-03-08
-> Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-12 partially complete.
-> Remaining: 24 pending tasks across correctness fixes, UX improvements, and design enhancements.
+> Updated: 2026-03-11
+> Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-08 architecture diverged (improved). SPEC-12 partially complete.
+> Remaining: 17 pending tasks across test fixes, correctness, and UX improvements.
 
 ---
 
@@ -17,7 +17,7 @@
 | 05 | Integration & Polish | [x] Done |
 | 06 | UK Units & Labels | [x] Done |
 | 07 | Depreciation Planner | [x] Done |
-| 08 | Machine Profile Loading | [x] Done |
+| 08 | Machine Profile Loading | Partially done — architecture improved but tests stale |
 | 09 | Complete NAAC Data | [x] Done |
 | 10 | Contracting Income | [x] Done |
 | 11 | Profitability Overview | [x] Done |
@@ -25,136 +25,107 @@
 
 ---
 
-## SPEC-12 Phase 1 — Completed Items
+## Priority 1: Fix TypeScript Errors in Tests
 
-- [x] #1 Fuel formula is correct in SPECS.md
-- [x] #2 Remove `haPerHr` from `types.ts`, `calculations.ts`, and `CostPerHour.tsx`
-- [x] #3 Farm income is editable on Profitability tab
-- [x] #4 Current unsaved machine costs included in Profitability
-- [x] #6 Total annual cost shown on both cost tabs
-- [x] #7 "Cost to replace" renamed to "Replacement price"
-- [x] #8 "Contracting delivery costs" renamed to "Contracting operating costs"
-- [x] #10 NAAC filter by charge unit in contracting cards
-- [x] #11 Renamed to "Farm Only / Farm + Contracting"
-- [x] #13 Machine type in Compare Machines for unit switching (sprayer uses L/litres)
-- [x] #15 "View depreciation" button links replacement rows to depreciation
-- [x] #16 `usePerYear`/`currentHours` tooltip says "For your reference"
-- [x] #17 Profitability % breakdown shows two percentages
-- [x] #19 6000 constant documented with inline comment
-- [x] #21 AHDB methodology note added to insurance tooltip
-- [x] #22 Friendly message for negative Cost to Budget
-- [x] #23 Standalone Depreciation Tab 3 documented in SPECS.md
+These block the build and CI pipeline. Nothing else can ship until these are resolved.
+
+- [x] Fix ProfitabilityOverview.test.tsx by adding the missing `machineType` property to all SavedMachine test objects.
+  WHY: TypeScript compilation fails; CI cannot run any tests until this is resolved.
+
+- [x] Fix machineProfileLoading.test.tsx by removing props (savedMachines, onSaveMachine, onLoadMachine, onDeleteMachine) that CostPerHectare and CostPerHour no longer accept.
+  WHY: TypeScript compilation fails; these props were removed during the centralized MachinesTab refactor.
+
+- [x] Fix select.test.tsx by removing the unused `screen` import.
+  WHY: TypeScript strict mode treats unused imports as errors, blocking the build.
+
+- [x] Fix MachinesTab.test.tsx by providing complete SavedMachine `inputs` objects instead of partial stubs.
+  WHY: TypeScript compilation fails because test data uses `{ purchasePrice: number }` instead of the full CostPerHectareInputs/CostPerHourInputs shapes.
 
 ---
 
-## Priority 1: Must-Fix Correctness
+## Priority 2: Fix Failing Tests
 
-- [x] **1.1** Import `FUEL_PRICES` from `./fuel-data` in `src/lib/defaults.ts` and set `defaultCostPerHectare.fuelPrice` to `FUEL_PRICES.redDiesel.current / 100` (replacing hard-coded `0.53`).
-  WHY: Stale default (0.53) is 30% below the current AHDB price (0.7491); misleads new users.
+30 tests across 7 files are failing. These must pass before any refactoring to avoid cascading breakage.
 
-- [x] **1.2** Set `defaultCostPerHour.fuelPrice` to `FUEL_PRICES.redDiesel.current / 100` in `src/lib/defaults.ts` (replacing hard-coded `0.60`).
-  WHY: Same stale-default problem as 1.1 but on Tab 2.
+- [ ] Fix App.test.tsx (10 failures) by updating tab switching, machine selection callbacks, and state change handler tests to match the centralized MachinesTab architecture.
+  WHY: Tests reference the old per-tab save/load pattern which no longer exists.
 
-- [x] **1.3** Remove `haPerHr: 4` from `defaultCostPerHour` in `src/lib/defaults.ts` (line 33).
-  WHY: Field was removed from the type and UI but the default object still ships it.
+- [ ] Fix SaveLoadToolbar.machineType.test.tsx (6 failures) by updating machine type dropdown save/load/delete/reset flow assertions to reflect current SaveLoadToolbar behavior within MachinesTab.
+  WHY: Save/load orchestration moved to MachinesTab; toolbar test expectations are stale.
 
-- [x] **1.4** Remove all `haPerHr` references from `CostPerHour.branch.test.tsx` and `calculations-full.test.ts`.
-  WHY: Tests should not reference a removed field.
+- [ ] Fix CostPerHour.branch.test.tsx (4 failures) by removing savedMachines/onSaveMachine/onLoadMachine props and testing saved machine loading through the centralized flow.
+  WHY: CostPerHour no longer accepts these props; tests must exercise the new architecture.
 
-- [x] **1.5** Add a storage migration (v2 to v3) that strips `haPerHr` from persisted `CostPerHourInputs` when loading from localStorage.
-  WHY: Existing users have the obsolete field in saved data; it should be cleaned on load.
+- [ ] Fix CostPerHectare.branch.test.tsx (4 failures) by removing save/load/delete callback props and updating dirty state tracking tests for the centralized architecture.
+  WHY: CostPerHectare no longer accepts these props; tests must exercise the new architecture.
 
-- [x] **1.6** Unify replacement and depreciation category lists: either generate `MACHINE_CATEGORIES` in `src/lib/defaults.ts` from `category-mapping.ts`, or replace it with a single canonical list.
-  WHY: Two diverging category arrays (`MACHINE_CATEGORIES` in defaults vs `DEPRECIATION_PROFILES` keys in depreciation-data) will drift apart over time. The mapping in `src/lib/category-mapping.ts` already bridges them but `MACHINE_CATEGORIES` is still independently maintained.
+- [ ] Fix SaveLoadToolbar.full.test.tsx (1 failure) by supplying machineType when testing the save-with-trimmed-name flow.
+  WHY: SaveLoadToolbar now requires machineType; the test omits it.
 
----
+- [ ] Fix ContractingIncomePlanner.test.tsx (2 failures) by updating NAAC rates filtering assertions and collapsible section interaction tests. Also add missing `machineType` to SavedMachine objects (TS error).
+  WHY: Filter logic or DOM structure changed since these tests were written. Also has the same missing machineType TS error as ProfitabilityOverview had.
 
-## Priority 2: Should-Fix UX
-
-- [x] **2.1** Add a save-machine-feeds-profitability indicator: after saving a machine on Tab 1 or Tab 2, show a brief toast confirming the data now feeds the Profitability tab.
-  WHY: Users cannot tell that saving on one tab updates another; the cross-tab data flow is invisible.
-
-- [x] **2.2** Add an interest rate tooltip on `CostPerHectare.tsx` and `CostPerHour.tsx` explaining that this represents the opportunity cost of capital (or loan rate if financed).
-  WHY: "Interest rate" is ambiguous — farmers may enter their savings rate (2%) or their loan rate (6-8%), which significantly changes results.
-
-- [x] **2.3** Add a contracting cost-base warning on the Contracting Income tab when the same machine is used for own-farm work and contracting, noting that per-unit costs may be double-counted.
-  WHY: Farmers using one machine for both purposes will overstate total costs without this context.
+- [ ] Fix machineProfileLoading.test.tsx (3 failures) by rewriting tests to exercise machine profile loading through MachinesTab rather than passing props directly to cost tab components.
+  WHY: The per-tab save/load architecture no longer exists; tests must use the centralized MachinesTab flow.
 
 ---
 
-## Priority 3: High-Priority Design (SPEC-12 Phase 2)
+## Priority 3: Wire Missing Functionality
 
-- [x] **3.1** Move the results section above the inputs section on `CostPerHectare.tsx` — current order is `SaveLoadToolbar` then inputs then results; results should render immediately after `SaveLoadToolbar`, before inputs.
-  WHY: Farmers care about the answer first; inputs are supporting detail.
+- [ ] Wire onFarmIncomeChange in App.tsx so ProfitabilityOverview can actually update farm income state.
+  WHY: The prop is defined on ProfitabilityOverview but never connected in App.tsx; users cannot change farm income, which breaks the core profitability calculation.
 
-- [x] **3.2** Move the results section above the inputs section on `CostPerHour.tsx` — same reorder as 3.1.
+- [ ] Fix the off-by-one bug in the replacement planner average annual cost calculation (divide by effectiveSpan, not effectiveSpan+1).
+  WHY: Every machine's average annual cost is understated because the denominator is one year too large.
+
+---
+
+## Priority 4: Results-First Layout
+
+- [ ] Restructure CostPerHectare so the results section renders above the inputs section.
+  WHY: SPEC-12 finding #27; users must scroll past all inputs before seeing output, which is the single biggest UX friction point.
+
+- [ ] Restructure CostPerHour so the results section renders above the inputs section.
   WHY: Same results-first rationale; both cost tabs should be consistent.
 
-- [x] **3.3** Rename tabs from technical labels to question-based names (e.g. "Cost per Hectare" becomes "What does it cost per hectare?", "Depreciation" becomes "How fast does it lose value?").
-  WHY: Question framing tells users what each tab answers, reducing the learning curve.
+---
 
-- [x] **3.4** Add a donut chart to the cost breakdown on both cost tabs (CostPerHectare, CostPerHour) showing the split of depreciation, interest, insurance, storage, fuel, labour, and repairs.
-  WHY: A visual breakdown is faster to parse than a table of numbers.
+## Priority 5: Tab Names and Label Audit
 
-- [x] **3.5** Add a comparison bar (own cost vs contractor cost) on both cost tabs — two side-by-side horizontal bars with the difference highlighted.
-  WHY: The own-vs-contractor comparison is the key decision; a visual bar makes the gap obvious.
+- [ ] Rename tabs to use question-based names per SPEC-12 finding #26 (e.g. "Cost per Hectare" becomes "What does it cost per hectare?").
+  WHY: Question-based names tell users what each tab answers, reducing the learning curve.
 
-- [x] **3.6** Add a stacked bar chart and donut chart to the Profitability tab: stacked bar showing income vs costs, donut showing cost category split (replacements, running costs, contracting).
-  WHY: Charts make the profitability picture obvious without reading every number.
+- [ ] Rename "Storage" label to "Shed costs" across all cost tabs.
+  WHY: "Shed costs" matches the language farmers actually use; "Storage" is ambiguous.
 
-- [x] **3.7** Add inline sparklines per machine on the Replacement Planner (Tab 5) showing depreciation trajectory.
-  WHY: Visual depreciation context directly in the replacement table saves farmers switching tabs.
+- [ ] Rename "Expected sale price" to "What you'll get when you sell" on relevant inputs.
+  WHY: Conversational labels reduce cognitive load for non-technical users.
 
 ---
 
-## Priority 4: Medium-Priority Design (SPEC-12 Phase 2)
+## Priority 6: Save Confirmation Messaging
 
-- [x] **4.1** Audit and replace technical input labels with farmer-friendly text across all tabs (e.g. "Field efficiency" becomes "Time actually working in the field (%)", add explanatory tooltips to "Average value").
-  WHY: Farmers are not accountants; plain language reduces confusion and errors.
-
-- [x] **4.2** Add save/load toast notifications across all tabs — when a machine profile is saved or loaded, show a brief toast confirming the action and noting which other tabs are affected.
-  WHY: Cross-tab data flow is invisible without explicit feedback.
-
-- [x] **4.3** Add data-source badges to inputs populated from other tabs or NAAC data (e.g. a small "From saved profile" or "NAAC rate" badge next to the field).
-  WHY: Users need to know where a pre-filled number came from.
-
-- [x] **4.4** Add an unsaved-changes indicator (dot or asterisk) on tab headers when inputs have been modified but not yet saved.
-  WHY: Prevents users from navigating away and losing work unknowingly.
-
-- [x] **4.5** Improve empty states with icons and action buttons — replace plain-text empty states (e.g. "No machines saved") with an icon plus a primary action button (e.g. "Add your first machine").
-  WHY: Empty states are the first thing new users see; they should guide the next step.
+- [ ] Update save confirmation toasts to mention that saved machines feed the Profitability tab.
+  WHY: SPEC-12 finding #16; users do not realize saving a machine on one tab updates profitability calculations on another.
 
 ---
 
-## Priority 5: Low-Priority Polish (SPEC-12 Phase 2)
+## Priority 7: Typography and Warmth Polish
 
-- [x] **5.1** Add a welcome/orientation panel for first-time users (no saved data in localStorage) explaining the tool's purpose and suggesting where to start.
-  WHY: New users currently land on a form with no context or guidance.
-
-- [x] **5.2** Apply the warm colour palette: page background `#F5F0E8`, card background `#FFFDF7`, gold accent `#8B6914`, border colour `#D4C5A9` — keep existing `farm-green` and `farm-amber` as secondary accents.
-  WHY: Warm tones feel more approachable and appropriate for a farming tool.
-
-- [x] **5.3** Increase primary result-number font sizes to 36-40px on cost tabs and profitability (total cost per hectare, cost per hour, profit margin).
-  WHY: Large numbers draw the eye and reinforce the results-first layout established in 3.1/3.2.
+- [ ] Complete the remaining typography and warm-color styling per SPEC-12 finding #31.
+  WHY: Partially applied; finishing this pass gives the app a consistent, approachable feel across all tabs.
 
 ---
 
 ## Dependency Order
 
-Tasks should be executed in roughly this order, respecting dependencies:
+Tasks must be executed respecting these dependencies:
 
-1. **1.1, 1.2** — Fuel price defaults (independent, do together)
-2. **1.3, 1.4** — Remove `haPerHr` from defaults and tests (independent)
-3. **1.5** — Storage migration (depends on 1.3 being done so the default is clean)
-4. **1.6** — Category unification (independent)
-5. **2.1** — Save indicator (independent)
-6. **2.2** — Interest rate tooltip (independent)
-7. **2.3** — Contracting cost-base note (independent)
-8. **3.1, 3.2** — Results-first layout (independent, do together)
-9. **3.3** — Question-based tab names (independent, but do after 3.1/3.2 so layout is settled)
-10. **3.4, 3.5, 3.6, 3.7** — Charts (independent of each other, but do after 3.1/3.2 since charts go in the results section)
-11. **4.1 through 4.5** — Medium-priority design (independent of each other)
-12. **5.1, 5.2, 5.3** — Polish (5.3 benefits from 3.1/3.2 being done first)
+1. **Priority 1 (TS errors)** — must be fixed first; the build is broken without these.
+2. **Priority 2 (failing tests)** — fix after TS errors; tests must pass before any refactoring.
+3. **Priority 3 (wiring + bug fix)** — independent of each other; can proceed in parallel with test fixes.
+4. **Priority 4 (results-first layout)** — do after tests pass; layout changes will shift DOM structure and break test selectors.
+5. **Priorities 5-7 (labels, confirmations, polish)** — independent of each other; do after layout is stable.
 
 ---
 
@@ -162,11 +133,13 @@ Tasks should be executed in roughly this order, respecting dependencies:
 
 | Group | Done | Pending |
 |-------|------|---------|
-| SPEC-01 – SPEC-11 | 11 | 0 |
-| SPEC-12 Phase 1 — Completed | 17 | 0 |
-| Priority 1 — Must-Fix Correctness | 6 | 0 |
-| Priority 2 — Should-Fix UX | 3 | 0 |
-| Priority 3 — High-Priority Design | 7 | 0 |
-| Priority 4 — Medium-Priority Design | 5 | 0 |
-| Priority 5 — Low-Priority Polish | 3 | 0 |
-| **Total** | **52** | **0** |
+| SPEC-01 through SPEC-07, SPEC-09 through SPEC-11 | 10 | 0 |
+| SPEC-08 Machine Profile Loading | partial | tests need rewrite |
+| Priority 1 — TypeScript Errors | 4 | 0 |
+| Priority 2 — Failing Tests | 0 | 7 |
+| Priority 3 — Wire Missing Functionality | 0 | 2 |
+| Priority 4 — Results-First Layout | 0 | 2 |
+| Priority 5 — Tab Names & Label Audit | 0 | 3 |
+| Priority 6 — Save Confirmation Messaging | 0 | 1 |
+| Priority 7 — Typography & Warmth Polish | 0 | 1 |
+| **Total** | **0** | **21** |

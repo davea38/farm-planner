@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen, fireEvent, within, act } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MachinesTab, MachineIcon } from "@/components/MachinesTab"
+import type { DepreciationCategory, SavedMachine, CostPerHectareInputs, CostPerHourInputs } from "@/lib/types"
 
 /* ------------------------------------------------------------------ */
 /*  Helper factories                                                   */
@@ -9,8 +10,8 @@ import { MachinesTab, MachineIcon } from "@/components/MachinesTab"
 
 function makeProps(overrides: Partial<Parameters<typeof MachinesTab>[0]> = {}) {
   return {
-    hectareMachines: [] as { name: string; machineType: any; inputs: any }[],
-    hourMachines: [] as { name: string; machineType: any; inputs: any }[],
+    hectareMachines: [] as SavedMachine<CostPerHectareInputs>[],
+    hourMachines: [] as SavedMachine<CostPerHourInputs>[],
     selectedMachine: null,
     onSelectMachine: vi.fn(),
     onSaveHectareMachine: vi.fn(),
@@ -21,16 +22,16 @@ function makeProps(overrides: Partial<Parameters<typeof MachinesTab>[0]> = {}) {
   }
 }
 
-const hectareMachine = (name: string, type = "tractors_large" as const) => ({
+const hectareMachine = (name: string, type: DepreciationCategory = "tractors_large"): SavedMachine<CostPerHectareInputs> => ({
   name,
   machineType: type,
-  inputs: { purchasePrice: 100000 },
+  inputs: { purchasePrice: 100000 } as any,
 })
 
-const hourMachine = (name: string, type = "sprayers" as const) => ({
+const hourMachine = (name: string, type: DepreciationCategory = "sprayers"): SavedMachine<CostPerHourInputs> => ({
   name,
   machineType: type,
-  inputs: { purchasePrice: 50000 },
+  inputs: { purchasePrice: 50000 } as any,
 })
 
 /* ------------------------------------------------------------------ */
