@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-11
 > Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-08 architecture diverged (improved). SPEC-12 partially complete.
-> Remaining: 8 pending tasks across UX improvements.
+> Remaining: 1 pending task (typography polish).
 
 ---
 
@@ -106,8 +106,9 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 
 ## Priority 6: Save Confirmation Messaging
 
-- [ ] Update save confirmation toasts to mention that saved machines feed the Profitability tab.
+- [x] Update save confirmation toasts to mention that saved machines feed the Profitability tab.
   WHY: SPEC-12 finding #16; users do not realize saving a machine on one tab updates profitability calculations on another.
+  DONE: Updated save/update toasts in both MachinesTab and SaveLoadToolbar to reference the "Worth It?" overview. New save on SaveLoadToolbar already had this; added it to update toasts and MachinesTab save/edit toasts.
 
 ---
 
@@ -140,7 +141,7 @@ Tasks must be executed respecting these dependencies:
 | Priority 2 — Failing Tests | 7 | 0 |
 | Priority 3 — Wire Missing Functionality | 2 | 0 |
 | Priority 4 — Results-First Layout | 2 | 0 |
-| Priority 5 — Tab Names & Label Audit | 0 | 3 |
-| Priority 6 — Save Confirmation Messaging | 0 | 1 |
+| Priority 5 — Tab Names & Label Audit | 3 | 0 |
+| Priority 6 — Save Confirmation Messaging | 1 | 0 |
 | Priority 7 — Typography & Warmth Polish | 0 | 1 |
-| **Total** | **0** | **21** |
+| **Total** | **25** | **1** |

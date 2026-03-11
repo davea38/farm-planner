@@ -239,7 +239,7 @@ export function MachinesTab({
     } else {
       onSaveHourMachine(editName.trim(), editType, entry.index)
     }
-    showToast(`Updated "${editName.trim()}".`)
+    showToast(`Updated "${editName.trim()}" — changes will reflect in the "Worth It?" overview.`)
     setEditingKey(null)
   }
 
@@ -271,7 +271,7 @@ export function MachinesTab({
     onSaveHectareMachine(newName.trim(), newMachineType, null)
     const newIndex = hectareMachines.length
     onSelectMachine({ costMode: "hectare", index: newIndex })
-    showToast(`Saved "${newName.trim()}" — now edit its costs on the other tabs.`)
+    showToast(`Saved "${newName.trim()}" — edit its costs on the other tabs. It'll feed into the "Worth It?" overview.`)
     setNewName("")
     setNewMachineType("")
     setAddNewOpen(false)

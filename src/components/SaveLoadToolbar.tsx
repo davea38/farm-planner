@@ -121,7 +121,7 @@ export function SaveLoadToolbar<T>({
               onSave(trimmedName, machineType, selectedIndex)
               setName("")
               if (selectedIndex !== null) {
-                showToast(`Updated "${trimmedName}" — changes saved.`)
+                showToast(`Updated "${trimmedName}" — changes saved and reflected in the "Worth It?" overview.`)
               } else {
                 showToast(`Saved! This machine's costs now feed into the "Worth It?" overview.`)
               }
