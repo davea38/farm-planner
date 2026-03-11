@@ -167,7 +167,7 @@ export function CostPerHectare({
               min={0}
             />
             <InputField
-              label="Expected sale price"
+              label="What you'll get when you sell"
               value={inputs.salePrice}
               onChange={update("salePrice")}
               unit="£"

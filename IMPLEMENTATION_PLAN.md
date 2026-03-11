@@ -99,7 +99,7 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 - [x] Rename "Storage" label to "Shed costs" across all cost tabs.
   WHY: "Shed costs" matches the language farmers actually use; "Storage" is ambiguous.
 
-- [ ] Rename "Expected sale price" to "What you'll get when you sell" on relevant inputs.
+- [x] Rename "Expected sale price" to "What you'll get when you sell" on relevant inputs.
   WHY: Conversational labels reduce cognitive load for non-technical users.
 
 ---

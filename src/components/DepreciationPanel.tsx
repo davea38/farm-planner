@@ -15,7 +15,7 @@ import { DepreciationCurve } from "./DepreciationCurve"
 const CATEGORIES = Object.entries(DEPRECIATION_PROFILES) as [MachineCategory, typeof DEPRECIATION_PROFILES[MachineCategory]][]
 
 interface DepreciationPanelProps {
-  /** Fills the "Expected sale price" input on the parent form */
+  /** Fills the "What you'll get when you sell" input on the parent form */
   onApplySalePrice?: (value: number) => void
   /** Current purchase price from the form (drives the £ scale) */
   purchasePrice?: number
