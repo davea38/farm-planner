@@ -21,17 +21,11 @@ let capturedContractingIncomeOnChange: ((state: unknown) => void) | null = null
 // Mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('@/components/CostPerHectare', () => ({
-  CostPerHectare: (props: Record<string, unknown>) => {
-    capturedCostPerHectareOnChange = props.onChange as typeof capturedCostPerHectareOnChange
-    return <div data-testid="cost-per-hectare" />
-  },
-}))
-
-vi.mock('@/components/CostPerHour', () => ({
-  CostPerHour: (props: Record<string, unknown>) => {
-    capturedCostPerHourOnChange = props.onChange as typeof capturedCostPerHourOnChange
-    return <div data-testid="cost-per-hour" />
+vi.mock('@/components/CostCalculator', () => ({
+  CostCalculator: (props: Record<string, unknown>) => {
+    capturedCostPerHectareOnChange = props.onHectareChange as typeof capturedCostPerHectareOnChange
+    capturedCostPerHourOnChange = props.onHourChange as typeof capturedCostPerHourOnChange
+    return <div data-testid="cost-calculator" />
   },
 }))
 
@@ -212,10 +206,11 @@ describe('App', () => {
 
   // --- Tabs ---
 
-  it('shows all 8 tab labels', () => {
+  it('shows all 7 tab labels', () => {
     renderApp()
-    for (const label of ['Machines', 'Cost/Ha', 'Cost/Hr', 'Value Loss', 'Compare', 'Replace', 'Contract', 'Worth It?']) {
-      expect(screen.getByText(label)).toBeInTheDocument()
+    for (const label of ['Machines', 'Cost/Ha', 'Depreciation', 'Compare', 'Replace', 'Contract', 'Worth It']) {
+      const matches = screen.getAllByText(label)
+      expect(matches.length).toBeGreaterThanOrEqual(1)
     }
   })
 
@@ -234,8 +229,9 @@ describe('App', () => {
 
   it('disables non-machine tabs when no machine selected', () => {
     renderApp()
-    for (const label of ['Cost/Ha', 'Cost/Hr', 'Value Loss', 'Compare', 'Replace', 'Contract', 'Worth It?']) {
-      const tab = screen.getByText(label).closest('button')!
+    for (const label of ['Cost/Ha', 'Depreciation', 'Compare', 'Replace', 'Contract', 'Worth It']) {
+      const matches = screen.getAllByText(label)
+      const tab = matches[0].closest('button')!
       expect(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true').toBe(true)
     }
   })
@@ -424,7 +420,7 @@ describe('App', () => {
 
   it('allows switching to Cost/Ha tab after selecting a machine', async () => {
     await renderWithMachineAndTab('Cost/Ha')
-    await waitFor(() => { expect(screen.getByTestId('cost-per-hectare')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
   })
 
   // --- Callback exercise: handleSelectMachine loads inputs ---
@@ -515,10 +511,10 @@ describe('App', () => {
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
     await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
 
-    // Switch to Cost/Ha tab to get the onChange callback
+    // Switch to Cost tab to get the onChange callback
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
-    await waitFor(() => { expect(screen.getByTestId('cost-per-hectare')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
 
     // Now invoke the onChange
     act(() => {
@@ -530,12 +526,12 @@ describe('App', () => {
   it('onCostPerHectareChange skips saved machine update if no machine selected', async () => {
     addHectareMachine()
     renderApp()
-    // Select and then switch to Cost/Ha
+    // Select and then switch to Cost tab
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
     await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
-    await waitFor(() => { expect(screen.getByTestId('cost-per-hectare')).toBeInTheDocument() })
+    await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
 
     // Deselect, then call onChange
     act(() => { capturedOnSelectMachine!(null) })
@@ -553,9 +549,11 @@ describe('App', () => {
     act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
     await waitFor(() => { expect(screen.getByText('Hour Machine')).toBeInTheDocument() })
 
+    // The merged cost tab label shows "Cost/Hr" when costMode is hour, but default is hectare
+    // Navigate to the cost tab (shows as Cost/Ha by default)
     const user = userEvent.setup()
-    await user.click(screen.getByText('Cost/Hr'))
-    await waitFor(() => { expect(screen.getByTestId('cost-per-hour')).toBeInTheDocument() })
+    await user.click(screen.getByText('Cost/Ha'))
+    await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
 
     act(() => {
       capturedCostPerHourOnChange!({ ...mockDefaultState.costPerHour.current, purchasePrice: 777 })

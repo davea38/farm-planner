@@ -1,10 +1,10 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useHashRoute } from '@/lib/useHashRoute'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
-import { CostPerHectare } from '@/components/CostPerHectare'
-import { CostPerHour } from '@/components/CostPerHour'
+import { CostCalculator } from '@/components/CostCalculator'
+import type { CostMode } from '@/components/CostCalculator'
 import { CompareMachines } from '@/components/CompareMachines'
 import { ReplacementPlanner } from '@/components/ReplacementPlanner'
 import { DepreciationPanel } from '@/components/DepreciationPanel'
@@ -29,6 +29,28 @@ function App() {
   useAutoSave(appState)
 
   const hasMachineSelected = selectedMachine !== null
+
+  // Derive cost mode from hash route; default to hectare
+  const [costMode, setCostMode] = useState<CostMode>(() => {
+    const hash = window.location.hash.replace('#', '')
+    return hash === 'cost-per-hour' ? 'hour' : 'hectare'
+  })
+
+  // Normalize tab value: map legacy cost routes and cost-calculator to one value
+  const tabsValue = (activeTab === "cost-per-hectare" || activeTab === "cost-per-hour")
+    ? "cost-calculator"
+    : activeTab
+
+  // Sync costMode when navigating via back/forward to a cost route
+  useEffect(() => {
+    if (activeTab === "cost-per-hour") setCostMode("hour")
+    else if (activeTab === "cost-per-hectare") setCostMode("hectare")
+  }, [activeTab])
+
+  const handleCostModeChange = useCallback((mode: CostMode) => {
+    setCostMode(mode)
+    setActiveTab(mode === "hour" ? "cost-per-hour" : "cost-per-hectare")
+  }, [setActiveTab])
 
   const handleUnitsChange = useCallback((prefs: UnitPreferences) => {
     setUnitPrefs(prefs)
@@ -213,68 +235,66 @@ function App() {
 
           <WelcomePanel />
 
-          <Tabs value={activeTab} onValueChange={(v) => {
+          <Tabs value={tabsValue} onValueChange={(v) => {
             // Only allow switching to non-machines tabs if a machine is selected
             if (v !== "machines" && !hasMachineSelected) return
-            setActiveTab(v)
+            if (v === "cost-calculator") {
+              // Route to the correct cost hash based on current mode
+              setActiveTab(costMode === "hour" ? "cost-per-hour" : "cost-per-hectare")
+            } else {
+              setActiveTab(v)
+            }
           }}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="machines">
                 Machines
               </TabsTrigger>
               <TabsTrigger
-                value="cost-per-hectare"
+                value="cost-calculator"
                 disabled={!hasMachineSelected}
               >
-                <span className="sm:hidden">{unitPrefs.area === 'acres' ? 'Cost/Acre' : 'Cost/Ha'}</span>
-                <span className="hidden sm:inline">{unitPrefs.area === 'acres' ? 'Cost per acre?' : 'Cost per hectare?'}</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="cost-per-hour"
-                disabled={!hasMachineSelected}
-              >
-                <span className="sm:hidden">Cost/Hr</span>
-                <span className="hidden sm:inline">Cost per hour?</span>
+                <span className="sm:hidden">{costMode === 'hectare' ? (unitPrefs.area === 'acres' ? 'Cost/Acre' : 'Cost/Ha') : 'Cost/Hr'}</span>
+                <span className="hidden sm:inline">{costMode === 'hectare' ? (unitPrefs.area === 'acres' ? 'Cost per acre' : 'Cost per hectare') : 'Cost per hour'}</span>
               </TabsTrigger>
               <TabsTrigger
                 value="depreciation"
                 disabled={!hasMachineSelected}
               >
-                <span className="sm:hidden">Value Loss</span>
-                <span className="hidden sm:inline">Losing value?</span>
+                <span className="sm:hidden">Depreciation</span>
+                <span className="hidden sm:inline">Depreciation</span>
               </TabsTrigger>
               <TabsTrigger
                 value="compare-machines"
                 disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Compare</span>
-                <span className="hidden sm:inline">Which is better?</span>
+                <span className="hidden sm:inline">Which is better</span>
               </TabsTrigger>
               <TabsTrigger
                 value="replacement-planner"
                 disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Replace</span>
-                <span className="hidden sm:inline">When to replace?</span>
+                <span className="hidden sm:inline">When to replace</span>
               </TabsTrigger>
               <TabsTrigger
                 value="contracting-income"
                 disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Contract</span>
-                <span className="hidden sm:inline">Contracting pay?</span>
+                <span className="hidden sm:inline">Contracting pay</span>
               </TabsTrigger>
               <TabsTrigger
                 value="profitability"
                 disabled={!hasMachineSelected}
               >
-                <span className="sm:hidden">Worth It?</span>
-                <span className="hidden sm:inline">Is it worth it?</span>
+                <span className="sm:hidden">Worth It</span>
+                <span className="hidden sm:inline">Is it worth it</span>
               </TabsTrigger>
             </TabsList>
 
-            {/* Selected machine banner — shown on all tabs */}
-            {(() => {
+            {/* Selected machine banner — shown on select tabs only */}
+            {!["compare-machines", "replacement-planner", "contracting-income", "profitability"].includes(activeTab) && (() => {
               if (!selectedMachine) {
                 const hasMachines = appState.costPerHectare.savedMachines.length > 0 || appState.costPerHour.savedMachines.length > 0
                 return (
@@ -342,17 +362,14 @@ function App() {
               />
             </TabsContent>
 
-            <TabsContent value="cost-per-hectare" className="mt-4">
-              <CostPerHectare
-                initialInputs={appState.costPerHectare.current}
-                onChange={onCostPerHectareChange}
-              />
-            </TabsContent>
-
-            <TabsContent value="cost-per-hour" className="mt-4">
-              <CostPerHour
-                initialInputs={appState.costPerHour.current}
-                onChange={onCostPerHourChange}
+            <TabsContent value="cost-calculator" className="mt-4">
+              <CostCalculator
+                mode={costMode}
+                onModeChange={handleCostModeChange}
+                initialHectareInputs={appState.costPerHectare.current}
+                initialHourInputs={appState.costPerHour.current}
+                onHectareChange={onCostPerHectareChange}
+                onHourChange={onCostPerHourChange}
               />
             </TabsContent>
 

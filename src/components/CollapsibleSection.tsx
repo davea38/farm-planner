@@ -15,6 +15,8 @@ interface CollapsibleSectionProps {
   onOpenChange?: (open: boolean) => void
   /** Visual variant */
   variant?: "default" | "muted"
+  /** Optional element rendered to the right of the title, outside the collapse trigger */
+  headerRight?: React.ReactNode
   children: React.ReactNode
 }
 
@@ -25,6 +27,7 @@ export function CollapsibleSection({
   open: propOpen,
   onOpenChange,
   variant = "default",
+  headerRight,
   children,
 }: CollapsibleSectionProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen)
@@ -43,35 +46,42 @@ export function CollapsibleSection({
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className={triggerClasses}>
-        <div className="flex items-center gap-2.5">
-          <div className={`flex items-center justify-center w-5 h-5 rounded transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
-            <svg
-              className="h-4 w-4 shrink-0 text-muted-foreground"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+      <div className="flex items-center gap-2">
+        <CollapsibleTrigger className={`${triggerClasses} flex-1 min-w-0`}>
+          <div className="flex items-center gap-2.5">
+            <div className={`flex items-center justify-center w-5 h-5 rounded transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+              <svg
+                className="h-4 w-4 shrink-0 text-muted-foreground"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-sm font-semibold leading-tight">{title}</span>
+              {subtitle && (
+                <span className="text-[11px] text-muted-foreground leading-tight">{subtitle}</span>
+              )}
+            </div>
           </div>
-          <div className="flex flex-col items-start gap-0.5">
-            <span className="text-sm font-semibold leading-tight">{title}</span>
-            {subtitle && (
-              <span className="text-[11px] text-muted-foreground leading-tight">{subtitle}</span>
-            )}
+          {!open && !headerRight && (
+            <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">
+              Show
+            </span>
+          )}
+        </CollapsibleTrigger>
+        {headerRight && (
+          <div className="shrink-0 pr-3">
+            {headerRight}
           </div>
-        </div>
-        {!open && (
-          <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">
-            Show
-          </span>
         )}
-      </CollapsibleTrigger>
+      </div>
       <div className={`overflow-hidden transition-all ${open ? "mt-1" : ""}`}>
         <CollapsibleContent className="px-3 pt-1 pb-2">
           {children}

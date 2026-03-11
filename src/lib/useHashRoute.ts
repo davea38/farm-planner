@@ -4,6 +4,7 @@ const VALID_TABS = new Set([
   'machines',
   'cost-per-hectare',
   'cost-per-hour',
+  'cost-calculator',
   'depreciation',
   'compare-machines',
   'replacement-planner',
