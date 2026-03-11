@@ -7,6 +7,7 @@ import { ContractorRatesPanel } from "@/components/ContractorRatesPanel"
 import { ResultBanner } from "@/components/ResultBanner"
 import { SourceBadge } from "@/components/SourceBadge"
 import { formatGBP, formatPct } from "@/lib/format"
+import { generateId } from "@/lib/uuid"
 import {
   calculateContractingService,
   calculateContractingSummary,
@@ -123,7 +124,7 @@ export function ContractingIncomePlanner({
 
   const addService = () => {
     const newService: ContractingService = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: "New Service",
       chargeRate: 0,
       chargeUnit: "ha",

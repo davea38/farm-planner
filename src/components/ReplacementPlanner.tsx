@@ -4,6 +4,7 @@ import type { MachineCategory as DepreciationCategory } from "@/lib/depreciation
 import { defaultReplacementPlanner, createDefaultReplacementMachines, MACHINE_CATEGORIES } from "@/lib/defaults"
 import { calcReplacementSummary } from "@/lib/calculations"
 import { formatGBP, formatPct } from "@/lib/format"
+import { generateId } from "@/lib/uuid"
 import { getDepreciationCategory } from "@/lib/category-mapping"
 import { InputField } from "./InputField"
 import { ResultBanner } from "./ResultBanner"
@@ -325,7 +326,7 @@ export function ReplacementPlanner({
 
   const addMachine = () => {
     const newMachine: ReplacementMachine = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: "New machine",
       category: "other",
       condition: "used",

@@ -7,6 +7,7 @@ import type {
 } from "./types";
 import { FUEL_PRICES } from "./fuel-data";
 import { CATEGORY_LABELS } from "./category-mapping";
+import { generateId } from "./uuid";
 
 export const defaultCostPerHectare: CostPerHectareInputs = {
   purchasePrice: 126000,
@@ -63,7 +64,7 @@ export const defaultMachineB: WorkrateInputs = {
 
 function makeReplacementMachine(name: string, category: ReplacementMachine["category"] = "other"): ReplacementMachine {
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     name,
     category,
     condition: "used",
