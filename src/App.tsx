@@ -18,7 +18,6 @@ import { WelcomePanel } from '@/components/WelcomePanel'
 import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
 import type { UnitPreferences } from '@/lib/units'
-import { defaultCostPerHectare, defaultCostPerHour } from '@/lib/defaults'
 import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState, ContractingIncomeState, DepreciationCategory } from '@/lib/types'
 
 function App() {

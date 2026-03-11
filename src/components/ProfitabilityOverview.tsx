@@ -132,10 +132,10 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
           to update the numbers here.
         </p>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-8">
         {/* Income Section */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-sm uppercase tracking-wide border-b pb-1">
+          <h3 className="font-semibold text-sm border-b pb-1">
             Income
           </h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
@@ -165,7 +165,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
 
         {/* Costs Section */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-sm uppercase tracking-wide border-b pb-1">
+          <h3 className="font-semibold text-sm border-b pb-1">
             Costs
           </h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
@@ -228,7 +228,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
 
         {/* Net Position */}
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm uppercase tracking-wide border-b pb-1">
+          <h3 className="font-semibold text-sm border-b pb-1">
             Net Position
           </h3>
           <Card className="border-2">
@@ -300,7 +300,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
               {/* Donut: cost category split */}
               {results.totalCosts > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">
                     Where your costs go
                   </p>
                   <CostDonutChart
@@ -321,7 +321,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
         {/* With vs Without Contracting */}
         {hasServices && (
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm uppercase tracking-wide border-b pb-1">
+            <h3 className="font-semibold text-sm border-b pb-1">
               Farm Only vs Farm + Contracting
             </h3>
             <div className="overflow-x-auto">

@@ -24,16 +24,16 @@ export function CostBreakdown({ rows }: CostBreakdownProps) {
         const convertedUnitLabel = displayUnit(metricUnit, units).replace("£/", "")
 
         return row.bold ? (
-          <div key={row.label} className="space-y-0.5">
+          <div key={row.label} className="space-y-0.5 rounded-lg bg-farm-green/10 px-4 py-3">
             <span className="text-sm text-muted-foreground">{row.label}</span>
-            <div className="text-4xl font-bold tabular-nums">
+            <div className="text-4xl font-bold tabular-nums text-farm-green">
               {formatGBP(convertedValue)}<span className="text-lg font-semibold text-muted-foreground">/{convertedUnitLabel}</span>
             </div>
           </div>
         ) : (
           <div
             key={row.label}
-            className="flex items-baseline justify-between gap-2 sm:gap-4 text-sm text-muted-foreground pl-4"
+            className="flex items-baseline justify-between gap-2 sm:gap-4 text-base text-muted-foreground pl-4"
           >
             <span>{row.label}</span>
             <span className="tabular-nums whitespace-nowrap">

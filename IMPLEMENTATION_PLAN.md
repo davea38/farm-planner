@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-11
 > Baseline: SPEC-01 through SPEC-11 fully implemented. SPEC-08 architecture diverged (improved). SPEC-12 partially complete.
-> Remaining: 1 pending task (typography polish).
+> Remaining: 0 pending tasks. All implementation complete.
 
 ---
 
@@ -114,8 +114,9 @@ These block the build and CI pipeline. Nothing else can ship until these are res
 
 ## Priority 7: Typography and Warmth Polish
 
-- [ ] Complete the remaining typography and warm-color styling per SPEC-12 finding #31.
+- [x] Complete the remaining typography and warm-color styling per SPEC-12 finding #31.
   WHY: Partially applied; finishing this pass gives the app a consistent, approachable feel across all tabs.
+  DONE: Focus ring changed to warm gold (#8B6914), primary result numbers styled in dark green on light green background, section headers converted from UPPERCASE to sentence case, inter-section spacing increased (space-y-8), result card padding increased (p-6), secondary result text bumped to text-base. Also cleaned up pre-existing unused imports (DepreciationPanel, defaults).
 
 ---
 
@@ -143,5 +144,5 @@ Tasks must be executed respecting these dependencies:
 | Priority 4 — Results-First Layout | 2 | 0 |
 | Priority 5 — Tab Names & Label Audit | 3 | 0 |
 | Priority 6 — Save Confirmation Messaging | 1 | 0 |
-| Priority 7 — Typography & Warmth Polish | 0 | 1 |
-| **Total** | **25** | **1** |
+| Priority 7 — Typography & Warmth Polish | 1 | 0 |
+| **Total** | **26** | **0** |

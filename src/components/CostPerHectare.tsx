@@ -13,7 +13,6 @@ import { RepairEstimator } from "./RepairEstimator"
 import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
-import { DepreciationPanel } from "./DepreciationPanel"
 import { CostDonutChart } from "./CostDonutChart"
 import { CostComparisonBar } from "./CostComparisonBar"
 
@@ -90,10 +89,10 @@ export function CostPerHectare({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
 
       {/* Results — shown first so the answer is visible without scrolling */}
-      <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+      <div className="rounded-lg bg-muted/50 p-6 space-y-4">
         <h2 className="text-sm font-semibold">Results</h2>
 
         {hasZeroWarning ? (
@@ -118,9 +117,9 @@ export function CostPerHectare({
               unit={areaUnit}
             />
 
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 rounded-lg bg-farm-green/10 px-4 py-3">
               <span className="text-sm text-muted-foreground">Total annual cost</span>
-              <div className="text-4xl font-bold tabular-nums">
+              <div className="text-4xl font-bold tabular-nums text-farm-green">
                 {formatGBP(results.totalAnnualCost)}<span className="text-lg font-semibold text-muted-foreground">/year</span>
               </div>
             </div>

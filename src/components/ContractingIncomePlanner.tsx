@@ -403,7 +403,7 @@ export function ContractingIncomePlanner({
                 {/* Results */}
                 {hasResults && (
                   <div className="mt-4 space-y-3 rounded-lg bg-muted/50 p-4">
-                    <h4 className="font-semibold text-sm uppercase tracking-wide">
+                    <h4 className="font-semibold text-sm">
                       Results
                     </h4>
                     <div className="grid grid-cols-2 gap-2 text-sm">
@@ -463,7 +463,7 @@ export function ContractingIncomePlanner({
         {services.length >= 1 && (
           <Card className="border-2 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-lg uppercase tracking-wide">
+              <CardTitle className="text-lg">
                 Overall Contracting Summary
               </CardTitle>
             </CardHeader>
