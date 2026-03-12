@@ -374,7 +374,22 @@ function App() {
             </TabsContent>
 
             <TabsContent value="depreciation" className="mt-4">
-              <DepreciationPanel />
+              <DepreciationPanel
+                category={(() => {
+                  if (!selectedMachine) return undefined
+                  const machine = selectedMachine.costMode === "hectare"
+                    ? appState.costPerHectare.savedMachines[selectedMachine.index]
+                    : appState.costPerHour.savedMachines[selectedMachine.index]
+                  return machine?.machineType
+                })()}
+                purchasePrice={(() => {
+                  if (!selectedMachine) return undefined
+                  const machine = selectedMachine.costMode === "hectare"
+                    ? appState.costPerHectare.savedMachines[selectedMachine.index]
+                    : appState.costPerHour.savedMachines[selectedMachine.index]
+                  return machine?.inputs.purchasePrice
+                })()}
+              />
             </TabsContent>
 
             <TabsContent value="compare-machines" className="mt-4">
