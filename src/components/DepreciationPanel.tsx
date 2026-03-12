@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import type { MachineCategory } from "@/lib/depreciation-data"
 import {
   DEPRECIATION_PROFILES,
@@ -46,10 +46,17 @@ export function DepreciationPanel({
       setInternalCategory(value)
     }
   }
-  const [internalPurchasePrice, setInternalPurchasePrice] = useState(100000)
+  const [internalPurchasePrice, setInternalPurchasePrice] = useState(propPurchasePrice ?? 100000)
   const [internalYears, setInternalYears] = useState(5)
 
-  const purchasePrice = propPurchasePrice ?? internalPurchasePrice
+  // Sync internal price when the selected machine changes
+  useEffect(() => {
+    if (propPurchasePrice !== undefined) {
+      setInternalPurchasePrice(propPurchasePrice)
+    }
+  }, [propPurchasePrice])
+
+  const purchasePrice = internalPurchasePrice
   const years = propYearsOwned ?? internalYears
 
   const handleYearsChange = (value: number) => {
@@ -89,21 +96,19 @@ export function DepreciationPanel({
             ))}
           </select>
         </div>
-        {propPurchasePrice === undefined && (
-          <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1">
-              Purchase price (£):
-            </label>
-            <input
-              type="number"
-              value={internalPurchasePrice}
-              onChange={(e) => setInternalPurchasePrice(Number(e.target.value) || 0)}
-              className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
-              min={0}
-              step={1000}
-            />
-          </div>
-        )}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground block mb-1">
+            Purchase price (£):
+          </label>
+          <input
+            type="number"
+            value={internalPurchasePrice}
+            onChange={(e) => setInternalPurchasePrice(Number(e.target.value) || 0)}
+            className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm min-h-[44px]"
+            min={0}
+            step={1000}
+          />
+        </div>
       </div>
 
       {/* SVG Depreciation Curve — prominent */}
