@@ -60,7 +60,7 @@ describe("ProfitabilityOverview", () => {
 
   it("shows empty state when no saved machines or services", () => {
     renderWithUnits(<ProfitabilityOverview appState={createTestState()} />);
-    expect(screen.getByText(/save machines/i)).toBeInTheDocument();
+    expect(screen.getByText(/earning their keep/i)).toBeInTheDocument();
   });
 
   it("shows income section", () => {
@@ -327,7 +327,7 @@ describe("ProfitabilityOverview", () => {
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     expect(screen.queryByText(/No machines or services yet/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/save machines/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/earning their keep/i)).not.toBeInTheDocument();
   });
 
   it("shows contracting table details with income, costs, net, and machinery % rows", () => {

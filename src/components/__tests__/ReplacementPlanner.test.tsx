@@ -213,6 +213,6 @@ describe("ReplacementPlanner", () => {
       farmIncome: 350000,
     }
     renderWithUnits(<ReplacementPlanner initialState={noReplacementState} />)
-    expect(screen.getByText(/Set replacement years/)).toBeInTheDocument()
+    expect(screen.getByText(/years until replacement/)).toBeInTheDocument()
   })
 })

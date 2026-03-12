@@ -722,7 +722,7 @@ describe("ContractingIncomePlanner", () => {
       />,
     )
     expect(
-      screen.getByText(/No contracting services yet/),
+      screen.getByText(/Could your machines earn more/),
     ).toBeInTheDocument()
     expect(
       screen.getByRole("button", { name: /Add your first service/i }),

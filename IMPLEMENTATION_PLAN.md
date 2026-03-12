@@ -79,7 +79,7 @@ The app works; CI is red.
 - [ ] **Finding #31 (partial):** Complete typography and warmth audit — farm-green/amber/red palette and large result numbers exist but consistency not verified.
   *WHY: Inconsistent styling undermines trust.*
 
-- [x] **Finding #32:** Empty states audit complete — MachinesTab, ProfitabilityOverview, ContractingIncomePlanner, and ReplacementPlanner TimelineChart all have farmer-friendly empty states with clear guidance and action buttons.
+- [x] **Finding #32:** Empty states audit complete — all empty states now have icon + friendly headline + explanation + action button. ProfitabilityOverview navigates to Machines tab, ContractingIncomePlanner has "Could your machines earn more?" prompt, ReplacementPlanner timeline has two-line guidance. MachinesTab was already complete.
 
 - [x] **Finding #33:** Farmer-friendly language audit complete — labels, section headers, tooltips, and warning messages updated across all active components (CostCalculator, CompareMachines, ReplacementPlanner, ProfitabilityOverview, ContractingIncomePlanner).
   *Changes: "Spares & repairs" → "Repairs (% of price)", "Coverage speed" → "Ground covered", "Finance / opportunity cost" → "Money tied up", "Shed costs" → "Shed costs (% of price)", "Contractor charges" → "Contractor quote", "Contractor Comparison" → "Compare with a contractor", "Running Costs" → "Running costs", "Overheads" → "Overheads (most farmers leave these as-is)", "Results" → "Your answer", "Budget Summary" → "Your budget", "Farm income" → "Your farm income", warning messages updated to match new labels.*
