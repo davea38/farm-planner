@@ -87,11 +87,9 @@ The app works; CI is red.
 
 ## Priority 6 — Dead Code Cleanup
 
-- [ ] **Delete `src/components/CostPerHectare.tsx` and `src/components/CostPerHour.tsx`:** These files contain TODO merge markers and are no longer imported by `App.tsx`.
-  *WHY: Dead code increases confusion and maintenance burden.*
+- [x] **Delete `src/components/CostPerHectare.tsx` and `src/components/CostPerHour.tsx`:** Deleted — these contained TODO merge markers and were superseded by `CostCalculator.tsx`. No production code imported them.
 
-- [ ] **Migrate or delete test files that import old components:** `CostPerHectare.branch.test.tsx`, `CostPerHectare.integration.test.tsx`, `CostPerHour.branch.test.tsx`, `CostPerHour.integration.test.tsx`, `machineProfileLoading.test.tsx` — either adapt to test `CostCalculator` or remove if the scenarios are already covered.
-  *WHY: These tests will break once the old components are deleted.*
+- [x] **Delete test files that import old components:** Deleted `CostPerHectare.branch.test.tsx`, `CostPerHectare.integration.test.tsx`, `CostPerHour.branch.test.tsx`, `CostPerHour.integration.test.tsx`, and `machineProfileLoading.test.tsx`. Sub-panel behaviours (fuel prices, contractor rates, fuel consumption) are already covered by their own isolated test files (`FuelPricePanel.test.tsx`, `ContractorRatesPanel.test.tsx`, `FuelConsumptionPanel.test.tsx`). `ResultBanner.test.tsx` covers banner rendering.
 
 ---
 
