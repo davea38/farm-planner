@@ -71,24 +71,27 @@ export function CostCalculator({
     setFieldSources((prev) => ({ ...prev, [field]: source }))
   }
 
-  // Propagate changes to parent
-  const isFirstRenderHa = useRef(true)
-  useEffect(() => {
-    if (isFirstRenderHa.current) {
-      isFirstRenderHa.current = false
-      return
-    }
-    onHectareChange?.(haInputs)
-  }, [haInputs, onHectareChange])
+  // Propagate changes to parent — use ref comparison to skip the initial
+  // mount (including React 19 StrictMode's double-invocation of effects)
+  const onHectareChangeRef = useRef(onHectareChange)
+  onHectareChangeRef.current = onHectareChange
+  const prevHaInputs = useRef(haInputs)
 
-  const isFirstRenderHr = useRef(true)
   useEffect(() => {
-    if (isFirstRenderHr.current) {
-      isFirstRenderHr.current = false
-      return
-    }
-    onHourChange?.(hrInputs)
-  }, [hrInputs, onHourChange])
+    if (prevHaInputs.current === haInputs) return
+    prevHaInputs.current = haInputs
+    onHectareChangeRef.current?.(haInputs)
+  }, [haInputs])
+
+  const onHourChangeRef = useRef(onHourChange)
+  onHourChangeRef.current = onHourChange
+  const prevHrInputs = useRef(hrInputs)
+
+  useEffect(() => {
+    if (prevHrInputs.current === hrInputs) return
+    prevHrInputs.current = hrInputs
+    onHourChangeRef.current?.(hrInputs)
+  }, [hrInputs])
 
   // Current mode inputs/results
   const inputs = mode === "hectare" ? haInputs : hrInputs

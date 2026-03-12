@@ -41,14 +41,16 @@ export function CompareMachines({
     setMachineB((prev) => ({ ...prev, [field]: value }))
   }
 
-  const isFirstRender = useRef(true)
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+  const prevA = useRef(machineA)
+  const prevB = useRef(machineB)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    onChange?.(machineA, machineB)
-  }, [machineA, machineB, onChange])
+    if (prevA.current === machineA && prevB.current === machineB) return
+    prevA.current = machineA
+    prevB.current = machineB
+    onChangeRef.current?.(machineA, machineB)
+  }, [machineA, machineB])
 
   const resultsA = useMemo(() => calcWorkrate(machineA), [machineA])
   const resultsB = useMemo(() => calcWorkrate(machineB), [machineB])

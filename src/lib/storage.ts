@@ -194,14 +194,13 @@ export function exportToFile(state: AppState): void {
 
 export function useAutoSave(data: AppState, delayMs = 1000): void {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstRender = useRef(true);
+  const prevData = useRef(data);
 
   useEffect(() => {
-    // Skip saving on initial mount — the data is already from localStorage or defaults
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    // Skip if the data reference hasn't changed (handles initial mount
+    // and React 19 StrictMode double-invoke of effects)
+    if (prevData.current === data) return;
+    prevData.current = data;
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);

@@ -357,14 +357,14 @@ export function ReplacementPlanner({
     }, 100)
   }
 
-  const isFirstRender = useRef(true)
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+  const prevState = useRef(state)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    onChange?.(state)
-  }, [state, onChange])
+    if (prevState.current === state) return
+    prevState.current = state
+    onChangeRef.current?.(state)
+  }, [state])
 
   const summary = useMemo(
     () => calcReplacementSummary(state.machines, state.farmIncome, CURRENT_YEAR, 6),

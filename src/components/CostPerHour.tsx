@@ -39,14 +39,14 @@ export function CostPerHour({
     setFieldSources((prev) => ({ ...prev, [field]: source }))
   }
 
-  const isFirstRender = useRef(true)
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+  const prevInputs = useRef(inputs)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    onChange?.(inputs)
-  }, [inputs, onChange])
+    if (prevInputs.current === inputs) return
+    prevInputs.current = inputs
+    onChangeRef.current?.(inputs)
+  }, [inputs])
 
   const results = useMemo(() => calcCostPerHour(inputs), [inputs])
 
