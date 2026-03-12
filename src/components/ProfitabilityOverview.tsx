@@ -46,11 +46,9 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
   const hasMachines =
     appState.costPerHectare.savedMachines.length > 0 ||
     appState.costPerHour.savedMachines.length > 0;
-  const hasCurrentHaMachine = appState.costPerHectare.current.hectaresPerYear > 0;
-  const hasCurrentHrMachine = appState.costPerHour.current.hoursPerYear > 0;
   const hasServices = appState.contractingIncome.services.length > 0;
 
-  const { results, runningCostsHa, runningCostsHr, currentHaRunning, currentHrRunning } = useMemo(() => {
+  const { results, runningCostsHa, runningCostsHr } = useMemo(() => {
     const replacementSummary = calcReplacementSummary(
       appState.replacementPlanner.machines,
       appState.replacementPlanner.farmIncome,
@@ -74,18 +72,6 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
       0,
     );
 
-    // Include current (unsaved) machine costs
-    let curHaRunning = 0;
-    if (hasCurrentHaMachine) {
-      const r = calcCostPerHectare(appState.costPerHectare.current);
-      curHaRunning = r.totalCostPerHa * appState.costPerHectare.current.hectaresPerYear;
-    }
-    let curHrRunning = 0;
-    if (hasCurrentHrMachine) {
-      const r = calcCostPerHour(appState.costPerHour.current);
-      curHrRunning = r.totalCostPerHr * appState.costPerHour.current.hoursPerYear;
-    }
-
     let contractingGrossIncome = 0;
     let contractingCosts = 0;
     for (const s of appState.contractingIncome.services) {
@@ -104,18 +90,16 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
       contractingGrossIncome,
       contractingCosts,
       replacementAnnualCost: replacementSummary.averageAnnualCost,
-      runningCostsHectare: haRunning + curHaRunning,
-      runningCostsHour: hrRunning + curHrRunning,
+      runningCostsHectare: haRunning,
+      runningCostsHour: hrRunning,
     });
 
     return {
       results: profResults,
       runningCostsHa: haRunning,
       runningCostsHr: hrRunning,
-      currentHaRunning: curHaRunning,
-      currentHrRunning: curHrRunning,
     };
-  }, [appState, hasCurrentHaMachine, hasCurrentHrMachine]);
+  }, [appState]);
 
   const trafficLight = getTrafficLight(results.machineryCostPctOfFarmIncome);
   const haCountLabel = appState.costPerHectare.savedMachines.length;
@@ -183,16 +167,6 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
             <span className="font-medium text-right">
               {formatGBP(runningCostsHa)}/year
             </span>
-            {hasCurrentHaMachine && (
-              <>
-                <span className="text-muted-foreground pl-2">
-                  ↳ Current unsaved machine (per-ha):
-                </span>
-                <span className="font-medium text-right text-muted-foreground">
-                  {formatGBP(currentHaRunning)}/year
-                </span>
-              </>
-            )}
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Running costs (per-hr machines x {hrCountLabel}):
               {hrCountLabel > 0 && <SourceBadge label={`${hrCountLabel} saved machine${hrCountLabel !== 1 ? "s" : ""}`} />}
@@ -200,16 +174,6 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
             <span className="font-medium text-right">
               {formatGBP(runningCostsHr)}/year
             </span>
-            {hasCurrentHrMachine && (
-              <>
-                <span className="text-muted-foreground pl-2">
-                  ↳ Current unsaved machine (per-hr):
-                </span>
-                <span className="font-medium text-right text-muted-foreground">
-                  {formatGBP(currentHrRunning)}/year
-                </span>
-              </>
-            )}
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Contracting operating costs:
               {results.contractingCosts > 0 && <SourceBadge label="Contracting tab" />}

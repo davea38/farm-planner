@@ -48,26 +48,14 @@ function createV3StateWithMachines() {
 
 function createV4State(): AppState {
   return {
-    version: 4,
+    version: 5,
     lastSaved: "2026-01-01T00:00:00.000Z",
     costPerHectare: {
-      current: {
-        purchasePrice: 126000, yearsOwned: 8, salePrice: 34000,
-        hectaresPerYear: 1200, interestRate: 2, insuranceRate: 2,
-        storageRate: 1, workRate: 4, labourCost: 14, fuelPrice: 53,
-        fuelUse: 20, repairsPct: 2, contractorCharge: 76,
-      },
       savedMachines: [
         { name: "Drill", machineType: "drills", inputs: { purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300, interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4, labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60 } },
       ],
     },
     costPerHour: {
-      current: {
-        purchasePrice: 92751, yearsOwned: 7, salePrice: 40000,
-        hoursPerYear: 700, interestRate: 2, insuranceRate: 2,
-        storageRate: 1, fuelConsumptionPerHr: 14, fuelPrice: 60,
-        repairsPct: 1, labourCost: 14, contractorCharge: 45,
-      },
       savedMachines: [
         { name: "Telehandler", machineType: "miscellaneous", inputs: { purchasePrice: 60000, yearsOwned: 6, salePrice: 20000, hoursPerYear: 800, interestRate: 3, insuranceRate: 2, storageRate: 1, fuelConsumptionPerHr: 12, fuelPrice: 60, repairsPct: 2, labourCost: 14, contractorCharge: 50 } },
       ],
@@ -91,7 +79,7 @@ describe("v3 → v4 migration: machineType on saved machines", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(v3))
 
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
     for (const m of state.costPerHectare.savedMachines) {
       expect(m.machineType).toBe("miscellaneous")
     }
@@ -114,7 +102,7 @@ describe("v3 → v4 migration: machineType on saved machines", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(v3))
 
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
     expect(state.costPerHectare.savedMachines).toEqual([])
     expect(state.costPerHour.savedMachines).toEqual([])
   })
@@ -144,7 +132,7 @@ describe("v3 → v4 migration: machineType on saved machines", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(v0))
 
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
     expect(state.costPerHectare.savedMachines[0].machineType).toBe("miscellaneous")
   })
 })

@@ -12,18 +12,16 @@ import {
 
 const STORAGE_KEY = "farmPlanner";
 const UNITS_STORAGE_KEY = "farmPlannerUnits";
-const CURRENT_VERSION = 4;
+const CURRENT_VERSION = 5;
 
 function createDefaultState(): AppState {
   return {
     version: CURRENT_VERSION,
     lastSaved: new Date().toISOString(),
     costPerHectare: {
-      current: { ...defaultCostPerHectare },
       savedMachines: [],
     },
     costPerHour: {
-      current: { ...defaultCostPerHour },
       savedMachines: [],
     },
     compareMachines: {
@@ -115,6 +113,16 @@ const migrations: Migration[] = [
     addMachineType(state.costPerHectare as Record<string, unknown> | undefined);
     addMachineType(state.costPerHour as Record<string, unknown> | undefined);
     return { ...state, version: 4 };
+  },
+  // v4 → v5: Remove shared `current` from costPerHectare/costPerHour — each machine owns its inputs
+  (state) => {
+    const strip = (section: Record<string, unknown> | undefined) => {
+      if (!section) return;
+      delete section.current;
+    };
+    strip(state.costPerHectare as Record<string, unknown> | undefined);
+    strip(state.costPerHour as Record<string, unknown> | undefined);
+    return { ...state, version: 5 };
   },
 ];
 

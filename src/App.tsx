@@ -19,6 +19,7 @@ import { UnitContext } from '@/lib/UnitContext'
 import { loadState, useAutoSave, exportToFile, importFromFile, loadUnitPreferences, saveUnitPreferences } from '@/lib/storage'
 import type { UnitPreferences } from '@/lib/units'
 import type { AppState, CostPerHectareInputs, CostPerHourInputs, WorkrateInputs, ReplacementPlannerState, ContractingIncomeState, DepreciationCategory } from '@/lib/types'
+import { defaultCostPerHectare, defaultCostPerHour } from '@/lib/defaults'
 
 function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
@@ -57,39 +58,28 @@ function App() {
     saveUnitPreferences(prefs)
   }, [])
 
-  // When a machine is selected on the Machines tab, load its inputs into current
+  // When a machine is selected on the Machines tab — just track the selection
   const handleSelectMachine = useCallback((sel: SelectedMachine | null) => {
     setSelectedMachine(sel)
-    if (!sel) return
-    if (sel.costMode === "hectare") {
-      setAppState((prev) => {
-        const machine = prev.costPerHectare.savedMachines[sel.index]
-        if (!machine) return prev
-        return { ...prev, costPerHectare: { ...prev.costPerHectare, current: machine.inputs } }
-      })
-    } else {
-      setAppState((prev) => {
-        const machine = prev.costPerHour.savedMachines[sel.index]
-        if (!machine) return prev
-        return { ...prev, costPerHour: { ...prev.costPerHour, current: machine.inputs } }
-      })
-    }
   }, [])
 
-  // Cost changes also update the selected saved machine
+  // Derive the selected machine's inputs for CostCalculator
+  const selectedHectareInputs = selectedMachine?.costMode === "hectare"
+    ? appState.costPerHectare.savedMachines[selectedMachine.index]?.inputs
+    : undefined
+  const selectedHourInputs = selectedMachine?.costMode === "hour"
+    ? appState.costPerHour.savedMachines[selectedMachine.index]?.inputs
+    : undefined
+
+  // Cost changes update the selected saved machine directly
   const onCostPerHectareChange = useCallback((inputs: CostPerHectareInputs) => {
-    setAppState((prev) => ({
-      ...prev,
-      costPerHectare: { ...prev.costPerHectare, current: inputs },
-    }))
-    // Also update the saved machine if one is selected
     setSelectedMachine((sel) => {
       if (sel?.costMode === "hectare") {
         setAppState((prev) => {
           const machines = prev.costPerHectare.savedMachines.map((m, i) =>
             i === sel.index ? { ...m, inputs } : m
           )
-          return { ...prev, costPerHectare: { ...prev.costPerHectare, savedMachines: machines } }
+          return { ...prev, costPerHectare: { savedMachines: machines } }
         })
       }
       return sel
@@ -98,13 +88,18 @@ function App() {
 
   const onSaveCostPerHectareMachine = useCallback((name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
     setAppState((prev) => {
-      const newMachine = { name, machineType, inputs: prev.costPerHectare.current }
-      const machines = selectedIndex != null
-        ? prev.costPerHectare.savedMachines.map((m, i) => i === selectedIndex ? newMachine : m)
-        : [...prev.costPerHectare.savedMachines, newMachine]
+      if (selectedIndex != null) {
+        // Edit: only update name and type, preserve existing inputs
+        const machines = prev.costPerHectare.savedMachines.map((m, i) =>
+          i === selectedIndex ? { ...m, name, machineType } : m
+        )
+        return { ...prev, costPerHectare: { savedMachines: machines } }
+      }
+      // New machine: use defaults
+      const newMachine = { name, machineType, inputs: { ...defaultCostPerHectare } }
       return {
         ...prev,
-        costPerHectare: { ...prev.costPerHectare, savedMachines: machines },
+        costPerHectare: { savedMachines: [...prev.costPerHectare.savedMachines, newMachine] },
       }
     })
   }, [])
@@ -113,25 +108,19 @@ function App() {
     setAppState((prev) => ({
       ...prev,
       costPerHectare: {
-        ...prev.costPerHectare,
         savedMachines: prev.costPerHectare.savedMachines.filter((_, i) => i !== index),
       },
     }))
   }, [])
 
   const onCostPerHourChange = useCallback((inputs: CostPerHourInputs) => {
-    setAppState((prev) => ({
-      ...prev,
-      costPerHour: { ...prev.costPerHour, current: inputs },
-    }))
-    // Also update the saved machine if one is selected
     setSelectedMachine((sel) => {
       if (sel?.costMode === "hour") {
         setAppState((prev) => {
           const machines = prev.costPerHour.savedMachines.map((m, i) =>
             i === sel.index ? { ...m, inputs } : m
           )
-          return { ...prev, costPerHour: { ...prev.costPerHour, savedMachines: machines } }
+          return { ...prev, costPerHour: { savedMachines: machines } }
         })
       }
       return sel
@@ -140,13 +129,16 @@ function App() {
 
   const onSaveCostPerHourMachine = useCallback((name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
     setAppState((prev) => {
-      const newMachine = { name, machineType, inputs: prev.costPerHour.current }
-      const machines = selectedIndex != null
-        ? prev.costPerHour.savedMachines.map((m, i) => i === selectedIndex ? newMachine : m)
-        : [...prev.costPerHour.savedMachines, newMachine]
+      if (selectedIndex != null) {
+        const machines = prev.costPerHour.savedMachines.map((m, i) =>
+          i === selectedIndex ? { ...m, name, machineType } : m
+        )
+        return { ...prev, costPerHour: { savedMachines: machines } }
+      }
+      const newMachine = { name, machineType, inputs: { ...defaultCostPerHour } }
       return {
         ...prev,
-        costPerHour: { ...prev.costPerHour, savedMachines: machines },
+        costPerHour: { savedMachines: [...prev.costPerHour.savedMachines, newMachine] },
       }
     })
   }, [])
@@ -155,7 +147,6 @@ function App() {
     setAppState((prev) => ({
       ...prev,
       costPerHour: {
-        ...prev.costPerHour,
         savedMachines: prev.costPerHour.savedMachines.filter((_, i) => i !== index),
       },
     }))
@@ -364,10 +355,11 @@ function App() {
 
             <TabsContent value="cost-calculator" className="mt-4">
               <CostCalculator
+                key={selectedMachine ? `${selectedMachine.costMode}-${selectedMachine.index}` : 'none'}
                 mode={costMode}
                 onModeChange={handleCostModeChange}
-                initialHectareInputs={appState.costPerHectare.current}
-                initialHourInputs={appState.costPerHour.current}
+                initialHectareInputs={selectedHectareInputs}
+                initialHourInputs={selectedHourInputs}
                 onHectareChange={onCostPerHectareChange}
                 onHourChange={onCostPerHourChange}
               />

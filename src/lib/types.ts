@@ -154,11 +154,9 @@ export interface AppState {
   version: number;
   lastSaved: string;
   costPerHectare: {
-    current: CostPerHectareInputs;
     savedMachines: SavedMachine<CostPerHectareInputs>[];
   };
   costPerHour: {
-    current: CostPerHourInputs;
     savedMachines: SavedMachine<CostPerHourInputs>[];
   };
   compareMachines: {

@@ -6,42 +6,12 @@ import type { AppState } from "@/lib/types";
 
 function createTestState(overrides?: Partial<AppState>): AppState {
   return {
-    version: 4,
+    version: 5,
     lastSaved: new Date().toISOString(),
     costPerHectare: {
-      current: {
-        purchasePrice: 0,
-        yearsOwned: 1,
-        salePrice: 0,
-        hectaresPerYear: 0,
-        interestRate: 0,
-        insuranceRate: 0,
-        storageRate: 0,
-        workRate: 0,
-        labourCost: 0,
-        fuelPrice: 0,
-        fuelUse: 0,
-        repairsPct: 0,
-        contractorCharge: 0,
-      },
       savedMachines: [],
     },
     costPerHour: {
-      current: {
-        purchasePrice: 0,
-        yearsOwned: 1,
-        salePrice: 0,
-        hoursPerYear: 0,
-        interestRate: 0,
-        insuranceRate: 0,
-        storageRate: 0,
-
-        fuelConsumptionPerHr: 0,
-        fuelPrice: 0,
-        repairsPct: 0,
-        labourCost: 0,
-        contractorCharge: 0,
-      },
       savedMachines: [],
     },
     compareMachines: {
@@ -192,11 +162,6 @@ describe("ProfitabilityOverview", () => {
     const state = createTestState({
       replacementPlanner: { machines: [], farmIncome: 100000 },
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "Drill",
           machineType: "miscellaneous" as const,
@@ -221,11 +186,6 @@ describe("ProfitabilityOverview", () => {
     const state = createTestState({
       replacementPlanner: { machines: [], farmIncome: 30000 },
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "Drill",
           machineType: "miscellaneous" as const,
@@ -250,11 +210,6 @@ describe("ProfitabilityOverview", () => {
   it("shows running costs from saved per-ha machines", () => {
     const state = createTestState({
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "6m Drill",
           machineType: "miscellaneous" as const,
@@ -276,12 +231,6 @@ describe("ProfitabilityOverview", () => {
   it("shows running costs from saved per-hr machines", () => {
     const state = createTestState({
       costPerHour: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hoursPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0,
-          fuelConsumptionPerHr: 0, fuelPrice: 0, repairsPct: 0,
-          labourCost: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "Telehandler",
           machineType: "miscellaneous" as const,
@@ -297,37 +246,6 @@ describe("ProfitabilityOverview", () => {
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     expect(screen.getByText(/1 saved machine(?!s)/)).toBeInTheDocument();
     expect(screen.getByText(/per-hr machines x 1/)).toBeInTheDocument();
-  });
-
-  it("shows current unsaved per-ha machine when hectaresPerYear > 0", () => {
-    const state = createTestState({
-      costPerHectare: {
-        current: {
-          purchasePrice: 100000, yearsOwned: 5, salePrice: 50000, hectaresPerYear: 500,
-          interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-          labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
-        },
-        savedMachines: [],
-      },
-    });
-    renderWithUnits(<ProfitabilityOverview appState={state} />);
-    expect(screen.getByText(/Current unsaved machine \(per-ha\)/)).toBeInTheDocument();
-  });
-
-  it("shows current unsaved per-hr machine when hoursPerYear > 0", () => {
-    const state = createTestState({
-      costPerHour: {
-        current: {
-          purchasePrice: 60000, yearsOwned: 5, salePrice: 15000, hoursPerYear: 600,
-          interestRate: 3, insuranceRate: 2, storageRate: 1,
-          fuelConsumptionPerHr: 10, fuelPrice: 60, repairsPct: 2,
-          labourCost: 14, contractorCharge: 45,
-        },
-        savedMachines: [],
-      },
-    });
-    renderWithUnits(<ProfitabilityOverview appState={state} />);
-    expect(screen.getByText(/Current unsaved machine \(per-hr\)/)).toBeInTheDocument();
   });
 
   it("calls onFarmIncomeChange when farm income input changes", () => {
@@ -352,11 +270,6 @@ describe("ProfitabilityOverview", () => {
     // Add saved machine to produce costs, which means totalCosts > 0
     const state = createTestState({
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "Sprayer",
           machineType: "miscellaneous" as const,
@@ -409,11 +322,6 @@ describe("ProfitabilityOverview", () => {
     const state = createTestState({
       replacementPlanner: { machines: [], farmIncome: 0 },
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "Combine",
           machineType: "miscellaneous" as const,
@@ -435,11 +343,6 @@ describe("ProfitabilityOverview", () => {
   it("does not show empty state message when saved machines exist", () => {
     const state = createTestState({
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [{
           name: "Drill",
           machineType: "miscellaneous" as const,
@@ -494,11 +397,6 @@ describe("ProfitabilityOverview", () => {
     };
     const state = createTestState({
       costPerHectare: {
-        current: {
-          purchasePrice: 0, yearsOwned: 1, salePrice: 0, hectaresPerYear: 0,
-          interestRate: 0, insuranceRate: 0, storageRate: 0, workRate: 0,
-          labourCost: 0, fuelPrice: 0, fuelUse: 0, repairsPct: 0, contractorCharge: 0,
-        },
         savedMachines: [
           { name: "Drill A", machineType: "miscellaneous", inputs: machineInputs },
           { name: "Drill B", machineType: "miscellaneous", inputs: machineInputs },
@@ -509,31 +407,6 @@ describe("ProfitabilityOverview", () => {
     // Should say "2 saved machines" (plural)
     expect(screen.getByText(/2 saved machines/)).toBeInTheDocument();
     expect(screen.getByText(/per-ha machines x 2/)).toBeInTheDocument();
-  });
-
-  it("shows both current unsaved ha and hr machines simultaneously", () => {
-    const state = createTestState({
-      costPerHectare: {
-        current: {
-          purchasePrice: 100000, yearsOwned: 5, salePrice: 50000, hectaresPerYear: 500,
-          interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-          labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
-        },
-        savedMachines: [],
-      },
-      costPerHour: {
-        current: {
-          purchasePrice: 60000, yearsOwned: 5, salePrice: 15000, hoursPerYear: 600,
-          interestRate: 3, insuranceRate: 2, storageRate: 1,
-          fuelConsumptionPerHr: 10, fuelPrice: 60, repairsPct: 2,
-          labourCost: 14, contractorCharge: 45,
-        },
-        savedMachines: [],
-      },
-    });
-    renderWithUnits(<ProfitabilityOverview appState={state} />);
-    expect(screen.getByText(/Current unsaved machine \(per-ha\)/)).toBeInTheDocument();
-    expect(screen.getByText(/Current unsaved machine \(per-hr\)/)).toBeInTheDocument();
   });
 
   it("does not render charts when there are zero costs and zero income", () => {

@@ -18,42 +18,12 @@ vi.stubGlobal("crypto", {
 
 function createValidState(): AppState {
   return {
-    version: 4,
+    version: 5,
     lastSaved: "2026-01-01T00:00:00.000Z",
     costPerHectare: {
-      current: {
-        purchasePrice: 126000,
-        yearsOwned: 8,
-        salePrice: 34000,
-        hectaresPerYear: 1200,
-        interestRate: 2,
-        insuranceRate: 2,
-        storageRate: 1,
-        workRate: 4,
-        labourCost: 14,
-        fuelPrice: 53,
-        fuelUse: 20,
-        repairsPct: 2,
-        contractorCharge: 76,
-      },
       savedMachines: [],
     },
     costPerHour: {
-      current: {
-        purchasePrice: 92751,
-        yearsOwned: 7,
-        salePrice: 40000,
-        hoursPerYear: 700,
-        interestRate: 2,
-        insuranceRate: 2,
-        storageRate: 1,
-
-        fuelConsumptionPerHr: 14,
-        fuelPrice: 60,
-        repairsPct: 1,
-        labourCost: 14,
-        contractorCharge: 45,
-      },
       savedMachines: [],
     },
     compareMachines: {
@@ -95,7 +65,7 @@ describe("loadState", () => {
 
   it("returns default state when localStorage is empty", () => {
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
     expect(state.costPerHectare).toBeDefined()
     expect(state.costPerHour).toBeDefined()
     expect(state.compareMachines).toBeDefined()
@@ -106,19 +76,19 @@ describe("loadState", () => {
     const saved = createValidState()
     localStorage.setItem("farmPlanner", JSON.stringify(saved))
     const state = loadState()
-    expect(state.costPerHectare.current.purchasePrice).toBe(126000)
+    expect(state.costPerHectare.savedMachines).toEqual([])
   })
 
   it("returns default state for invalid JSON", () => {
     localStorage.setItem("farmPlanner", "not json")
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
   })
 
   it("returns default state for invalid structure", () => {
     localStorage.setItem("farmPlanner", JSON.stringify({ foo: "bar" }))
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
   })
 
   it("migrates v0 data to v2", () => {
@@ -130,7 +100,7 @@ describe("loadState", () => {
     }
     localStorage.setItem("farmPlanner", JSON.stringify(v0Data))
     const state = loadState()
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
     expect(state.lastSaved).toBeDefined()
     expect(state.contractingIncome).toEqual({ services: [] })
   })
@@ -143,7 +113,7 @@ describe("loadState", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(futureData))
     const state = loadState()
     // Should fall back to defaults since migration returns null for future versions
-    expect(state.version).toBe(4)
+    expect(state.version).toBe(5)
   })
 })
 
@@ -158,7 +128,7 @@ describe("saveState", () => {
     const raw = localStorage.getItem("farmPlanner")
     expect(raw).toBeTruthy()
     const parsed = JSON.parse(raw!)
-    expect(parsed.version).toBe(4)
+    expect(parsed.version).toBe(5)
     expect(parsed.lastSaved).toBeDefined()
   })
 })
@@ -255,7 +225,7 @@ describe("importFromFile", () => {
     const file = new File([blob], "test.json", { type: "application/json" })
 
     const result = await importFromFile(file)
-    expect(result.version).toBe(4)
+    expect(result.version).toBe(5)
     expect(result.costPerHectare).toBeDefined()
   })
 

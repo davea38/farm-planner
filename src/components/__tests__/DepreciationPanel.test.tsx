@@ -62,9 +62,11 @@ describe("DepreciationPanel — standalone mode", () => {
 })
 
 describe("DepreciationPanel — prop-driven mode", () => {
-  it("hides purchase price input when purchasePrice prop provided", () => {
+  it("shows purchase price input pre-filled when purchasePrice prop provided", () => {
     renderPanel({ purchasePrice: 126000 })
-    expect(screen.queryByText(/purchase price/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/purchase price/i)).toBeInTheDocument()
+    const input = screen.getByDisplayValue("126000")
+    expect(input).toBeInTheDocument()
   })
 
   it("uses provided purchasePrice for calculations", () => {
