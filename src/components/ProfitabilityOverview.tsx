@@ -194,12 +194,12 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
           <Card className="border-2">
             <CardContent className="py-4 space-y-3 text-center">
               <p className="text-sm text-muted-foreground">Net Position</p>
-              <p className="text-4xl sm:text-[40px] font-bold">
+              <p className="text-4xl sm:text-[40px] font-bold tabular-nums">
                 <span
                   className={
                     results.netPosition >= 0
-                      ? "text-green-600"
-                      : "text-red-600"
+                      ? "text-farm-green"
+                      : "text-farm-red"
                   }
                 >
                   {results.netPosition >= 0 ? "+" : ""}

@@ -64,7 +64,7 @@ export function FuelConsumptionPanel({
               max={MAX_HP}
               value={hp}
               onChange={(e) => setHp(Number(e.target.value))}
-              className="w-full accent-green-600"
+              className="w-full accent-farm-green"
               aria-label="Tractor horsepower"
             />
             <div className="flex justify-between text-xs text-muted-foreground">
@@ -88,7 +88,7 @@ export function FuelConsumptionPanel({
             )}
             <div className="mt-2 h-3 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full rounded-full bg-green-600 transition-all duration-200"
+                className="h-full rounded-full bg-farm-green transition-all duration-200"
                 style={{ width: `${Math.min(gaugePct, 100)}%` }}
               />
             </div>
@@ -114,7 +114,7 @@ export function FuelConsumptionPanel({
                     <div className="text-[10px] text-muted-foreground">HP</div>
                     <div className="mt-1 h-8 flex items-end justify-center">
                       <div
-                        className="w-3 rounded-t bg-green-600"
+                        className="w-3 rounded-t bg-farm-green"
                         style={{
                           height: `${Math.max(refPct, 10)}%`,
                           opacity: 0.4 + refPct * 0.006,
@@ -135,7 +135,7 @@ export function FuelConsumptionPanel({
           <button
             type="button"
             onClick={() => onApply(Number(applyValue.toFixed(1)))}
-            className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
+            className="w-full rounded-lg bg-farm-green px-4 py-2 text-sm font-medium text-white hover:bg-farm-green/90 transition-colors cursor-pointer"
             aria-label={`Use fuel consumption estimate ${displayValue}`}
           >
             Use this estimate ({displayValue})

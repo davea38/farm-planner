@@ -76,8 +76,7 @@ The app works; CI is red.
 
 - [x] **Finding #30:** Inter-tab wayfinding complete — SourceBadge now supports clickable navigation (navigates to source tab on click), ProfitabilityOverview badges wired to source tabs, ConnectedTabsFooter added to Machines, Cost Calculator, Replacement Planner, and Contracting tabs. Save toasts with data-flow hints were already implemented.
 
-- [ ] **Finding #31 (partial):** Complete typography and warmth audit — farm-green/amber/red palette and large result numbers exist but consistency not verified.
-  *WHY: Inconsistent styling undermines trust.*
+- [x] **Finding #31:** Typography and warmth audit complete — all generic Tailwind colors (text-green-600, bg-green-600, text-red-600, bg-amber-50, etc.) replaced with farm-* palette tokens (text-farm-green, bg-farm-green, text-farm-red, bg-farm-amber/10, etc.) across ProfitabilityOverview, FuelPricePanel, FuelConsumptionPanel, ContractorRatesPanel, DepreciationPanel, ReplacementPlanner, and ContractingIncomePlanner. Result numbers consistently use text-4xl font-bold tabular-nums.
 
 - [x] **Finding #32:** Empty states audit complete — all empty states now have icon + friendly headline + explanation + action button. ProfitabilityOverview navigates to Machines tab, ContractingIncomePlanner has "Could your machines earn more?" prompt, ReplacementPlanner timeline has two-line guidance. MachinesTab was already complete.
 

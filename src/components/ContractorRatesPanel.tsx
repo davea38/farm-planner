@@ -50,9 +50,9 @@ function rateTier(rate: number, unit: string): "low" | "mid" | "high" {
 }
 
 const tierStyles = {
-  low: "bg-green-50 dark:bg-green-950/30",
-  mid: "bg-amber-50 dark:bg-amber-950/30",
-  high: "bg-red-50 dark:bg-red-950/30",
+  low: "bg-farm-green/5",
+  mid: "bg-farm-amber/5",
+  high: "bg-farm-red/5",
 }
 
 function formatRateValue(displayRate: number, unitLabel: string): string {
@@ -132,7 +132,7 @@ export function ContractorRatesPanel({
                 onClick={() => setActiveCategory(cat)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
                   activeCategory === cat
-                    ? "bg-green-600 text-white"
+                    ? "bg-farm-green text-white"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
@@ -170,7 +170,7 @@ export function ContractorRatesPanel({
                         <button
                           type="button"
                           onClick={() => onApply(r.rate)}
-                          className="rounded-lg bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
+                          className="rounded-lg bg-farm-green px-2 py-1 text-xs font-medium text-white hover:bg-farm-green/90 transition-colors cursor-pointer"
                           aria-label={`Use ${r.operation} rate ${formatRateValue(displayRate, unitLabel)}`}
                         >
                           Use
@@ -192,11 +192,11 @@ export function ContractorRatesPanel({
               </div>
               <div className="relative h-2 rounded-full bg-muted overflow-hidden">
                 <div
-                  className="absolute h-full rounded-full bg-gradient-to-r from-green-500 via-amber-500 to-red-500"
+                  className="absolute h-full rounded-full bg-gradient-to-r from-farm-green via-farm-amber to-farm-red"
                   style={{ width: "100%" }}
                 />
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-green-700"
+                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-farm-green"
                   style={{ left: `calc(${rangeIndicatorPct}% - 6px)` }}
                 />
               </div>

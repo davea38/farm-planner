@@ -289,7 +289,7 @@ describe("ProfitabilityOverview", () => {
     const { container } = renderWithUnits(
       <ProfitabilityOverview appState={createTestState()} />,
     );
-    const positiveSpan = container.querySelector(".text-green-600");
+    const positiveSpan = container.querySelector(".text-farm-green");
     expect(positiveSpan).toBeInTheDocument();
   });
 
@@ -309,7 +309,7 @@ describe("ProfitabilityOverview", () => {
     const { container } = renderWithUnits(
       <ProfitabilityOverview appState={state} />,
     );
-    const negativeSpan = container.querySelector(".text-red-600");
+    const negativeSpan = container.querySelector(".text-farm-red");
     expect(negativeSpan).toBeInTheDocument();
   });
 

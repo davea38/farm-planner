@@ -28,12 +28,12 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
         <div className="space-y-4 pt-2">
           {/* Price cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="rounded-lg bg-card p-3 text-center shadow-sm border border-green-200 dark:border-green-900">
+            <div className="rounded-lg bg-card p-3 text-center shadow-sm border border-farm-green/30">
               <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Red Diesel
               </div>
               <div className="text-lg font-bold mt-1">{redDiesel.current}p/L</div>
-              <div className={`text-xs mt-0.5 ${redChange <= 0 ? "text-green-600" : "text-red-600"}`}>
+              <div className={`text-xs mt-0.5 ${redChange <= 0 ? "text-farm-green" : "text-farm-red"}`}>
                 {redChange <= 0 ? "▼" : "▲"} {Math.abs(redChange).toFixed(1)}%
               </div>
             </div>
@@ -42,7 +42,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
                 Pump Diesel
               </div>
               <div className="text-lg font-bold mt-1">{pumpDiesel.current}p/L</div>
-              <div className={`text-xs mt-0.5 ${pumpChange <= 0 ? "text-green-600" : "text-red-600"}`}>
+              <div className={`text-xs mt-0.5 ${pumpChange <= 0 ? "text-farm-green" : "text-farm-red"}`}>
                 {pumpChange <= 0 ? "▼" : "▲"} {Math.abs(pumpChange).toFixed(1)}%
               </div>
             </div>
@@ -60,7 +60,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
           <button
             type="button"
             onClick={() => onApply(redDiesel.current)}
-            className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors cursor-pointer"
+            className="w-full rounded-lg bg-farm-green px-4 py-2 text-sm font-medium text-white hover:bg-farm-green/90 transition-colors cursor-pointer"
             aria-label={`Use red diesel price ${redDiesel.current}p`}
           >
             Use red diesel price ({redDiesel.current}p)

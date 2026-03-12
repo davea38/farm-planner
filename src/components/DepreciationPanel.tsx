@@ -174,11 +174,11 @@ export function DepreciationPanel({
         <div className="mt-1">
           <div className="h-3 rounded-full bg-muted overflow-hidden flex">
             <div
-              className="h-full bg-red-500/70 transition-all duration-200"
+              className="h-full bg-farm-red/70 transition-all duration-200"
               style={{ width: `${pctLost}%` }}
             />
             <div
-              className="h-full bg-green-500/40 transition-all duration-200"
+              className="h-full bg-farm-green/40 transition-all duration-200"
               style={{ width: `${pctRemaining}%` }}
             />
           </div>
@@ -190,11 +190,11 @@ export function DepreciationPanel({
       </div>
 
       {/* Sweet spot callout */}
-      <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-3 py-2 text-xs">
-        <span className="font-semibold text-green-700 dark:text-green-300">
+      <div className="rounded-md bg-farm-green/10 border border-farm-green/30 px-3 py-2 text-xs">
+        <span className="font-semibold text-farm-green">
           Sweet spot: Year {sweetSpot}
         </span>
-        <span className="text-green-600 dark:text-green-400">
+        <span className="text-farm-green/80">
           {" "}— after this, annual depreciation slows below average. Consider keeping
           the machine longer past this point.
         </span>

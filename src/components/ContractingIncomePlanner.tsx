@@ -355,7 +355,7 @@ export function ContractingIncomePlanner({
                     }
                   />
                   {service.linkedMachineSource && service.ownCostPerUnit > 0 && (
-                    <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mt-1">
+                    <p className="text-xs text-farm-amber bg-farm-amber/10 border border-farm-amber/40 rounded-md px-3 py-2 mt-1">
                       ⚠ This cost is based on your farm's usage alone. If this
                       machine also does contracting work, the true per-unit cost
                       is lower (fixed costs spread over more{" "}

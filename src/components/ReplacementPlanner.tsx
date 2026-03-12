@@ -179,7 +179,7 @@ function MachineRow({
         <div className="flex items-center justify-between min-h-[44px] px-1">
           <span className="text-sm text-muted-foreground">Cost to budget</span>
           {costToBudget < 0 ? (
-            <span className="text-sm font-medium tabular-nums text-green-700">
+            <span className="text-sm font-medium tabular-nums text-farm-green">
               You&apos;ll receive {formatGBP(Math.abs(costToBudget))}
             </span>
           ) : (
