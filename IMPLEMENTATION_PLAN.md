@@ -74,14 +74,12 @@ The app works; CI is red.
 
 - [x] **Finding #28:** Visual breakdowns complete — donut charts on CostCalculator and ProfitabilityOverview, CostComparisonBar on CostCalculator, DepreciationSparkline on ReplacementPlanner, IncomeVsCostsBar on ProfitabilityOverview, and new ContractingComparisonBar for Farm Only vs Farm + Contracting comparison.
 
-- [ ] **Finding #30:** Add inter-tab wayfinding: save toasts with data-flow hints, data-source badges on receiving tabs, connected-tabs footer.
-  *WHY: Users don't understand how tabs feed into each other.*
+- [x] **Finding #30:** Inter-tab wayfinding complete — SourceBadge now supports clickable navigation (navigates to source tab on click), ProfitabilityOverview badges wired to source tabs, ConnectedTabsFooter added to Machines, Cost Calculator, Replacement Planner, and Contracting tabs. Save toasts with data-flow hints were already implemented.
 
 - [ ] **Finding #31 (partial):** Complete typography and warmth audit — farm-green/amber/red palette and large result numbers exist but consistency not verified.
   *WHY: Inconsistent styling undermines trust.*
 
-- [ ] **Finding #32 (partial):** Audit empty states across all tabs — `MachinesTab` and `ProfitabilityOverview` have them; other tabs may not.
-  *WHY: Blank screens with no guidance cause users to abandon the tool.*
+- [x] **Finding #32:** Empty states audit complete — MachinesTab, ProfitabilityOverview, ContractingIncomePlanner, and ReplacementPlanner TimelineChart all have farmer-friendly empty states with clear guidance and action buttons.
 
 - [x] **Finding #33:** Farmer-friendly language audit complete — labels, section headers, tooltips, and warning messages updated across all active components (CostCalculator, CompareMachines, ReplacementPlanner, ProfitabilityOverview, ContractingIncomePlanner).
   *Changes: "Spares & repairs" → "Repairs (% of price)", "Coverage speed" → "Ground covered", "Finance / opportunity cost" → "Money tied up", "Shed costs" → "Shed costs (% of price)", "Contractor charges" → "Contractor quote", "Contractor Comparison" → "Compare with a contractor", "Running Costs" → "Running costs", "Overheads" → "Overheads (most farmers leave these as-is)", "Results" → "Your answer", "Budget Summary" → "Your budget", "Farm income" → "Your farm income", warning messages updated to match new labels.*

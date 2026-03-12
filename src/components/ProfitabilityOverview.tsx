@@ -7,6 +7,7 @@ import { IncomeVsCostsBar } from "@/components/IncomeVsCostsBar";
 import { formatGBP, formatPct } from "@/lib/format";
 import { ContractingComparisonBar } from "@/components/ContractingComparisonBar";
 import { SourceBadge } from "@/components/SourceBadge";
+import { navigateToTab } from "@/lib/tab-navigation";
 import {
   calculateProfitability,
   calcCostPerHectare,
@@ -374,13 +375,21 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
 
         {/* Empty state message */}
         {!hasMachines && !hasServices && (
-          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-6 text-center space-y-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-muted-foreground/40"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <p className="text-sm font-medium text-muted-foreground">No machines or services yet</p>
-            <p className="text-sm text-muted-foreground/70">
-              Save machines on the <strong>Cost / Hectare</strong> or <strong>Cost / Hour</strong> tabs,
-              and add services on the <strong>Contracting</strong> tab to build your profitability picture.
+          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-8 text-center space-y-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-muted-foreground/40"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            <h3 className="text-sm font-semibold text-foreground">Let's see if your machines are earning their keep</h3>
+            <p className="text-sm text-muted-foreground/70 max-w-xs mx-auto">
+              Add machines on the <strong>Machines</strong> tab and work out their costs.
+              This tab will pull everything together to show your full profitability picture.
             </p>
+            <button
+              type="button"
+              onClick={() => navigateToTab("machines")}
+              className="inline-flex items-center gap-1.5 mt-1 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors min-h-[44px] cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add a machine
+            </button>
           </div>
         )}
       </CardContent>

@@ -192,10 +192,13 @@ export function ContractingIncomePlanner({
       )}
       <CardContent className="space-y-6">
         {services.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-6 text-center space-y-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-muted-foreground/40"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            <p className="text-sm font-medium text-muted-foreground">No contracting services yet</p>
-            <Button onClick={addService} variant="outline">
+          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-8 text-center space-y-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-muted-foreground/40"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <h3 className="text-sm font-semibold text-foreground">Could your machines earn more?</h3>
+            <p className="text-sm text-muted-foreground/70 max-w-xs mx-auto">
+              If you do work for other farms, add your services here to see what margin you're making.
+            </p>
+            <Button onClick={addService} variant="outline" className="mt-1 min-h-[44px]">
               Add your first service
             </Button>
           </div>
