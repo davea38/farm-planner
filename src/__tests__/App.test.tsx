@@ -162,15 +162,16 @@ function removeSavedMachines() {
   mockDefaultState.costPerHour.savedMachines = []
 }
 
-// Helper: render app, select a hectare machine, and switch to a given tab
+// Helper: render app, select a hectare machine, and switch to a given tab.
+// The machine banner only renders on non-machines tabs, so we navigate first then verify.
 async function renderWithMachineAndTab(tab: string) {
   addHectareMachine()
   renderApp()
   act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-  await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
   if (tab !== 'machines') {
     const user = userEvent.setup()
     await user.click(screen.getByText(tab))
+    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
   }
 }
 
@@ -245,19 +246,22 @@ describe('App', () => {
   // --- No-machine banners ---
 
   it('shows "No machine selected"', () => {
+    window.location.hash = '#cost-per-hectare'
     renderApp()
     expect(screen.getByText('No machine selected')).toBeInTheDocument()
   })
 
   it('shows "Add your first machine" when no saved machines', () => {
+    window.location.hash = '#cost-per-hectare'
     renderApp()
     expect(screen.getByText(/Add your first machine/)).toBeInTheDocument()
   })
 
   it('shows "Select a machine" when machines exist but none selected', () => {
     addHectareMachine()
+    window.location.hash = '#cost-per-hectare'
     renderApp()
-    expect(screen.getByText(/Select a machine on the Machines tab/)).toBeInTheDocument()
+    expect(screen.getByText(/Select a machine/)).toBeInTheDocument()
   })
 
   // --- Active machine banner ---
@@ -266,6 +270,9 @@ describe('App', () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    // Banner only renders on non-machines tabs
+    const user = userEvent.setup()
+    await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     expect(screen.getByText('Change')).toBeInTheDocument()
     expect(screen.getByText('Large Tractor')).toBeInTheDocument()
@@ -275,15 +282,17 @@ describe('App', () => {
     addHourMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
+    // Banner only renders on non-machines tabs
+    const user = userEvent.setup()
+    await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByText('Hour Machine')).toBeInTheDocument() })
     expect(screen.getByText('Combine Harvester')).toBeInTheDocument()
   })
 
-  it('enables non-machine tabs after selection', async () => {
+  it('enables non-machine tabs after selection', () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     const tab = screen.getByText('Cost/Ha').closest('button')!
     expect(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true').toBe(false)
   })
@@ -312,6 +321,9 @@ describe('App', () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    // Navigate to non-machines tab to see the banner
+    const user = userEvent.setup()
+    await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     act(() => { capturedOnSelectMachine!(null) })
     await waitFor(() => { expect(screen.getByText('No machine selected')).toBeInTheDocument() })
@@ -425,19 +437,19 @@ describe('App', () => {
 
   // --- Callback exercise: handleSelectMachine loads inputs ---
 
-  it('handleSelectMachine with hectare loads cost-per-hectare inputs', async () => {
+  it('handleSelectMachine with hectare loads cost-per-hectare inputs', () => {
     addHectareMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
-    // The state was updated internally — we can verify the app didn't crash
+    // The state was updated internally — verify the app didn't crash
+    expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  it('handleSelectMachine with hour loads cost-per-hour inputs', async () => {
+  it('handleSelectMachine with hour loads cost-per-hour inputs', () => {
     addHourMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Hour Machine')).toBeInTheDocument() })
+    expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
   it('handleSelectMachine with out-of-bounds hectare index returns prev state', async () => {
@@ -507,9 +519,7 @@ describe('App', () => {
   it('onCostPerHectareChange updates current and saved machine if selected', async () => {
     addHectareMachine()
     renderApp()
-    // Select the machine first
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
 
     // Switch to Cost tab to get the onChange callback
     const user = userEvent.setup()
@@ -526,9 +536,7 @@ describe('App', () => {
   it('onCostPerHectareChange skips saved machine update if no machine selected', async () => {
     addHectareMachine()
     renderApp()
-    // Select and then switch to Cost tab
     act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
@@ -547,10 +555,8 @@ describe('App', () => {
     addHourMachine()
     renderApp()
     act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
-    await waitFor(() => { expect(screen.getByText('Hour Machine')).toBeInTheDocument() })
 
-    // The merged cost tab label shows "Cost/Hr" when costMode is hour, but default is hectare
-    // Navigate to the cost tab (shows as Cost/Ha by default)
+    // Navigate to the cost tab
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })

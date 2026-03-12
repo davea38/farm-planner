@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-12
 > Baseline: SPECs 01-11 fully implemented. SPEC-12 partially complete. SPEC-13 not started.
-> Remaining: 1 build fix, 6 SPEC-13 requirements, 6 SPEC-12 items.
+> Remaining: 0 build fixes, 6 SPEC-13 requirements, 6 SPEC-12 items.
 
 ---
 
@@ -47,7 +47,7 @@ The following groups from the prior plan are all done:
 - [x] Remove the unused imports `defaultCostPerHectare` and `defaultCostPerHour` from `src/lib/storage.ts`.
   WHY: These 2 TypeScript errors prevent the project from building; nothing can ship until they are resolved.
 
-- [ ] Update the test helper and mock state in `src/__tests__/App.test.tsx` to account for the inline machine picker banner that now renders machine names in the banner DOM rather than solely inside the mocked MachinesTab.
+- [x] Update the test helper and mock state in `src/__tests__/App.test.tsx` to account for the inline machine picker banner that now renders machine names in the banner DOM rather than solely inside the mocked MachinesTab.
   WHY: 16 tests timeout because `renderWithMachineAndTab` waits for `screen.getByText('Test Tractor')` which no longer resolves as expected after the banner was added; fixing selectors unblocks the full test suite.
 
 ---
@@ -210,10 +210,10 @@ Note: Priorities 3 and 4 can proceed in parallel since they both depend only on 
 |-------|------|---------|
 | SPECs 01-11 | 11 | 0 |
 | Prior plan tasks (TS errors, test fixes, wiring, layout, labels, polish) | 20 | 0 |
-| Priority 1 — Current build fixes | 1 | 1 |
+| Priority 1 — Current build fixes | 2 | 0 |
 | Priority 2 — SPEC-13 types & defaults | 0 | 4 |
 | Priority 3 — SPEC-13 storage migration | 0 | 5 |
 | Priority 4 — SPEC-13 controlled CostCalculator | 0 | 5 |
 | Priority 5 — SPEC-13 wiring | 0 | 8 |
 | Priority 6 — SPEC-12 remaining UX | 0 | 6 |
-| **Total** | **32** | **29** |
+| **Total** | **33** | **28** |
