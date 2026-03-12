@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
-import type { WorkrateInputs } from "@/lib/types"
+import type { WorkrateInputs, CompareUnitType } from "@/lib/types"
 import { defaultMachineA, defaultMachineB } from "@/lib/defaults"
 import { calcWorkrate } from "@/lib/calculations"
 import { InputField } from "./InputField"
@@ -17,8 +17,6 @@ function getZeroWorkrateFields(inputs: WorkrateInputs): string[] {
   return fields
 }
 
-type MachineType = "spreader" | "sprayer"
-
 export function CompareMachines({
   initialMachineA,
   initialMachineB,
@@ -31,8 +29,6 @@ export function CompareMachines({
   const { units } = useUnits()
   const [machineA, setMachineA] = useState<WorkrateInputs>(initialMachineA ?? defaultMachineA)
   const [machineB, setMachineB] = useState<WorkrateInputs>(initialMachineB ?? defaultMachineB)
-  const [typeA, setTypeA] = useState<MachineType>("spreader")
-  const [typeB, setTypeB] = useState<MachineType>("spreader")
 
   const updateA = (field: keyof WorkrateInputs) => (value: number) => {
     setMachineA((prev) => ({ ...prev, [field]: value }))
@@ -79,16 +75,14 @@ export function CompareMachines({
         <MachineInputs
           title={machineA.name || "Machine A"}
           inputs={machineA}
-          machineType={typeA}
-          onMachineTypeChange={setTypeA}
+          onUnitTypeChange={(unitType) => setMachineA((prev) => ({ ...prev, unitType }))}
           onNameChange={(name) => setMachineA((prev) => ({ ...prev, name }))}
           onUpdate={updateA}
         />
         <MachineInputs
           title={machineB.name || "Machine B"}
           inputs={machineB}
-          machineType={typeB}
-          onMachineTypeChange={setTypeB}
+          onUnitTypeChange={(unitType) => setMachineB((prev) => ({ ...prev, unitType }))}
           onNameChange={(name) => setMachineB((prev) => ({ ...prev, name }))}
           onUpdate={updateB}
         />
@@ -178,20 +172,19 @@ export function CompareMachines({
 function MachineInputs({
   title,
   inputs,
-  machineType,
-  onMachineTypeChange,
+  onUnitTypeChange,
   onNameChange,
   onUpdate,
 }: {
   title: string
   inputs: WorkrateInputs
-  machineType: MachineType
-  onMachineTypeChange: (type: MachineType) => void
+  onUnitTypeChange: (type: CompareUnitType) => void
   onNameChange: (name: string) => void
   onUpdate: (field: keyof WorkrateInputs) => (value: number) => void
 }) {
-  const capacityUnit = machineType === "sprayer" ? "L" : "kg"
-  const rateUnit = machineType === "sprayer" ? "L/ha" : "kg/ha"
+  const unitType = inputs.unitType ?? "spreader"
+  const capacityUnit = unitType === "sprayer" ? "L" : "kg"
+  const rateUnit = unitType === "sprayer" ? "L/ha" : "kg/ha"
 
   return (
     <div className="rounded-lg bg-card p-4 shadow-sm space-y-1">
@@ -213,8 +206,8 @@ function MachineInputs({
       <div className="flex items-center gap-2 min-h-[44px]">
         <label className="flex-1 text-sm font-medium leading-tight">Type</label>
         <select
-          value={machineType}
-          onChange={(e) => onMachineTypeChange(e.target.value as MachineType)}
+          value={unitType}
+          onChange={(e) => onUnitTypeChange(e.target.value as CompareUnitType)}
           className="w-20 sm:w-28 text-right text-sm rounded-md border border-input bg-background px-2 py-1"
         >
           <option value="spreader">Spreader</option>

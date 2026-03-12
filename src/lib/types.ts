@@ -63,8 +63,11 @@ export interface CostPerHourResults {
   annualSaving: number;
 }
 
+export type CompareUnitType = "spreader" | "sprayer";
+
 export interface WorkrateInputs {
   name: string;
+  unitType?: CompareUnitType;
   width: number;
   capacity: number;
   speed: number;
