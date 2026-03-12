@@ -3,8 +3,6 @@ import type { AppState } from "./types";
 import type { UnitPreferences } from "./units";
 import { DEFAULT_UNITS } from "./units";
 import {
-  defaultCostPerHectare,
-  defaultCostPerHour,
   defaultMachineA,
   defaultMachineB,
   createDefaultReplacementMachines,
