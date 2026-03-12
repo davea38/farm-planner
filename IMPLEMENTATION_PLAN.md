@@ -73,17 +73,19 @@ The following groups from the prior plan are all done:
 
 - [ ] Bump `CURRENT_VERSION` from `5` to `6` in `src/lib/storage.ts`.
   WHY: Signals the new data format and triggers migration for existing users loading saved data.
+  NOTE: Deferred to Priority 5 wiring — bumping version activates migration but createDefaultState/consumers must use v6 shape first.
 
-- [ ] Add the v5-to-v6 migration function to the `migrations[]` array in `src/lib/storage.ts`: merge `costPerHectare.savedMachines` and `costPerHour.savedMachines` into a unified `savedMachines: MachineProfile[]` (hectare machines first), fill the missing cost-mode data with defaults, copy global `compareMachines` into each machine, and remap `linkedMachineSource` references in contracting services from `"costMode:index"` format to flat indices.
+- [x] Add the v5-to-v6 migration function to the `migrations[]` array in `src/lib/storage.ts`: merge `costPerHectare.savedMachines` and `costPerHour.savedMachines` into a unified `savedMachines: MachineProfile[]` (hectare machines first), fill the missing cost-mode data with defaults, copy global `compareMachines` into each machine, and remap `linkedMachineSource` references in contracting services from `"costMode:index"` format to flat indices.
   WHY: Existing users' localStorage must be losslessly transformed to the new shape; contracting service links must remain valid after index renumbering.
 
 - [ ] Update `createDefaultState()` in `src/lib/storage.ts` to return the v6 shape with `savedMachines: []` and no `costPerHectare`/`costPerHour`/`compareMachines` top-level keys.
   WHY: New users and fallback states must produce valid v6 data.
+  NOTE: Deferred to Priority 5 wiring — requires AppState type to be switched to v6 shape.
 
-- [ ] Update `hasValidStructure()` in `src/lib/storage.ts` to validate v6 data (check for `savedMachines` array) while still accepting pre-v6 data so migration can run.
+- [x] Update `hasValidStructure()` in `src/lib/storage.ts` to validate v6 data (check for `savedMachines` array) while still accepting pre-v6 data so migration can run.
   WHY: The structural guard is called before migration; it must accept both old and new shapes.
 
-- [ ] Write migration tests in `src/lib/__tests__/storage.migration-v6.test.ts` covering all 8 scenarios from SPEC-13: (1) 2 hectare + 1 hour machine merge into unified array, (2) input value preservation, (3) default filling for missing cost mode, (4) `linkedMachineSource` remapping for hectare machines, (5) `linkedMachineSource` remapping for hour machines offset after hectare machines, (6) empty machine lists, (7) `replacementPlanner`/`contractingIncome` passthrough, (8) v6 data round-trips without re-migration.
+- [x] Write migration tests in `src/lib/__tests__/storage.migration-v6.test.ts` covering all 8 scenarios from SPEC-13: (1) 2 hectare + 1 hour machine merge into unified array, (2) input value preservation, (3) default filling for missing cost mode, (4) `linkedMachineSource` remapping for hectare machines, (5) `linkedMachineSource` remapping for hour machines offset after hectare machines, (6) empty machine lists, (7) `replacementPlanner`/`contractingIncome` passthrough, (8) v6 data round-trips without re-migration.
   WHY: Data migrations are irreversible and high-risk; automated tests prevent corruption for upgrading users.
 
 ---
@@ -213,8 +215,8 @@ Note: Priorities 3 and 4 can proceed in parallel since they both depend only on 
 | Prior plan tasks (TS errors, test fixes, wiring, layout, labels, polish) | 20 | 0 |
 | Priority 1 — Current build fixes | 2 | 0 |
 | Priority 2 — SPEC-13 types & defaults | 4 | 0 |
-| Priority 3 — SPEC-13 storage migration | 0 | 5 |
+| Priority 3 — SPEC-13 storage migration | 3 | 2 |
 | Priority 4 — SPEC-13 controlled CostCalculator | 0 | 5 |
 | Priority 5 — SPEC-13 wiring | 0 | 8 |
 | Priority 6 — SPEC-12 remaining UX | 0 | 6 |
-| **Total** | **37** | **24** |
+| **Total** | **40** | **21** |

@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
-import type { AppState } from "./types";
+import type { AppState, MachineProfile } from "./types";
 import type { UnitPreferences } from "./units";
 import { DEFAULT_UNITS } from "./units";
 import {
+  defaultCostPerHectare,
+  defaultCostPerHour,
   defaultMachineA,
   defaultMachineB,
   createDefaultReplacementMachines,
@@ -39,7 +41,10 @@ function createDefaultState(): AppState {
 function hasValidStructure(data: unknown): data is Record<string, unknown> {
   if (typeof data !== "object" || data === null) return false;
   const obj = data as Record<string, unknown>;
-  return (
+  // v6 shape: savedMachines array
+  const isV6 = Array.isArray(obj.savedMachines);
+  // v5 and earlier shape: separate cost mode sections
+  const isLegacy =
     typeof obj.costPerHectare === "object" &&
     obj.costPerHectare !== null &&
     typeof obj.costPerHour === "object" &&
@@ -47,8 +52,8 @@ function hasValidStructure(data: unknown): data is Record<string, unknown> {
     typeof obj.compareMachines === "object" &&
     obj.compareMachines !== null &&
     typeof obj.replacementPlanner === "object" &&
-    obj.replacementPlanner !== null
-  );
+    obj.replacementPlanner !== null;
+  return isV6 || isLegacy;
 }
 
 function isValidState(data: unknown): data is AppState {
@@ -60,6 +65,63 @@ function isValidState(data: unknown): data is AppState {
 }
 
 type Migration = (state: Record<string, unknown>) => Record<string, unknown>;
+
+// Exported for direct testing — called by migrations[5] (v5 → v6)
+export function migrateV5toV6(state: Record<string, unknown>): Record<string, unknown> {
+  const ha = ((state.costPerHectare as Record<string, unknown>)?.savedMachines ?? []) as Array<Record<string, unknown>>;
+  const hr = ((state.costPerHour as Record<string, unknown>)?.savedMachines ?? []) as Array<Record<string, unknown>>;
+  const compare = state.compareMachines as Record<string, unknown> | undefined;
+
+  const indexMap: Record<string, number> = {};
+  const unified: MachineProfile[] = [];
+
+  // Hectare machines first (preserves current UI ordering)
+  for (let i = 0; i < ha.length; i++) {
+    indexMap[`hectare:${i}`] = unified.length;
+    unified.push({
+      name: ha[i].name as string,
+      machineType: (ha[i].machineType as MachineProfile["machineType"]) ?? "miscellaneous",
+      costMode: "hectare",
+      costPerHectare: ha[i].inputs as MachineProfile["costPerHectare"],
+      costPerHour: { ...defaultCostPerHour },
+      compareMachines: {
+        machineA: (compare?.machineA as MachineProfile["compareMachines"]["machineA"]) ?? { ...defaultMachineA },
+        machineB: (compare?.machineB as MachineProfile["compareMachines"]["machineB"]) ?? { ...defaultMachineB },
+      },
+    });
+  }
+
+  // Hour machines after
+  for (let i = 0; i < hr.length; i++) {
+    indexMap[`hour:${i}`] = unified.length;
+    unified.push({
+      name: hr[i].name as string,
+      machineType: (hr[i].machineType as MachineProfile["machineType"]) ?? "miscellaneous",
+      costMode: "hour",
+      costPerHour: hr[i].inputs as MachineProfile["costPerHour"],
+      costPerHectare: { ...defaultCostPerHectare },
+      compareMachines: {
+        machineA: (compare?.machineA as MachineProfile["compareMachines"]["machineA"]) ?? { ...defaultMachineA },
+        machineB: (compare?.machineB as MachineProfile["compareMachines"]["machineB"]) ?? { ...defaultMachineB },
+      },
+    });
+  }
+
+  // Migrate linkedMachineSource in contracting services
+  const contracting = state.contractingIncome as Record<string, unknown> | undefined;
+  if (contracting?.services) {
+    const services = contracting.services as Array<Record<string, unknown>>;
+    for (const svc of services) {
+      if (svc.linkedMachineSource) {
+        const newIdx = indexMap[svc.linkedMachineSource as string];
+        svc.linkedMachineSource = newIdx !== undefined ? String(newIdx) : null;
+      }
+    }
+  }
+
+  const { costPerHectare: _, costPerHour: __, compareMachines: ___, ...rest } = state;
+  return { ...rest, version: 6, savedMachines: unified };
+}
 
 // Sequential migrations: index 0 migrates from version 0 (unversioned) to version 1, etc.
 // To add a new migration: push a function that transforms version N to N+1.
@@ -122,6 +184,8 @@ const migrations: Migration[] = [
     strip(state.costPerHour as Record<string, unknown> | undefined);
     return { ...state, version: 5 };
   },
+  // v5 → v6: Unify savedMachines into single array with per-machine data
+  migrateV5toV6,
 ];
 
 function migrateState(data: Record<string, unknown>): AppState | null {
