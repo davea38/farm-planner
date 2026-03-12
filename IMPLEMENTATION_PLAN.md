@@ -2,7 +2,7 @@
 
 > Updated: 2026-03-12
 > Baseline: SPECs 01-11 fully implemented. SPEC-12 partially complete. SPEC-13 not started.
-> Remaining: 0 build fixes, 6 SPEC-13 requirements, 6 SPEC-12 items.
+> Remaining: 0 build fixes, 6 SPEC-13 requirements (types done), 6 SPEC-12 items.
 
 ---
 
@@ -54,16 +54,17 @@ The following groups from the prior plan are all done:
 
 ## Priority 2: SPEC-13 — Core Data Model (Types & Defaults)
 
-- [ ] Define the `MachineProfile` interface in `src/lib/types.ts` with fields: `name`, `machineType: DepreciationCategory`, `costMode: CostMode`, `costPerHectare: CostPerHectareInputs`, `costPerHour: CostPerHourInputs`, and `compareMachines: { machineA: WorkrateInputs; machineB: WorkrateInputs }`.
+- [x] Define the `MachineProfile` interface in `src/lib/types.ts` with fields: `name`, `machineType: DepreciationCategory`, `costMode: CostMode`, `costPerHectare: CostPerHectareInputs`, `costPerHour: CostPerHourInputs`, and `compareMachines: { machineA: WorkrateInputs; machineB: WorkrateInputs }`.
   WHY: This is the foundational type that replaces the split `SavedMachine<T>` generic with a single self-contained machine record; every subsequent SPEC-13 task depends on it.
 
-- [ ] Add a `CostMode` type alias (`"hectare" | "hour"`) to `src/lib/types.ts`.
+- [x] Add a `CostMode` type alias (`"hectare" | "hour"`) to `src/lib/types.ts`.
   WHY: Used by `MachineProfile.costMode` to indicate the machine's preferred calculator view.
 
-- [ ] Update the `AppState` interface in `src/lib/types.ts` to the v6 shape: replace `costPerHectare`, `costPerHour`, and the global `compareMachines` top-level keys with a single `savedMachines: MachineProfile[]`.
+- [x] Update the `AppState` interface in `src/lib/types.ts` to the v6 shape: replace `costPerHectare`, `costPerHour`, and the global `compareMachines` top-level keys with a single `savedMachines: MachineProfile[]`.
   WHY: The flat array eliminates the fragmented data model that causes complexity in selection, deletion, and cross-tab data flow.
+  NOTE: Added as `AppStateV6` alongside existing `AppState` to avoid breaking consumers. The switchover from `AppState` to `AppStateV6` happens during Priority 5 wiring.
 
-- [ ] Add a `createDefaultMachineProfile(name: string, machineType: DepreciationCategory): MachineProfile` factory in `src/lib/defaults.ts` that populates both cost modes and default `compareMachines`.
+- [x] Add a `createDefaultMachineProfile(name: string, machineType: DepreciationCategory): MachineProfile` factory in `src/lib/defaults.ts` that populates both cost modes and default `compareMachines`.
   WHY: Every code path that creates a new machine needs a single source of truth for default values across all tabs.
 
 ---
@@ -211,9 +212,9 @@ Note: Priorities 3 and 4 can proceed in parallel since they both depend only on 
 | SPECs 01-11 | 11 | 0 |
 | Prior plan tasks (TS errors, test fixes, wiring, layout, labels, polish) | 20 | 0 |
 | Priority 1 — Current build fixes | 2 | 0 |
-| Priority 2 — SPEC-13 types & defaults | 0 | 4 |
+| Priority 2 — SPEC-13 types & defaults | 4 | 0 |
 | Priority 3 — SPEC-13 storage migration | 0 | 5 |
 | Priority 4 — SPEC-13 controlled CostCalculator | 0 | 5 |
 | Priority 5 — SPEC-13 wiring | 0 | 8 |
 | Priority 6 — SPEC-12 remaining UX | 0 | 6 |
-| **Total** | **33** | **28** |
+| **Total** | **37** | **24** |

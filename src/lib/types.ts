@@ -127,6 +127,24 @@ export interface ReplacementSummary {
 
 export type { DepreciationCategory };
 
+export type CostMode = "hectare" | "hour";
+
+/**
+ * A unified machine profile. Each machine owns ALL its tab data.
+ * Both cost modes are always present; costMode is a UI preference.
+ */
+export interface MachineProfile {
+  name: string;
+  machineType: DepreciationCategory;
+  costMode: CostMode;
+  costPerHectare: CostPerHectareInputs;
+  costPerHour: CostPerHourInputs;
+  compareMachines: {
+    machineA: WorkrateInputs;
+    machineB: WorkrateInputs;
+  };
+}
+
 export interface SavedMachine<T> {
   name: string;
   machineType: DepreciationCategory;
@@ -150,6 +168,7 @@ export interface ContractingIncomeState {
   services: ContractingService[];
 }
 
+// v5 AppState — retained until all consumers are migrated to v6
 export interface AppState {
   version: number;
   lastSaved: string;
@@ -163,6 +182,15 @@ export interface AppState {
     machineA: WorkrateInputs;
     machineB: WorkrateInputs;
   };
+  replacementPlanner: ReplacementPlannerState;
+  contractingIncome: ContractingIncomeState;
+}
+
+// v6 AppState — unified machine data model (SPEC-13)
+export interface AppStateV6 {
+  version: number;
+  lastSaved: string;
+  savedMachines: MachineProfile[];
   replacementPlanner: ReplacementPlannerState;
   contractingIncome: ContractingIncomeState;
 }

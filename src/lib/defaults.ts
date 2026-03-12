@@ -4,7 +4,9 @@ import type {
   WorkrateInputs,
   ReplacementMachine,
   ReplacementPlannerState,
+  MachineProfile,
 } from "./types";
+import type { MachineCategory as DepreciationCategory } from "./depreciation-data";
 import { FUEL_PRICES } from "./fuel-data";
 import { CATEGORY_LABELS } from "./category-mapping";
 import { generateId } from "./uuid";
@@ -106,3 +108,17 @@ export const defaultReplacementPlanner: ReplacementPlannerState = {
   machines: createDefaultReplacementMachines(),
   farmIncome: 350000,
 };
+
+export function createDefaultMachineProfile(name: string, machineType: DepreciationCategory): MachineProfile {
+  return {
+    name,
+    machineType,
+    costMode: "hectare",
+    costPerHectare: { ...defaultCostPerHectare },
+    costPerHour: { ...defaultCostPerHour },
+    compareMachines: {
+      machineA: { ...defaultMachineA },
+      machineB: { ...defaultMachineB },
+    },
+  };
+}
