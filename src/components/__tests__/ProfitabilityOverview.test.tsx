@@ -282,7 +282,6 @@ describe("ProfitabilityOverview", () => {
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     expect(screen.getByText(/Contracting adds/)).toBeInTheDocument();
-    expect(screen.getByText(/to your bottom line/)).toBeInTheDocument();
   });
 
   it("shows positive net position with green styling when income exceeds costs", () => {

@@ -72,8 +72,7 @@ The app works; CI is red.
 - [x] Finding #22 — Negative "Cost to budget" shows "You'll receive" message.
 - [x] Finding #14 — Interest-rate tooltip says "finance/opportunity cost".
 
-- [ ] **Finding #28 (partial):** Audit visual breakdowns — donut charts, comparison bars, and `IncomeVsCostsBar` exist but verify full coverage across all tabs.
-  *WHY: Some tabs may still lack a visual summary.*
+- [x] **Finding #28:** Visual breakdowns complete — donut charts on CostCalculator and ProfitabilityOverview, CostComparisonBar on CostCalculator, DepreciationSparkline on ReplacementPlanner, IncomeVsCostsBar on ProfitabilityOverview, and new ContractingComparisonBar for Farm Only vs Farm + Contracting comparison.
 
 - [ ] **Finding #30:** Add inter-tab wayfinding: save toasts with data-flow hints, data-source badges on receiving tabs, connected-tabs footer.
   *WHY: Users don't understand how tabs feed into each other.*

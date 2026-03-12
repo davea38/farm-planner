@@ -5,6 +5,7 @@ import { ResultBanner } from "@/components/ResultBanner";
 import { CostDonutChart } from "@/components/CostDonutChart";
 import { IncomeVsCostsBar } from "@/components/IncomeVsCostsBar";
 import { formatGBP, formatPct } from "@/lib/format";
+import { ContractingComparisonBar } from "@/components/ContractingComparisonBar";
 import { SourceBadge } from "@/components/SourceBadge";
 import {
   calculateProfitability,
@@ -282,6 +283,15 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
             <h3 className="font-semibold text-sm border-b pb-1">
               Farm Only vs Farm + Contracting
             </h3>
+            <ContractingComparisonBar
+              farmOnlyIncome={results.farmIncomeAmount}
+              farmOnlyCosts={results.totalCosts - results.contractingCosts}
+              farmOnlyNet={results.netWithoutContracting}
+              withContractingIncome={results.totalIncome}
+              withContractingCosts={results.totalCosts}
+              withContractingNet={results.netWithContracting}
+              contractingContribution={results.contractingNetContribution}
+            />
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
@@ -337,19 +347,6 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
                 </tbody>
               </table>
             </div>
-            <p className="text-sm font-medium">
-              Contracting adds{" "}
-              <span
-                className={
-                  results.contractingNetContribution >= 0
-                    ? "text-green-600"
-                    : "text-red-600"
-                }
-              >
-                {formatGBP(results.contractingNetContribution)}/year
-              </span>{" "}
-              to your bottom line.
-            </p>
           </div>
         )}
 
