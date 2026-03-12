@@ -83,8 +83,8 @@ The app works; CI is red.
 - [ ] **Finding #32 (partial):** Audit empty states across all tabs — `MachinesTab` and `ProfitabilityOverview` have them; other tabs may not.
   *WHY: Blank screens with no guidance cause users to abandon the tool.*
 
-- [ ] **Finding #33 (partial):** Full farmer-friendly language audit — some labels improved but a systematic pass has not been done.
-  *WHY: Technical jargon alienates the target audience.*
+- [x] **Finding #33:** Farmer-friendly language audit complete — labels, section headers, tooltips, and warning messages updated across all active components (CostCalculator, CompareMachines, ReplacementPlanner, ProfitabilityOverview, ContractingIncomePlanner).
+  *Changes: "Spares & repairs" → "Repairs (% of price)", "Coverage speed" → "Ground covered", "Finance / opportunity cost" → "Money tied up", "Shed costs" → "Shed costs (% of price)", "Contractor charges" → "Contractor quote", "Contractor Comparison" → "Compare with a contractor", "Running Costs" → "Running costs", "Overheads" → "Overheads (most farmers leave these as-is)", "Results" → "Your answer", "Budget Summary" → "Your budget", "Farm income" → "Your farm income", warning messages updated to match new labels.*
 
 ---
 

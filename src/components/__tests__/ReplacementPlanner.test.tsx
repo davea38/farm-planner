@@ -61,7 +61,7 @@ describe("ReplacementPlanner", () => {
 
   it("displays budget summary section", () => {
     renderWithUnits(<ReplacementPlanner initialState={testState} />)
-    expect(screen.getByText("Budget Summary")).toBeInTheDocument()
+    expect(screen.getByText("Your budget")).toBeInTheDocument()
     expect(screen.getByText("Total replacement spend")).toBeInTheDocument()
     expect(screen.getByText("Average annual cost")).toBeInTheDocument()
   })

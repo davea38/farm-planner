@@ -51,7 +51,7 @@ describe("CompareMachines", () => {
     renderWithUnits(
       <CompareMachines initialMachineA={machineA} initialMachineB={machineB} />
     )
-    expect(screen.getByText("Results")).toBeInTheDocument()
+    expect(screen.getByText("Your answer")).toBeInTheDocument()
     expect(screen.getByText("Spot rate")).toBeInTheDocument()
     expect(screen.getByText("TRUE rate")).toBeInTheDocument()
   })

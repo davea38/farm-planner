@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { ContractorRatesPanel } from "@/components/ContractorRatesPanel"
 import { ResultBanner } from "@/components/ResultBanner"
 import { SourceBadge } from "@/components/SourceBadge"
+import { ConnectedTabsFooter } from "@/components/ConnectedTabsFooter"
 import { formatGBP, formatPct } from "@/lib/format"
 import { generateId } from "@/lib/uuid"
 import {
@@ -389,7 +390,7 @@ export function ContractingIncomePlanner({
                 {hasResults && (
                   <div className="mt-4 space-y-3 rounded-lg bg-muted/50 p-4">
                     <h4 className="font-semibold text-sm">
-                      Results
+                      Your answer
                     </h4>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <span className="text-muted-foreground">
@@ -493,6 +494,9 @@ export function ContractingIncomePlanner({
           </Card>
         )}
       </CardContent>
+      <div className="px-6 pb-4">
+        <ConnectedTabsFooter tabs={["profitability"]} />
+      </div>
     </Card>
   )
 }

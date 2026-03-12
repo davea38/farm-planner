@@ -680,7 +680,7 @@ describe("ContractingIncomePlanner", () => {
       />,
     )
     // The per-service "Results" heading should not appear
-    expect(screen.queryByText("Results")).not.toBeInTheDocument()
+    expect(screen.queryByText("Your answer")).not.toBeInTheDocument()
   })
 
   it("does not show results section when annualVolume is 0", () => {
@@ -695,7 +695,7 @@ describe("ContractingIncomePlanner", () => {
         savedMachines={[]}
       />,
     )
-    expect(screen.queryByText("Results")).not.toBeInTheDocument()
+    expect(screen.queryByText("Your answer")).not.toBeInTheDocument()
   })
 
   it("shows '+ Add Service' button when services exist", () => {

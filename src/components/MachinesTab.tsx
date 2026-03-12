@@ -4,6 +4,7 @@ import type { MachineCategory } from "@/lib/depreciation-data"
 import { DEPRECIATION_PROFILES } from "@/lib/depreciation-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { ConnectedTabsFooter } from "@/components/ConnectedTabsFooter"
 
 const MACHINE_TYPE_OPTIONS = Object.entries(DEPRECIATION_PROFILES) as [MachineCategory, (typeof DEPRECIATION_PROFILES)[MachineCategory]][]
 
@@ -553,6 +554,9 @@ export function MachinesTab({
             </div>
           </div>
         </div>
+      )}
+      {machines.length > 0 && (
+        <ConnectedTabsFooter tabs={["cost-calculator", "profitability"]} />
       )}
     </div>
   )

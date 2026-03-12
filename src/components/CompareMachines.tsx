@@ -13,7 +13,7 @@ function getZeroWorkrateFields(inputs: WorkrateInputs): string[] {
   if (inputs.applicationRate <= 0) fields.push("application rate")
   if (inputs.width <= 0) fields.push("width")
   if (inputs.speed <= 0) fields.push("speed")
-  if (inputs.fieldEfficiency <= 0) fields.push("field efficiency")
+  if (inputs.fieldEfficiency <= 0) fields.push("time actually working")
   return fields
 }
 
@@ -90,7 +90,7 @@ export function CompareMachines({
 
       {/* Results */}
       <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-        <h2 className="text-sm font-semibold">Results</h2>
+        <h2 className="text-sm font-semibold">Your answer</h2>
 
         {hasZeroWarning && (
           <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground space-y-1">

@@ -119,7 +119,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
           </h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <InputField
-              label="Farm income"
+              label="Your farm income"
               value={appState.replacementPlanner.farmIncome}
               onChange={(v) => onFarmIncomeChange?.(v)}
               unit="£/year"
@@ -128,7 +128,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
             />
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Contracting income:
-              {results.contractingIncomeAmount > 0 && <SourceBadge label="Contracting tab" />}
+              {results.contractingIncomeAmount > 0 && <SourceBadge label="Contracting tab" navigateTo="contracting-income" />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.contractingIncomeAmount)}/year
@@ -150,28 +150,28 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
           <div className="grid grid-cols-2 gap-2 text-sm">
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Replacement costs (avg annual):
-              <SourceBadge label="Replacement Planner" />
+              <SourceBadge label="Replacement Planner" navigateTo="replacement-planner" />
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.replacementCosts)}/year
             </span>
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Running costs (per-ha machines x {haCountLabel}):
-              {haCountLabel > 0 && <SourceBadge label={`${haCountLabel} saved machine${haCountLabel !== 1 ? "s" : ""}`} />}
+              {haCountLabel > 0 && <SourceBadge label={`${haCountLabel} saved machine${haCountLabel !== 1 ? "s" : ""}`} navigateTo="cost-calculator" />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(runningCostsHa)}/year
             </span>
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Running costs (per-hr machines x {hrCountLabel}):
-              {hrCountLabel > 0 && <SourceBadge label={`${hrCountLabel} saved machine${hrCountLabel !== 1 ? "s" : ""}`} />}
+              {hrCountLabel > 0 && <SourceBadge label={`${hrCountLabel} saved machine${hrCountLabel !== 1 ? "s" : ""}`} navigateTo="cost-calculator" />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(runningCostsHr)}/year
             </span>
             <span className="text-muted-foreground flex items-center gap-1.5 flex-wrap">
               Contracting operating costs:
-              {results.contractingCosts > 0 && <SourceBadge label="Contracting tab" />}
+              {results.contractingCosts > 0 && <SourceBadge label="Contracting tab" navigateTo="contracting-income" />}
             </span>
             <span className="font-medium text-right">
               {formatGBP(results.contractingCosts)}/year
@@ -244,7 +244,7 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
               <div>
                 <IncomeVsCostsBar
                   incomeSegments={[
-                    { label: "Farm income", value: results.farmIncomeAmount, color: "#2e7d32" },
+                    { label: "Your farm income", value: results.farmIncomeAmount, color: "#2e7d32" },
                     { label: "Contracting income", value: results.contractingIncomeAmount, color: "#66bb6a" },
                   ]}
                   costSegments={[

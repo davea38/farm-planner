@@ -13,6 +13,7 @@ import { FuelPricePanel } from "./FuelPricePanel"
 import { FuelConsumptionPanel } from "./FuelConsumptionPanel"
 import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { CostDonutChart } from "./CostDonutChart"
+import { ConnectedTabsFooter } from "./ConnectedTabsFooter"
 import { CostComparisonBar } from "./CostComparisonBar"
 
 export type { CostMode }
@@ -140,7 +141,7 @@ export function CostCalculator({
   const zeroWarnings: string[] = []
   if (mode === "hectare") {
     if (hectareInputs.hectaresPerYear <= 0) zeroWarnings.push(units.area === "acres" ? "acres worked per year" : "hectares worked per year")
-    if (hectareInputs.workRate <= 0) zeroWarnings.push("work rate")
+    if (hectareInputs.workRate <= 0) zeroWarnings.push("ground covered")
     if (hectareInputs.yearsOwned <= 0) zeroWarnings.push("years owned")
   } else {
     if (hourInputs.hoursPerYear <= 0) zeroWarnings.push("hours worked per year")
@@ -229,7 +230,7 @@ export function CostCalculator({
       {/* Running Costs — with mode toggle */}
       <div className="rounded-lg bg-card p-4 shadow-sm">
         <CollapsibleSection
-          title="Running Costs"
+          title="Running costs"
           subtitle="Fuel, labour, and repairs"
           defaultOpen={true}
           headerRight={
@@ -240,11 +241,11 @@ export function CostCalculator({
             {mode === "hectare" ? (
               <>
                 <InputField
-                  label="Coverage speed"
+                  label="Ground covered"
                   value={hectareInputs.workRate}
                   onChange={updateHa("workRate")}
                   metricUnit="ha/hr"
-                  tooltip="How many hectares (or acres) this machine covers per hour of field work"
+                  tooltip="How many hectares this machine gets through in an hour of actual work"
                   min={0}
                 />
                 <InputField
@@ -280,11 +281,11 @@ export function CostCalculator({
                   workRate={hectareInputs.workRate}
                 />
                 <InputField
-                  label="Spares & repairs"
+                  label="Repairs (% of price)"
                   value={hectareInputs.repairsPct}
                   onChange={updateHa("repairsPct")}
                   unit="%"
-                  tooltip="Annual repair bill as a percentage of what you paid"
+                  tooltip="Your annual repair bill as a percentage of purchase price"
                   min={0}
                   sourceBadge={fieldSources["repairsPct"]}
                 />
@@ -318,11 +319,11 @@ export function CostCalculator({
                 />
                 <FuelPricePanel onApply={applyHrFromSource("fuelPrice", "AHDB fuel price")} />
                 <InputField
-                  label="Spares & repairs"
+                  label="Repairs (% of price)"
                   value={hourInputs.repairsPct}
                   onChange={updateHr("repairsPct")}
                   unit="%"
-                  tooltip="Annual repair bill as a percentage of what you paid"
+                  tooltip="Your annual repair bill as a percentage of purchase price"
                   min={0}
                   sourceBadge={fieldSources["repairsPct"]}
                 />
@@ -346,17 +347,17 @@ export function CostCalculator({
       {/* Overheads */}
       <div className="rounded-lg bg-card p-4 shadow-sm">
         <CollapsibleSection
-          title="Overheads"
-          subtitle="Change interest rate and insurance rate to see how they affect your costs"
+          title="Overheads (most farmers leave these as-is)"
+          subtitle="Adjust these to see how they affect your costs"
           defaultOpen={false}
         >
           <div className="space-y-1 mt-2">
             <InputField
-              label="Finance / opportunity cost"
+              label="Money tied up"
               value={inputs.interestRate}
               onChange={update("interestRate")}
               unit="%"
-              tooltip="If you borrowed to buy this machine, enter your loan rate. If you paid cash, enter what that money could earn elsewhere (usually 2–4%)."
+              tooltip="If you didn't buy this machine, you could invest that money elsewhere. 2–4% is typical for savings, 6–8% for a loan."
               min={0}
             />
             <InputField
@@ -368,11 +369,11 @@ export function CostCalculator({
               min={0}
             />
             <InputField
-              label="Shed costs"
+              label="Shed costs (% of price)"
               value={inputs.storageRate}
               onChange={update("storageRate")}
               unit="%"
-              tooltip="Cost of keeping it under cover, as a percentage of what you paid"
+              tooltip="The cost of keeping it under cover — usually about 1% of what you paid"
               min={0}
             />
           </div>
@@ -382,7 +383,7 @@ export function CostCalculator({
       {/* Contractor Comparison */}
       <div className="rounded-lg bg-card p-4 shadow-sm">
         <CollapsibleSection
-          title="Contractor Comparison"
+          title="Compare with a contractor"
           subtitle={mode === "hectare" ? "What a contractor would charge for the same job" : "Compare owning vs hiring a contractor"}
           defaultOpen={true}
         >
@@ -390,11 +391,11 @@ export function CostCalculator({
             {mode === "hectare" ? (
               <>
                 <InputField
-                  label="Contractor charges"
+                  label="Contractor quote"
                   value={hectareInputs.contractorCharge}
                   onChange={updateHa("contractorCharge")}
                   metricUnit="£/ha"
-                  tooltip="What a contractor would charge you per hectare for the same job"
+                  tooltip="What a local contractor would charge you per hectare for the same job"
                   min={0}
                   sourceBadge={fieldSources["contractorCharge"]}
                 />
@@ -407,7 +408,7 @@ export function CostCalculator({
             ) : (
               <>
                 <InputField
-                  label="Contractor charges"
+                  label="Contractor quote"
                   value={hourInputs.contractorCharge}
                   onChange={updateHr("contractorCharge")}
                   unit="£/hr"
@@ -429,7 +430,7 @@ export function CostCalculator({
 
       {/* Results */}
       <div className="rounded-lg bg-muted/50 p-6 space-y-4">
-        <h2 className="text-sm font-semibold">Results</h2>
+        <h2 className="text-sm font-semibold">Your answer</h2>
 
         {hasZeroWarning ? (
           <div className="rounded-lg border border-farm-amber/50 bg-farm-amber/10 px-4 py-3 text-sm text-muted-foreground">
@@ -477,6 +478,7 @@ export function CostCalculator({
         )}
       </div>
 
+      <ConnectedTabsFooter tabs={["profitability"]} />
     </div>
   )
 }

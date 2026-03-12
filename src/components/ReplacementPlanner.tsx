@@ -11,6 +11,7 @@ import { ResultBanner } from "./ResultBanner"
 import { CollapsibleSection } from "./CollapsibleSection"
 import { DepreciationPanel } from "./DepreciationPanel"
 import { DepreciationSparkline } from "./DepreciationSparkline"
+import { ConnectedTabsFooter } from "./ConnectedTabsFooter"
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -425,7 +426,7 @@ export function ReplacementPlanner({
 
       {/* Budget Summary */}
       <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-        <h2 className="text-sm font-semibold">Budget Summary</h2>
+        <h2 className="text-sm font-semibold">Your budget</h2>
 
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
@@ -440,7 +441,7 @@ export function ReplacementPlanner({
 
         <div className="rounded-lg bg-card p-4 shadow-sm">
           <InputField
-            label="5-yr avg. farm income"
+            label="Your farm income (5-yr avg)"
             value={state.farmIncome}
             onChange={(v) => setState((prev) => ({ ...prev, farmIncome: v }))}
             unit="£"
@@ -469,6 +470,7 @@ export function ReplacementPlanner({
           />
         </CollapsibleSection>
       </div>
+      <ConnectedTabsFooter tabs={["profitability"]} />
     </div>
   )
 }
