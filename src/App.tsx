@@ -25,6 +25,7 @@ function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
   const [unitPrefs, setUnitPrefs] = useState<UnitPreferences>(loadUnitPreferences)
   const [selectedMachine, setSelectedMachine] = useState<SelectedMachine | null>(null)
+  const [machinePickerOpen, setMachinePickerOpen] = useState(false)
   const { activeTab, setActiveTab } = useHashRoute()
 
   useAutoSave(appState)
@@ -229,6 +230,7 @@ function App() {
           <Tabs value={tabsValue} onValueChange={(v) => {
             // Only allow switching to non-machines tabs if a machine is selected
             if (v !== "machines" && !hasMachineSelected) return
+            setMachinePickerOpen(false)
             if (v === "cost-calculator") {
               // Route to the correct cost hash based on current mode
               setActiveTab(costMode === "hour" ? "cost-per-hour" : "cost-per-hectare")
@@ -284,28 +286,88 @@ function App() {
               </TabsTrigger>
             </TabsList>
 
-            {/* Selected machine banner — shown on select tabs only */}
-            {!["compare-machines", "replacement-planner", "contracting-income", "profitability"].includes(activeTab) && (() => {
+            {/* Selected machine banner — shown on all tabs except the Machines tab itself */}
+            {activeTab !== "machines" && (() => {
+              // Build unified machine list for the picker
+              const allPickerMachines = [
+                ...appState.costPerHectare.savedMachines.map((m, i) => ({
+                  name: m.name, machineType: m.machineType, costMode: "hectare" as const, index: i,
+                })),
+                ...appState.costPerHour.savedMachines.map((m, i) => ({
+                  name: m.name, machineType: m.machineType, costMode: "hour" as const, index: i,
+                })),
+              ]
+
               if (!selectedMachine) {
-                const hasMachines = appState.costPerHectare.savedMachines.length > 0 || appState.costPerHour.savedMachines.length > 0
+                const hasMachines = allPickerMachines.length > 0
                 return (
-                  <div className="mt-4 rounded-lg border-2 border-dashed border-farm-amber/50 bg-farm-amber/5 p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-farm-amber/10 text-farm-amber shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-sm mb-0.5">No machine selected</div>
-                        <p className="text-sm text-muted-foreground">
-                          {hasMachines
-                            ? "Select a machine on the Machines tab to unlock the other tabs."
-                            : "Add your first machine on the Machines tab to get started."
-                          }
-                        </p>
+                  <div className="mt-4 space-y-0">
+                    <div className="rounded-lg border-2 border-dashed border-farm-amber/50 bg-farm-amber/5 p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-farm-amber/10 text-farm-amber shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-sm mb-0.5">No machine selected</div>
+                          <p className="text-sm text-muted-foreground">
+                            {hasMachines
+                              ? "Select a machine below or on the Machines tab to unlock the other tabs."
+                              : "Add your first machine on the Machines tab to get started."
+                            }
+                          </p>
+                        </div>
+                        {hasMachines && (
+                          <button
+                            type="button"
+                            onClick={() => setMachinePickerOpen(!machinePickerOpen)}
+                            className="text-xs font-medium shrink-0 rounded-full px-3 py-1 border border-farm-amber/40 text-farm-amber bg-farm-amber/10 hover:bg-farm-amber hover:text-white active:scale-95 transition-all duration-150 cursor-pointer flex items-center gap-1.5"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                            Select
+                          </button>
+                        )}
                       </div>
                     </div>
+                    {/* Inline machine picker for unselected state */}
+                    {machinePickerOpen && hasMachines && (
+                      <div className="mt-1 rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                        <div className="px-3 py-2 border-b border-border/50 bg-muted/30 flex items-center justify-between">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Select a machine</span>
+                          <button type="button" onClick={() => setMachinePickerOpen(false)} className="text-muted-foreground hover:text-foreground p-0.5 rounded transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                          </button>
+                        </div>
+                        <div className="max-h-[240px] overflow-y-auto divide-y divide-border/30">
+                          {allPickerMachines.map((entry) => {
+                            const profile = DEPRECIATION_PROFILES[entry.machineType]
+                            return (
+                              <button
+                                key={`${entry.costMode}-${entry.index}`}
+                                type="button"
+                                onClick={() => {
+                                  handleSelectMachine({ costMode: entry.costMode, index: entry.index })
+                                  setMachinePickerOpen(false)
+                                }}
+                                className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-primary/5 active:bg-primary/10 transition-colors cursor-pointer"
+                              >
+                                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-muted text-muted-foreground shrink-0">
+                                  <MachineIcon type={entry.machineType} size={22} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-medium text-sm truncate">{entry.name}</div>
+                                  <div className="text-xs text-muted-foreground">{profile?.label ?? entry.machineType}</div>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40 shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               }
@@ -315,27 +377,79 @@ function App() {
               if (!machine) return null
               const profile = DEPRECIATION_PROFILES[machine.machineType]
               return (
-                <div className="mt-4 rounded-lg border-2 border-primary bg-primary/5 p-3 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary shrink-0">
-                      <MachineIcon type={machine.machineType} size={28} />
+                <div className="mt-4 space-y-0">
+                  <div className={`rounded-lg border-2 border-primary bg-primary/5 p-3 shadow-sm ${machinePickerOpen ? "rounded-b-none border-b-0" : ""}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary shrink-0">
+                        <MachineIcon type={machine.machineType} size={28} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-sm truncate">{machine.name}</div>
+                        <div className="text-xs text-muted-foreground">{profile?.label ?? machine.machineType}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setMachinePickerOpen(!machinePickerOpen)}
+                        className="text-xs font-medium shrink-0 rounded-full px-3 py-1 border border-primary/30 text-primary bg-primary/10 hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all duration-150 cursor-pointer flex items-center gap-1.5"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          {machinePickerOpen
+                            ? <path d="m18 15-6-6-6 6"/>
+                            : <><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></>
+                          }
+                        </svg>
+                        {machinePickerOpen ? "Close" : "Change"}
+                      </button>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-sm truncate">{machine.name}</div>
-                      <div className="text-xs text-muted-foreground">{profile?.label ?? machine.machineType}</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("machines")}
-                      className="text-xs font-medium shrink-0 rounded-full px-3 py-1 border border-primary/30 text-primary bg-primary/10 hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all duration-150 cursor-pointer flex items-center gap-1.5"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                      Change
-                    </button>
                   </div>
+                  {/* Inline machine picker dropdown */}
+                  {machinePickerOpen && (
+                    <div className="rounded-b-lg border-2 border-t-0 border-primary bg-card shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                      <div className="px-3 py-2 border-b border-border/50 bg-muted/30">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Switch machine</span>
+                      </div>
+                      <div className="max-h-[280px] overflow-y-auto divide-y divide-border/30">
+                        {allPickerMachines.map((entry) => {
+                          const entryProfile = DEPRECIATION_PROFILES[entry.machineType]
+                          const isCurrent = selectedMachine.costMode === entry.costMode && selectedMachine.index === entry.index
+                          return (
+                            <button
+                              key={`${entry.costMode}-${entry.index}`}
+                              type="button"
+                              onClick={() => {
+                                if (!isCurrent) {
+                                  handleSelectMachine({ costMode: entry.costMode, index: entry.index })
+                                }
+                                setMachinePickerOpen(false)
+                              }}
+                              className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors cursor-pointer ${
+                                isCurrent
+                                  ? "bg-primary/8"
+                                  : "hover:bg-primary/5 active:bg-primary/10"
+                              }`}
+                            >
+                              <div className={`flex items-center justify-center w-9 h-9 rounded-lg shrink-0 ${
+                                isCurrent ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                              }`}>
+                                <MachineIcon type={entry.machineType} size={22} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className={`font-medium text-sm truncate ${isCurrent ? "text-primary" : ""}`}>{entry.name}</div>
+                                <div className="text-xs text-muted-foreground">{entryProfile?.label ?? entry.machineType}</div>
+                              </div>
+                              {isCurrent ? (
+                                <div className="shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                </div>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/40 shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })()}
