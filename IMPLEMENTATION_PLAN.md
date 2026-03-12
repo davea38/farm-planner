@@ -52,8 +52,7 @@ The app works; CI is red.
 
 - [x] Finding #12 — NAAC panel in contracting cards already filters by `service.chargeUnit`.
 
-- [ ] **Finding #13:** Allow capacity/rate unit in Compare Machines to be "L" for sprayers instead of hard-coded "kg".
-  *WHY: Sprayers measure in litres; showing "kg" is incorrect.*
+- [x] Finding #13 — Sprayer/spreader unit toggle added to Compare Machines; `unitType` stored on `WorkrateInputs`.
 
 - [x] Finding #16 — Save toast already mentions "Worth It?" overview tab.
 
