@@ -29,7 +29,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
           {/* Price cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-lg bg-card p-3 text-center shadow-sm border border-farm-green/30">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <div className="text-xs font-medium text-muted-foreground tracking-wide">
                 Red Diesel
               </div>
               <div className="text-lg font-bold mt-1">{redDiesel.current}p/L</div>
@@ -38,7 +38,7 @@ export function FuelPricePanel({ onApply }: FuelPricePanelProps) {
               </div>
             </div>
             <div className="rounded-lg bg-card p-3 text-center shadow-sm">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <div className="text-xs font-medium text-muted-foreground tracking-wide">
                 Pump Diesel
               </div>
               <div className="text-lg font-bold mt-1">{pumpDiesel.current}p/L</div>

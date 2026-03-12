@@ -196,7 +196,7 @@ export function ContractorRatesPanel({
                   style={{ width: "100%" }}
                 />
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-farm-green"
+                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-card border-2 border-farm-green"
                   style={{ left: `calc(${rangeIndicatorPct}% - 6px)` }}
                 />
               </div>

@@ -21,7 +21,7 @@ export function IncomeVsCostsBar({ incomeSegments, costSegments, netPosition }: 
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+      <p className="text-xs font-medium text-muted-foreground tracking-wide">
         Income vs Costs
       </p>
 

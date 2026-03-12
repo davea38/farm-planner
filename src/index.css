@@ -139,6 +139,6 @@ body {
   }
   html {
     @apply font-sans;
-    font-size: 18px;
+    font-size: 20px;
   }
 }

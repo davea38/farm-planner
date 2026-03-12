@@ -147,7 +147,7 @@ export function DepreciationPanel({
 
       {/* Summary card */}
       <div className="rounded-lg bg-card p-3 shadow-sm border border-border space-y-2">
-        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <div className="text-xs font-semibold text-muted-foreground tracking-wide">
           After {years} year{years !== 1 ? "s" : ""}
         </div>
         <div className="grid grid-cols-2 gap-2">

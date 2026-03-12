@@ -77,12 +77,12 @@ export function SaveLoadToolbar<T>({
 
       {/* Name + Machine type + Save row */}
       {nameDuplicate && (
-        <p className="text-xs text-red-500">A machine with this name already exists.</p>
+        <p className="text-xs text-destructive">A machine with this name already exists.</p>
       )}
       <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
         <div>
           <label htmlFor="machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
-            Name <span className="text-red-500">*</span>
+            Name <span className="text-destructive">*</span>
           </label>
           <Input
             id="machine-name-input"
@@ -95,7 +95,7 @@ export function SaveLoadToolbar<T>({
         </div>
         <div>
           <label htmlFor="machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
-            Machine type <span className="text-red-500">*</span>
+            Machine type <span className="text-destructive">*</span>
           </label>
           <select
             id="machine-type-select"

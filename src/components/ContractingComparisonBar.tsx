@@ -25,7 +25,7 @@ export function ContractingComparisonBar({
 
   return (
     <div className="space-y-4">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+      <p className="text-xs font-medium text-muted-foreground tracking-wide">
         Farm Only vs Farm + Contracting
       </p>
 

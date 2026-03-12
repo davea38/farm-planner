@@ -306,13 +306,13 @@ export function MachinesTab({
             </div>
             <div className="p-4 space-y-3">
               {newNameDuplicate && (
-                <p className="text-xs text-red-500">A machine with this name already exists.</p>
+                <p className="text-xs text-destructive">A machine with this name already exists.</p>
               )}
 
               <div className="grid grid-cols-[1fr_1fr] gap-3">
                 <div>
                   <label htmlFor="new-machine-name-input" className="text-xs font-medium text-muted-foreground block mb-1">
-                    Name <span className="text-red-500">*</span>
+                    Name <span className="text-destructive">*</span>
                   </label>
                   <Input
                     id="new-machine-name-input"
@@ -326,7 +326,7 @@ export function MachinesTab({
                 </div>
                 <div>
                   <label htmlFor="new-machine-type-select" className="text-xs font-medium text-muted-foreground block mb-1">
-                    Machine type <span className="text-red-500">*</span>
+                    Machine type <span className="text-destructive">*</span>
                   </label>
                   <select
                     id="new-machine-type-select"
@@ -458,7 +458,7 @@ export function MachinesTab({
                     <div className="px-4 pb-3 pt-1 bg-muted/20 border-t border-border/30">
                       <div className="space-y-2.5">
                         {editNameDuplicate && (
-                          <p className="text-xs text-red-500">A machine with this name already exists.</p>
+                          <p className="text-xs text-destructive">A machine with this name already exists.</p>
                         )}
                         <div className="grid grid-cols-[1fr_1fr] gap-2">
                           <div>
