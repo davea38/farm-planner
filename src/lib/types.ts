@@ -168,26 +168,8 @@ export interface ContractingIncomeState {
   services: ContractingService[];
 }
 
-// v5 AppState — retained until all consumers are migrated to v6
-export interface AppState {
-  version: number;
-  lastSaved: string;
-  costPerHectare: {
-    savedMachines: SavedMachine<CostPerHectareInputs>[];
-  };
-  costPerHour: {
-    savedMachines: SavedMachine<CostPerHourInputs>[];
-  };
-  compareMachines: {
-    machineA: WorkrateInputs;
-    machineB: WorkrateInputs;
-  };
-  replacementPlanner: ReplacementPlannerState;
-  contractingIncome: ContractingIncomeState;
-}
-
 // v6 AppState — unified machine data model (SPEC-13)
-export interface AppStateV6 {
+export interface AppState {
   version: number;
   lastSaved: string;
   savedMachines: MachineProfile[];

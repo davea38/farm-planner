@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect, useRef } from "react"
-import type { CostPerHectareInputs, CostPerHourInputs } from "@/lib/types"
-import { defaultCostPerHectare, defaultCostPerHour } from "@/lib/defaults"
+import { useState, useMemo } from "react"
+import type { CostPerHectareInputs, CostPerHourInputs, CostMode } from "@/lib/types"
 import { calcCostPerHectare, calcCostPerHour } from "@/lib/calculations"
 import { formatGBP } from "@/lib/format"
 import { useUnits } from "@/lib/UnitContext"
@@ -16,32 +15,30 @@ import { ContractorRatesPanel } from "./ContractorRatesPanel"
 import { CostDonutChart } from "./CostDonutChart"
 import { CostComparisonBar } from "./CostComparisonBar"
 
-export type CostMode = "hectare" | "hour"
+export type { CostMode }
 
 export function CostCalculator({
   mode,
   onModeChange,
-  initialHectareInputs,
-  initialHourInputs,
-  onHectareChange,
-  onHourChange,
+  hectareInputs,
+  hourInputs,
+  onHectareFieldChange,
+  onHourFieldChange,
 }: {
   mode: CostMode
   onModeChange: (mode: CostMode) => void
-  initialHectareInputs?: CostPerHectareInputs
-  initialHourInputs?: CostPerHourInputs
-  onHectareChange?: (inputs: CostPerHectareInputs) => void
-  onHourChange?: (inputs: CostPerHourInputs) => void
+  hectareInputs: CostPerHectareInputs
+  hourInputs: CostPerHourInputs
+  onHectareFieldChange: (field: keyof CostPerHectareInputs, value: number) => void
+  onHourFieldChange: (field: keyof CostPerHourInputs, value: number) => void
 }) {
-  const [haInputs, setHaInputs] = useState<CostPerHectareInputs>(initialHectareInputs ?? defaultCostPerHectare)
-  const [hrInputs, setHrInputs] = useState<CostPerHourInputs>(initialHourInputs ?? defaultCostPerHour)
   const [fieldSources, setFieldSources] = useState<Record<string, string>>({})
 
   const { units } = useUnits()
 
   // Hectare update helpers
   const updateHa = (field: keyof CostPerHectareInputs) => (value: number) => {
-    setHaInputs((prev) => ({ ...prev, [field]: value }))
+    onHectareFieldChange(field, value)
     setFieldSources((prev) => {
       if (!prev[field]) return prev
       const next = { ...prev }
@@ -51,13 +48,13 @@ export function CostCalculator({
   }
 
   const applyHaFromSource = (field: keyof CostPerHectareInputs, source: string) => (value: number) => {
-    setHaInputs((prev) => ({ ...prev, [field]: value }))
+    onHectareFieldChange(field, value)
     setFieldSources((prev) => ({ ...prev, [field]: source }))
   }
 
   // Hour update helpers
   const updateHr = (field: keyof CostPerHourInputs) => (value: number) => {
-    setHrInputs((prev) => ({ ...prev, [field]: value }))
+    onHourFieldChange(field, value)
     setFieldSources((prev) => {
       if (!prev[field]) return prev
       const next = { ...prev }
@@ -67,36 +64,14 @@ export function CostCalculator({
   }
 
   const applyHrFromSource = (field: keyof CostPerHourInputs, source: string) => (value: number) => {
-    setHrInputs((prev) => ({ ...prev, [field]: value }))
+    onHourFieldChange(field, value)
     setFieldSources((prev) => ({ ...prev, [field]: source }))
   }
 
-  // Propagate changes to parent — use ref comparison to skip the initial
-  // mount (including React 19 StrictMode's double-invocation of effects)
-  const onHectareChangeRef = useRef(onHectareChange)
-  onHectareChangeRef.current = onHectareChange
-  const prevHaInputs = useRef(haInputs)
-
-  useEffect(() => {
-    if (prevHaInputs.current === haInputs) return
-    prevHaInputs.current = haInputs
-    onHectareChangeRef.current?.(haInputs)
-  }, [haInputs])
-
-  const onHourChangeRef = useRef(onHourChange)
-  onHourChangeRef.current = onHourChange
-  const prevHrInputs = useRef(hrInputs)
-
-  useEffect(() => {
-    if (prevHrInputs.current === hrInputs) return
-    prevHrInputs.current = hrInputs
-    onHourChangeRef.current?.(hrInputs)
-  }, [hrInputs])
-
-  // Current mode inputs/results
-  const inputs = mode === "hectare" ? haInputs : hrInputs
-  const haResults = useMemo(() => calcCostPerHectare(haInputs), [haInputs])
-  const hrResults = useMemo(() => calcCostPerHour(hrInputs), [hrInputs])
+  // Current mode inputs/results — computed directly from props
+  const inputs = mode === "hectare" ? hectareInputs : hourInputs
+  const haResults = useMemo(() => calcCostPerHectare(hectareInputs), [hectareInputs])
+  const hrResults = useMemo(() => calcCostPerHour(hourInputs), [hourInputs])
 
   // Shared update helpers that delegate to the right mode
   const update = mode === "hectare"
@@ -128,15 +103,15 @@ export function CostCalculator({
     totalCostPerUnit = r.totalCostPerHa
     fixedCostPerUnit = r.fixedCostPerHa
     runningCostPerUnit = r.labourPerHa + r.fuelPerHa + r.repairsPerHa
-    contractorTotalCost = haInputs.contractorCharge * haInputs.hectaresPerYear
-    fuelAnnual = r.fuelPerHa * haInputs.hectaresPerYear
-    labourAnnual = r.labourPerHa * haInputs.hectaresPerYear
-    repairsAnnual = r.repairsPerHa * haInputs.hectaresPerYear
+    contractorTotalCost = hectareInputs.contractorCharge * hectareInputs.hectaresPerYear
+    fuelAnnual = r.fuelPerHa * hectareInputs.hectaresPerYear
+    labourAnnual = r.labourPerHa * hectareInputs.hectaresPerYear
+    repairsAnnual = r.repairsPerHa * hectareInputs.hectaresPerYear
     totalAnnualCost = r.totalAnnualCost
     annualSaving = r.annualSaving
-    contractorCharge = haInputs.contractorCharge
+    contractorCharge = hectareInputs.contractorCharge
     unitLabel = areaUnit
-    perUnitDiff = toDisplay(Math.abs(r.totalCostPerHa - haInputs.contractorCharge), "£/ha", units)
+    perUnitDiff = toDisplay(Math.abs(r.totalCostPerHa - hectareInputs.contractorCharge), "£/ha", units)
     annualDepreciation = r.annualDepreciation
     annualInterest = r.annualInterest
     annualInsurance = r.annualInsurance
@@ -146,15 +121,15 @@ export function CostCalculator({
     totalCostPerUnit = r.totalCostPerHr
     fixedCostPerUnit = r.fixedCostPerHr
     runningCostPerUnit = r.labourPerHr + r.fuelPerHr + r.repairsPerHr
-    contractorTotalCost = hrInputs.contractorCharge * hrInputs.hoursPerYear
-    fuelAnnual = r.fuelPerHr * hrInputs.hoursPerYear
-    labourAnnual = r.labourPerHr * hrInputs.hoursPerYear
-    repairsAnnual = r.repairsPerHr * hrInputs.hoursPerYear
+    contractorTotalCost = hourInputs.contractorCharge * hourInputs.hoursPerYear
+    fuelAnnual = r.fuelPerHr * hourInputs.hoursPerYear
+    labourAnnual = r.labourPerHr * hourInputs.hoursPerYear
+    repairsAnnual = r.repairsPerHr * hourInputs.hoursPerYear
     totalAnnualCost = r.totalAnnualCost
     annualSaving = r.annualSaving
-    contractorCharge = hrInputs.contractorCharge
+    contractorCharge = hourInputs.contractorCharge
     unitLabel = "hr"
-    perUnitDiff = Math.abs(r.totalCostPerHr - hrInputs.contractorCharge)
+    perUnitDiff = Math.abs(r.totalCostPerHr - hourInputs.contractorCharge)
     annualDepreciation = r.annualDepreciation
     annualInterest = r.annualInterest
     annualInsurance = r.annualInsurance
@@ -164,12 +139,12 @@ export function CostCalculator({
   // Zero warnings
   const zeroWarnings: string[] = []
   if (mode === "hectare") {
-    if (haInputs.hectaresPerYear <= 0) zeroWarnings.push(units.area === "acres" ? "acres worked per year" : "hectares worked per year")
-    if (haInputs.workRate <= 0) zeroWarnings.push("work rate")
-    if (haInputs.yearsOwned <= 0) zeroWarnings.push("years owned")
+    if (hectareInputs.hectaresPerYear <= 0) zeroWarnings.push(units.area === "acres" ? "acres worked per year" : "hectares worked per year")
+    if (hectareInputs.workRate <= 0) zeroWarnings.push("work rate")
+    if (hectareInputs.yearsOwned <= 0) zeroWarnings.push("years owned")
   } else {
-    if (hrInputs.hoursPerYear <= 0) zeroWarnings.push("hours worked per year")
-    if (hrInputs.yearsOwned <= 0) zeroWarnings.push("years owned")
+    if (hourInputs.hoursPerYear <= 0) zeroWarnings.push("hours worked per year")
+    if (hourInputs.yearsOwned <= 0) zeroWarnings.push("years owned")
   }
   const hasZeroWarning = zeroWarnings.length > 0
 
@@ -231,7 +206,7 @@ export function CostCalculator({
             {mode === "hectare" ? (
               <InputField
                 label={`${areaUnit === "acres" ? "Acres" : "Hectares"} worked/year`}
-                value={haInputs.hectaresPerYear}
+                value={hectareInputs.hectaresPerYear}
                 onChange={updateHa("hectaresPerYear")}
                 metricUnit="ha"
                 tooltip="Total hectares this machine covers in a year"
@@ -240,7 +215,7 @@ export function CostCalculator({
             ) : (
               <InputField
                 label="Hours worked/year"
-                value={hrInputs.hoursPerYear}
+                value={hourInputs.hoursPerYear}
                 onChange={updateHr("hoursPerYear")}
                 unit="hrs"
                 tooltip="Total hours this machine runs in a year"
@@ -266,7 +241,7 @@ export function CostCalculator({
               <>
                 <InputField
                   label="Coverage speed"
-                  value={haInputs.workRate}
+                  value={hectareInputs.workRate}
                   onChange={updateHa("workRate")}
                   metricUnit="ha/hr"
                   tooltip="How many hectares (or acres) this machine covers per hour of field work"
@@ -274,7 +249,7 @@ export function CostCalculator({
                 />
                 <InputField
                   label="Labour cost"
-                  value={haInputs.labourCost}
+                  value={hectareInputs.labourCost}
                   onChange={updateHa("labourCost")}
                   unit="£/hr"
                   tooltip="What you pay the operator per hour (including yourself)"
@@ -282,7 +257,7 @@ export function CostCalculator({
                 />
                 <InputField
                   label="Fuel price"
-                  value={haInputs.fuelPrice}
+                  value={hectareInputs.fuelPrice}
                   onChange={updateHa("fuelPrice")}
                   unit="p/litre"
                   tooltip="Current red diesel price in pence per litre"
@@ -292,7 +267,7 @@ export function CostCalculator({
                 <FuelPricePanel onApply={applyHaFromSource("fuelPrice", "AHDB fuel price")} />
                 <InputField
                   label="Fuel use"
-                  value={haInputs.fuelUse}
+                  value={hectareInputs.fuelUse}
                   onChange={updateHa("fuelUse")}
                   metricUnit="L/ha"
                   tooltip="Litres of fuel burned per hectare"
@@ -302,11 +277,11 @@ export function CostCalculator({
                 <FuelConsumptionPanel
                   onApply={applyHaFromSource("fuelUse", "Fuel estimate")}
                   mode="perHectare"
-                  workRate={haInputs.workRate}
+                  workRate={hectareInputs.workRate}
                 />
                 <InputField
                   label="Spares & repairs"
-                  value={haInputs.repairsPct}
+                  value={hectareInputs.repairsPct}
                   onChange={updateHa("repairsPct")}
                   unit="%"
                   tooltip="Annual repair bill as a percentage of what you paid"
@@ -321,7 +296,7 @@ export function CostCalculator({
               <>
                 <InputField
                   label="Fuel consumption"
-                  value={hrInputs.fuelConsumptionPerHr}
+                  value={hourInputs.fuelConsumptionPerHr}
                   onChange={updateHr("fuelConsumptionPerHr")}
                   unit="L/hr"
                   tooltip="Litres of fuel burned per hour of work"
@@ -334,7 +309,7 @@ export function CostCalculator({
                 />
                 <InputField
                   label="Fuel price"
-                  value={hrInputs.fuelPrice}
+                  value={hourInputs.fuelPrice}
                   onChange={updateHr("fuelPrice")}
                   unit="p/litre"
                   tooltip="Current red diesel price in pence per litre"
@@ -344,7 +319,7 @@ export function CostCalculator({
                 <FuelPricePanel onApply={applyHrFromSource("fuelPrice", "AHDB fuel price")} />
                 <InputField
                   label="Spares & repairs"
-                  value={hrInputs.repairsPct}
+                  value={hourInputs.repairsPct}
                   onChange={updateHr("repairsPct")}
                   unit="%"
                   tooltip="Annual repair bill as a percentage of what you paid"
@@ -356,7 +331,7 @@ export function CostCalculator({
                 </div>
                 <InputField
                   label="Labour cost"
-                  value={hrInputs.labourCost}
+                  value={hourInputs.labourCost}
                   onChange={updateHr("labourCost")}
                   unit="£/hr"
                   tooltip="Operator cost per hour (including yourself)"
@@ -416,7 +391,7 @@ export function CostCalculator({
               <>
                 <InputField
                   label="Contractor charges"
-                  value={haInputs.contractorCharge}
+                  value={hectareInputs.contractorCharge}
                   onChange={updateHa("contractorCharge")}
                   metricUnit="£/ha"
                   tooltip="What a contractor would charge you per hectare for the same job"
@@ -425,7 +400,7 @@ export function CostCalculator({
                 />
                 <ContractorRatesPanel
                   onApply={applyHaFromSource("contractorCharge", "NAAC rate")}
-                  currentRate={haInputs.contractorCharge}
+                  currentRate={hectareInputs.contractorCharge}
                   unitFilter="ha"
                 />
               </>
@@ -433,7 +408,7 @@ export function CostCalculator({
               <>
                 <InputField
                   label="Contractor charges"
-                  value={hrInputs.contractorCharge}
+                  value={hourInputs.contractorCharge}
                   onChange={updateHr("contractorCharge")}
                   unit="£/hr"
                   tooltip="What a contractor would charge you per hour for the same job"
@@ -442,7 +417,7 @@ export function CostCalculator({
                 />
                 <ContractorRatesPanel
                   onApply={applyHrFromSource("contractorCharge", "NAAC rate")}
-                  currentRate={hrInputs.contractorCharge}
+                  currentRate={hourInputs.contractorCharge}
                   unitFilter="hr"
                   defaultCategory="Tractor Hire"
                 />

@@ -2,36 +2,33 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen, fireEvent, within, act } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MachinesTab, MachineIcon } from "@/components/MachinesTab"
-import type { DepreciationCategory, SavedMachine, CostPerHectareInputs, CostPerHourInputs } from "@/lib/types"
+import type { DepreciationCategory, MachineProfile } from "@/lib/types"
+import { defaultCostPerHectare, defaultCostPerHour, defaultMachineA, defaultMachineB } from "@/lib/defaults"
 
 /* ------------------------------------------------------------------ */
 /*  Helper factories                                                   */
 /* ------------------------------------------------------------------ */
 
-function makeProps(overrides: Partial<Parameters<typeof MachinesTab>[0]> = {}) {
+type MachinesTabProps = Parameters<typeof MachinesTab>[0]
+
+function makeProps(overrides: Partial<MachinesTabProps> = {}): MachinesTabProps {
   return {
-    hectareMachines: [] as SavedMachine<CostPerHectareInputs>[],
-    hourMachines: [] as SavedMachine<CostPerHourInputs>[],
-    selectedMachine: null,
+    machines: [],
+    selectedMachineIndex: null,
     onSelectMachine: vi.fn(),
-    onSaveHectareMachine: vi.fn(),
-    onSaveHourMachine: vi.fn(),
-    onDeleteHectareMachine: vi.fn(),
-    onDeleteHourMachine: vi.fn(),
+    onSaveMachine: vi.fn(),
+    onDeleteMachine: vi.fn(),
     ...overrides,
   }
 }
 
-const hectareMachine = (name: string, type: DepreciationCategory = "tractors_large"): SavedMachine<CostPerHectareInputs> => ({
+const makeMachine = (name: string, type: DepreciationCategory = "tractors_large", costMode: "hectare" | "hour" = "hectare"): MachineProfile => ({
   name,
   machineType: type,
-  inputs: { purchasePrice: 100000 } as any,
-})
-
-const hourMachine = (name: string, type: DepreciationCategory = "sprayers"): SavedMachine<CostPerHourInputs> => ({
-  name,
-  machineType: type,
-  inputs: { purchasePrice: 50000 } as any,
+  costMode,
+  costPerHectare: { ...defaultCostPerHectare },
+  costPerHour: { ...defaultCostPerHour },
+  compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
 })
 
 /* ------------------------------------------------------------------ */
@@ -81,7 +78,7 @@ describe("MachinesTab", () => {
   describe("machine list rendering", () => {
     it("shows machine names in the list", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("John Deere 6150R"), hectareMachine("Case IH Puma")],
+        machines: [makeMachine("John Deere 6150R"), makeMachine("Case IH Puma")],
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByText("John Deere 6150R")).toBeInTheDocument()
@@ -90,7 +87,7 @@ describe("MachinesTab", () => {
 
     it("shows machine type labels", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("My Tractor", "tractors_small")],
+        machines: [makeMachine("My Tractor", "tractors_small")],
       })
       render(<MachinesTab {...props} />)
       // The profile label for tractors_small is "Tractors (80–149 HP)"
@@ -99,7 +96,7 @@ describe("MachinesTab", () => {
 
     it("does not show empty state when machines exist", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       expect(screen.queryByText("No machines yet")).not.toBeInTheDocument()
@@ -111,8 +108,7 @@ describe("MachinesTab", () => {
   describe("machine count badge", () => {
     it("shows count of all machines", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("A"), hectareMachine("B")],
-        hourMachines: [hourMachine("C")],
+        machines: [makeMachine("A"), makeMachine("B"), makeMachine("C", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByText("3")).toBeInTheDocument()
@@ -120,7 +116,7 @@ describe("MachinesTab", () => {
 
     it("shows correct count with only hour machines", () => {
       const props = makeProps({
-        hourMachines: [hourMachine("X"), hourMachine("Y")],
+        machines: [makeMachine("X", "sprayers", "hour"), makeMachine("Y", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByText("2")).toBeInTheDocument()
@@ -130,34 +126,34 @@ describe("MachinesTab", () => {
   /* ---- Selection ---- */
 
   describe("selection", () => {
-    it("clicking a machine calls onSelectMachine with correct costMode and index for hectare machine", async () => {
+    it("clicking a machine calls onSelectMachine with correct index", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A"), hectareMachine("Tractor B")],
+        machines: [makeMachine("Tractor A"), makeMachine("Tractor B")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText("Tractor B"))
-      expect(props.onSelectMachine).toHaveBeenCalledWith({ costMode: "hectare", index: 1 })
+      expect(props.onSelectMachine).toHaveBeenCalledWith(1)
     })
 
-    it("clicking a machine calls onSelectMachine with correct costMode for hour machine", async () => {
+    it("clicking a machine calls onSelectMachine with correct index for second machine", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hourMachines: [hourMachine("Sprayer X")],
+        machines: [makeMachine("Sprayer X", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText("Sprayer X"))
-      expect(props.onSelectMachine).toHaveBeenCalledWith({ costMode: "hour", index: 0 })
+      expect(props.onSelectMachine).toHaveBeenCalledWith(0)
     })
 
     it("clicking the radio button also selects the machine", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Select this machine"))
-      expect(props.onSelectMachine).toHaveBeenCalledWith({ costMode: "hectare", index: 0 })
+      expect(props.onSelectMachine).toHaveBeenCalledWith(0)
     })
   })
 
@@ -166,8 +162,8 @@ describe("MachinesTab", () => {
   describe("selected state", () => {
     it("shows 'Selected' title on the radio button of the selected machine", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A"), hectareMachine("Tractor B")],
-        selectedMachine: { costMode: "hectare" as const, index: 0 },
+        machines: [makeMachine("Tractor A"), makeMachine("Tractor B")],
+        selectedMachineIndex: 0,
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByTitle("Selected")).toBeInTheDocument()
@@ -176,8 +172,8 @@ describe("MachinesTab", () => {
 
     it("applies selected styling (bg-primary/6) to selected machine", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
-        selectedMachine: { costMode: "hectare" as const, index: 0 },
+        machines: [makeMachine("Tractor A")],
+        selectedMachineIndex: 0,
       })
       const { container } = render(<MachinesTab {...props} />)
       const selectedRow = container.querySelector(".bg-primary\\/6")
@@ -190,8 +186,8 @@ describe("MachinesTab", () => {
   describe("guidance banner", () => {
     it("shows 'Select a machine' banner when machines exist but none selected", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
-        selectedMachine: null,
+        machines: [makeMachine("Tractor A")],
+        selectedMachineIndex: null,
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByText("Select a machine")).toBeInTheDocument()
@@ -199,8 +195,8 @@ describe("MachinesTab", () => {
 
     it("does not show banner when a machine is selected", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
-        selectedMachine: { costMode: "hectare" as const, index: 0 },
+        machines: [makeMachine("Tractor A")],
+        selectedMachineIndex: 0,
       })
       render(<MachinesTab {...props} />)
       expect(screen.queryByText("Select a machine")).not.toBeInTheDocument()
@@ -218,7 +214,7 @@ describe("MachinesTab", () => {
     it("clicking 'Add New Machine' opens the form", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Existing")],
+        machines: [makeMachine("Existing")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText(/Add New Machine/))
@@ -249,7 +245,7 @@ describe("MachinesTab", () => {
       expect(screen.getByRole("button", { name: /Save Machine/ })).toBeDisabled()
     })
 
-    it("saving calls onSaveHectareMachine with name, type, null", async () => {
+    it("saving calls onSaveMachine with name, type, null", async () => {
       const user = userEvent.setup()
       const props = makeProps()
       render(<MachinesTab {...props} />)
@@ -257,21 +253,21 @@ describe("MachinesTab", () => {
       await user.type(screen.getByPlaceholderText(/John Deere/), "New Tractor")
       await user.selectOptions(screen.getByRole("combobox"), "tractors_large")
       await user.click(screen.getByRole("button", { name: /Save Machine/ }))
-      expect(props.onSaveHectareMachine).toHaveBeenCalledWith("New Tractor", "tractors_large", null)
+      expect(props.onSaveMachine).toHaveBeenCalledWith("New Tractor", "tractors_large", null)
     })
 
     it("saving also calls onSelectMachine to auto-select the new machine", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Existing")],
+        machines: [makeMachine("Existing")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText(/Add New Machine/))
       await user.type(screen.getByPlaceholderText(/John Deere/), "New Tractor")
       await user.selectOptions(screen.getByRole("combobox"), "tractors_large")
       await user.click(screen.getByRole("button", { name: /Save Machine/ }))
-      // hectareMachines.length is 1 so new index should be 1
-      expect(props.onSelectMachine).toHaveBeenCalledWith({ costMode: "hectare", index: 1 })
+      // machines.length is 1 so new index should be 1
+      expect(props.onSelectMachine).toHaveBeenCalledWith(1)
     })
 
     it("shows a toast after save", async () => {
@@ -300,7 +296,7 @@ describe("MachinesTab", () => {
     it("duplicate name shows error message", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Existing Tractor")],
+        machines: [makeMachine("Existing Tractor")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText(/Add New Machine/))
@@ -311,7 +307,7 @@ describe("MachinesTab", () => {
     it("duplicate name (case-insensitive) shows error and disables save", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("My Tractor")],
+        machines: [makeMachine("My Tractor")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText(/Add New Machine/))
@@ -323,7 +319,7 @@ describe("MachinesTab", () => {
     it("does not call save when name is duplicate", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Existing")],
+        machines: [makeMachine("Existing")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText(/Add New Machine/))
@@ -331,7 +327,7 @@ describe("MachinesTab", () => {
       await user.selectOptions(screen.getByRole("combobox"), "tractors_large")
       // Button is disabled, clicking it does nothing
       fireEvent.click(screen.getByRole("button", { name: /Save Machine/ }))
-      expect(props.onSaveHectareMachine).not.toHaveBeenCalled()
+      expect(props.onSaveMachine).not.toHaveBeenCalled()
     })
   })
 
@@ -341,7 +337,7 @@ describe("MachinesTab", () => {
     it("clicking edit button shows edit form with current name and type", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A", "tractors_small")],
+        machines: [makeMachine("Tractor A", "tractors_small")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Edit name & type"))
@@ -352,10 +348,10 @@ describe("MachinesTab", () => {
       expect(typeSelect).toBeInTheDocument()
     })
 
-    it("saving edit calls onSaveHectareMachine for hectare machines", async () => {
+    it("saving edit calls onSaveMachine for machines", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A", "tractors_small")],
+        machines: [makeMachine("Tractor A", "tractors_small")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Edit name & type"))
@@ -363,13 +359,13 @@ describe("MachinesTab", () => {
       await user.clear(nameInput)
       await user.type(nameInput, "Tractor B")
       await user.click(screen.getByRole("button", { name: /Save/ }))
-      expect(props.onSaveHectareMachine).toHaveBeenCalledWith("Tractor B", "tractors_small", 0)
+      expect(props.onSaveMachine).toHaveBeenCalledWith("Tractor B", "tractors_small", 0)
     })
 
-    it("saving edit calls onSaveHourMachine for hour machines", async () => {
+    it("saving edit calls onSaveMachine for hour machines too", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hourMachines: [hourMachine("Sprayer X", "sprayers")],
+        machines: [makeMachine("Sprayer X", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Edit name & type"))
@@ -377,13 +373,13 @@ describe("MachinesTab", () => {
       await user.clear(nameInput)
       await user.type(nameInput, "Sprayer Y")
       await user.click(screen.getByRole("button", { name: /Save/ }))
-      expect(props.onSaveHourMachine).toHaveBeenCalledWith("Sprayer Y", "sprayers", 0)
+      expect(props.onSaveMachine).toHaveBeenCalledWith("Sprayer Y", "sprayers", 0)
     })
 
     it("cancel button closes the edit form", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Edit name & type"))
@@ -395,7 +391,7 @@ describe("MachinesTab", () => {
     it("clicking edit button again toggles off the edit form", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       const editBtn = screen.getByTitle("Edit name & type")
@@ -408,7 +404,7 @@ describe("MachinesTab", () => {
     it("duplicate name of another machine shows error in edit form", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A"), hectareMachine("Tractor B")],
+        machines: [makeMachine("Tractor A"), makeMachine("Tractor B")],
       })
       render(<MachinesTab {...props} />)
       // Edit the first machine
@@ -423,7 +419,7 @@ describe("MachinesTab", () => {
     it("using own name in edit does not show duplicate error", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A"), hectareMachine("Tractor B")],
+        machines: [makeMachine("Tractor A"), makeMachine("Tractor B")],
       })
       render(<MachinesTab {...props} />)
       const editButtons = screen.getAllByTitle("Edit name & type")
@@ -435,7 +431,7 @@ describe("MachinesTab", () => {
     it("edit save is disabled when name is empty", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Edit name & type"))
@@ -447,7 +443,7 @@ describe("MachinesTab", () => {
     it("shows toast after saving edit", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A", "tractors_small")],
+        machines: [makeMachine("Tractor A", "tractors_small")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Edit name & type"))
@@ -462,7 +458,7 @@ describe("MachinesTab", () => {
     it("clicking delete shows confirmation modal", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Delete"))
@@ -470,10 +466,10 @@ describe("MachinesTab", () => {
       expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument()
     })
 
-    it("confirming delete calls onDeleteHectareMachine", async () => {
+    it("confirming delete calls onDeleteMachine", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A"), hectareMachine("Tractor B")],
+        machines: [makeMachine("Tractor A"), makeMachine("Tractor B")],
       })
       render(<MachinesTab {...props} />)
       const deleteButtons = screen.getAllByTitle("Delete")
@@ -481,25 +477,25 @@ describe("MachinesTab", () => {
       // Click the "Delete" button in the modal
       const modal = screen.getByText(/permanently remove/).closest("div")!.parentElement!
       await user.click(within(modal).getByRole("button", { name: "Delete" }))
-      expect(props.onDeleteHectareMachine).toHaveBeenCalledWith(1)
+      expect(props.onDeleteMachine).toHaveBeenCalledWith(1)
     })
 
-    it("confirming delete calls onDeleteHourMachine for hour machines", async () => {
+    it("confirming delete calls onDeleteMachine for hour machines", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hourMachines: [hourMachine("Sprayer X")],
+        machines: [makeMachine("Sprayer X", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Delete"))
       const modal = screen.getByText(/permanently remove/).closest("div")!.parentElement!
       await user.click(within(modal).getByRole("button", { name: "Delete" }))
-      expect(props.onDeleteHourMachine).toHaveBeenCalledWith(0)
+      expect(props.onDeleteMachine).toHaveBeenCalledWith(0)
     })
 
     it("cancel closes the modal", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Delete"))
@@ -512,7 +508,7 @@ describe("MachinesTab", () => {
     it("clicking overlay closes the modal", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Delete"))
@@ -526,36 +522,36 @@ describe("MachinesTab", () => {
     it("deleting the selected machine also calls onSelectMachine(null)", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
-        selectedMachine: { costMode: "hectare" as const, index: 0 },
+        machines: [makeMachine("Tractor A")],
+        selectedMachineIndex: 0,
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Delete"))
       const modal = screen.getByText(/permanently remove/).closest("div")!.parentElement!
       await user.click(within(modal).getByRole("button", { name: "Delete" }))
-      expect(props.onDeleteHectareMachine).toHaveBeenCalledWith(0)
+      expect(props.onDeleteMachine).toHaveBeenCalledWith(0)
       expect(props.onSelectMachine).toHaveBeenCalledWith(null)
     })
 
     it("deleting a non-selected machine does not call onSelectMachine(null)", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A"), hectareMachine("Tractor B")],
-        selectedMachine: { costMode: "hectare" as const, index: 0 },
+        machines: [makeMachine("Tractor A"), makeMachine("Tractor B")],
+        selectedMachineIndex: 0,
       })
       render(<MachinesTab {...props} />)
       const deleteButtons = screen.getAllByTitle("Delete")
       await user.click(deleteButtons[1]) // delete Tractor B (index 1)
       const modal = screen.getByText(/permanently remove/).closest("div")!.parentElement!
       await user.click(within(modal).getByRole("button", { name: "Delete" }))
-      expect(props.onDeleteHectareMachine).toHaveBeenCalledWith(1)
+      expect(props.onDeleteMachine).toHaveBeenCalledWith(1)
       expect(props.onSelectMachine).not.toHaveBeenCalledWith(null)
     })
 
     it("shows a toast after deleting", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByTitle("Delete"))
@@ -567,7 +563,7 @@ describe("MachinesTab", () => {
     it("deleting a machine being edited also cancels the edit", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor A")],
+        machines: [makeMachine("Tractor A")],
       })
       render(<MachinesTab {...props} />)
       // Start editing
@@ -578,7 +574,7 @@ describe("MachinesTab", () => {
       const modal = screen.getByText(/permanently remove/).closest("div")!.parentElement!
       await user.click(within(modal).getByRole("button", { name: "Delete" }))
       // Edit form should be closed (though the machine list entry will also be removed by parent)
-      expect(props.onDeleteHectareMachine).toHaveBeenCalledWith(0)
+      expect(props.onDeleteMachine).toHaveBeenCalledWith(0)
     })
   })
 
@@ -657,7 +653,7 @@ describe("MachinesTab", () => {
   describe("hour machines", () => {
     it("hour-mode machines appear in the list", () => {
       const props = makeProps({
-        hourMachines: [hourMachine("Hour Sprayer", "sprayers")],
+        machines: [makeMachine("Hour Sprayer", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByText("Hour Sprayer")).toBeInTheDocument()
@@ -665,23 +661,21 @@ describe("MachinesTab", () => {
 
     it("mixed hectare and hour machines all appear", () => {
       const props = makeProps({
-        hectareMachines: [hectareMachine("Hectare Tractor")],
-        hourMachines: [hourMachine("Hour Sprayer")],
+        machines: [makeMachine("Hectare Tractor"), makeMachine("Hour Sprayer", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       expect(screen.getByText("Hectare Tractor")).toBeInTheDocument()
       expect(screen.getByText("Hour Sprayer")).toBeInTheDocument()
     })
 
-    it("selecting an hour machine passes costMode 'hour'", async () => {
+    it("selecting an hour machine passes correct index", async () => {
       const user = userEvent.setup()
       const props = makeProps({
-        hectareMachines: [hectareMachine("Tractor")],
-        hourMachines: [hourMachine("Sprayer")],
+        machines: [makeMachine("Tractor"), makeMachine("Sprayer", "sprayers", "hour")],
       })
       render(<MachinesTab {...props} />)
       await user.click(screen.getByText("Sprayer"))
-      expect(props.onSelectMachine).toHaveBeenCalledWith({ costMode: "hour", index: 0 })
+      expect(props.onSelectMachine).toHaveBeenCalledWith(1)
     })
   })
 

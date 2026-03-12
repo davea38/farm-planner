@@ -1,8 +1,26 @@
 import { describe, it, expect, vi } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { ContractingIncomePlanner } from "@/components/ContractingIncomePlanner"
+import { defaultCostPerHectare, defaultCostPerHour, defaultMachineA, defaultMachineB } from "@/lib/defaults"
+import type { MachineProfile } from "@/lib/types"
 
 const emptyState = { services: [] }
+
+function makeMachineProfile(
+  name: string,
+  costMode: "hectare" | "hour",
+  overrides?: Partial<MachineProfile>,
+): MachineProfile {
+  return {
+    name,
+    machineType: "tractors_large",
+    costMode,
+    costPerHectare: { ...defaultCostPerHectare },
+    costPerHour: { ...defaultCostPerHour },
+    compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
+    ...overrides,
+  }
+}
 
 describe("ContractingIncomePlanner", () => {
   it("renders tab title", () => {
@@ -10,8 +28,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={emptyState}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(screen.getByText(/Will contracting pay/i)).toBeInTheDocument()
@@ -22,8 +39,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={emptyState}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(
@@ -37,8 +53,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={emptyState}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     fireEvent.click(screen.getByRole("button", { name: /add.*service/i }))
@@ -66,8 +81,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(screen.getAllByText(/gross income/i).length).toBeGreaterThan(0)
@@ -89,8 +103,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [profitableService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     // 24.6% margin = green banner
@@ -114,8 +127,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [lossService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(container.querySelector('[data-banner="red"]')).toBeInTheDocument()
@@ -148,8 +160,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(screen.getByText(/overall contracting summary/i)).toBeInTheDocument()
@@ -157,11 +168,9 @@ describe("ContractingIncomePlanner", () => {
   })
 
   it('shows "Pull from saved machine" dropdown with machines from both tabs', () => {
-    const hectareMachines = [
-      {
-        name: "6m Drill",
-        machineType: "tractors_large" as const,
-        inputs: {
+    const machines: MachineProfile[] = [
+      makeMachineProfile("6m Drill", "hectare", {
+        costPerHectare: {
           purchasePrice: 126000,
           yearsOwned: 8,
           salePrice: 34000,
@@ -176,13 +185,9 @@ describe("ContractingIncomePlanner", () => {
           repairsPct: 2,
           contractorCharge: 76,
         },
-      },
-    ]
-    const hourMachines = [
-      {
-        name: "Telehandler",
-        machineType: "tractors_large" as const,
-        inputs: {
+      }),
+      makeMachineProfile("Telehandler", "hour", {
+        costPerHour: {
           purchasePrice: 92751,
           yearsOwned: 7,
           salePrice: 40000,
@@ -190,14 +195,13 @@ describe("ContractingIncomePlanner", () => {
           interestRate: 2,
           insuranceRate: 2,
           storageRate: 1,
-
           fuelConsumptionPerHr: 14,
           fuelPrice: 60,
           repairsPct: 1,
           labourCost: 14,
           contractorCharge: 45,
         },
-      },
+      }),
     ]
     const service = {
       id: "test-1",
@@ -213,8 +217,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={vi.fn()}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={hourMachines}
+        savedMachines={machines}
       />,
     )
     expect(screen.getByText(/pull from saved machine/i)).toBeInTheDocument()
@@ -238,8 +241,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     fireEvent.click(screen.getByRole("button", { name: /delete/i }))
@@ -261,8 +263,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     // Expand the NAAC panel collapsible
@@ -289,8 +290,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(screen.getByText(/overall contracting summary/i)).toBeInTheDocument()
@@ -298,11 +298,9 @@ describe("ContractingIncomePlanner", () => {
 
   /* ───────────────────── additional coverage tests ───────────────────── */
 
-  const hectareMachines = [
-    {
-      name: "6m Drill",
-      machineType: "tractors_large" as const,
-      inputs: {
+  const hectareMachines: MachineProfile[] = [
+    makeMachineProfile("6m Drill", "hectare", {
+      costPerHectare: {
         purchasePrice: 126000,
         yearsOwned: 8,
         salePrice: 34000,
@@ -317,14 +315,12 @@ describe("ContractingIncomePlanner", () => {
         repairsPct: 2,
         contractorCharge: 76,
       },
-    },
+    }),
   ]
 
-  const hourMachines = [
-    {
-      name: "Telehandler",
-      machineType: "tractors_large" as const,
-      inputs: {
+  const hourMachines: MachineProfile[] = [
+    makeMachineProfile("Telehandler", "hour", {
+      costPerHour: {
         purchasePrice: 92751,
         yearsOwned: 7,
         salePrice: 40000,
@@ -338,7 +334,7 @@ describe("ContractingIncomePlanner", () => {
         labourCost: 14,
         contractorCharge: 45,
       },
-    },
+    }),
   ]
 
   const baseService = {
@@ -358,8 +354,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const nameInput = screen.getByDisplayValue("Combining")
@@ -377,8 +372,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const rateInput = screen.getByDisplayValue("100")
@@ -396,8 +390,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     // The charge-unit select is the one whose current value is "ha" and has
@@ -419,8 +412,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const volumeInput = screen.getByDisplayValue("400")
@@ -438,8 +430,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const costInput = screen.getByDisplayValue("60")
@@ -457,8 +448,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const addCostsInput = screen.getByDisplayValue("500")
@@ -477,19 +467,18 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={onChange}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={[]}
+        savedMachines={hectareMachines}
       />,
     )
     const machineSelect = container.querySelectorAll("select")[0]
-    fireEvent.change(machineSelect, { target: { value: "hectare:0" } })
+    fireEvent.change(machineSelect, { target: { value: "0" } })
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         services: [
           expect.objectContaining({
             ownCostPerUnit: 30.27,
             chargeUnit: "ha",
-            linkedMachineSource: "hectare:0",
+            linkedMachineSource: "0",
           }),
         ],
       }),
@@ -503,19 +492,18 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={onChange}
-        savedHectareMachines={[]}
-        savedHourMachines={hourMachines}
+        savedMachines={hourMachines}
       />,
     )
     const machineSelect = container.querySelectorAll("select")[0]
-    fireEvent.change(machineSelect, { target: { value: "hour:0" } })
+    fireEvent.change(machineSelect, { target: { value: "0" } })
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         services: [
           expect.objectContaining({
             ownCostPerUnit: 40.36,
             chargeUnit: "hr",
-            linkedMachineSource: "hour:0",
+            linkedMachineSource: "0",
           }),
         ],
       }),
@@ -529,12 +517,11 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={onChange}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={[]}
+        savedMachines={hectareMachines}
       />,
     )
     const machineSelect = container.querySelectorAll("select")[0]
-    fireEvent.change(machineSelect, { target: { value: "hectare:0" } })
+    fireEvent.change(machineSelect, { target: { value: "0" } })
     expect(screen.getByText(/Pulled costs from "6m Drill"/)).toBeInTheDocument()
   })
 
@@ -547,14 +534,13 @@ describe("ContractingIncomePlanner", () => {
       annualVolume: 400,
       ownCostPerUnit: 30.27,
       additionalCosts: 0,
-      linkedMachineSource: "hectare:0",
+      linkedMachineSource: "0",
     }
     render(
       <ContractingIncomePlanner
         initialState={{ services: [linkedService] }}
         onChange={vi.fn()}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={[]}
+        savedMachines={hectareMachines}
       />,
     )
     expect(screen.getByText(/Saved: 6m Drill/)).toBeInTheDocument()
@@ -569,14 +555,13 @@ describe("ContractingIncomePlanner", () => {
       annualVolume: 400,
       ownCostPerUnit: 30.27,
       additionalCosts: 0,
-      linkedMachineSource: "hectare:0",
+      linkedMachineSource: "0",
     }
     render(
       <ContractingIncomePlanner
         initialState={{ services: [linkedService] }}
         onChange={vi.fn()}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={[]}
+        savedMachines={hectareMachines}
       />,
     )
     expect(
@@ -599,8 +584,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [marginalService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     // margin = (10000 - 9500) / 10000 * 100 = 5% → amber
@@ -624,8 +608,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [marginalService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     // There are two data-banner elements: one per-service, one summary.
@@ -649,8 +632,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [lossService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const redBanners = container.querySelectorAll('[data-banner="red"]')
@@ -675,8 +657,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [profitableService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const greenBanners = container.querySelectorAll('[data-banner="green"]')
@@ -695,8 +676,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     // The per-service "Results" heading should not appear
@@ -712,8 +692,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [service] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(screen.queryByText("Results")).not.toBeInTheDocument()
@@ -724,8 +703,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     const addButtons = screen.getAllByRole("button", { name: /add.*service/i })
@@ -740,8 +718,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(
@@ -761,14 +738,13 @@ describe("ContractingIncomePlanner", () => {
       annualVolume: 400,
       ownCostPerUnit: 30.27,
       additionalCosts: 0,
-      linkedMachineSource: "hectare:5", // out of range
+      linkedMachineSource: "5", // out of range
     }
     render(
       <ContractingIncomePlanner
         initialState={{ services: [linkedService] }}
         onChange={vi.fn()}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={[]}
+        savedMachines={hectareMachines}
       />,
     )
     expect(screen.queryByText(/Saved:/)).not.toBeInTheDocument()
@@ -780,8 +756,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={onChange}
-        savedHectareMachines={hectareMachines}
-        savedHourMachines={[]}
+        savedMachines={hectareMachines}
       />,
     )
     const machineSelect = container.querySelectorAll("select")[0]
@@ -794,8 +769,7 @@ describe("ContractingIncomePlanner", () => {
       <ContractingIncomePlanner
         initialState={{ services: [baseService] }}
         onChange={vi.fn()}
-        savedHectareMachines={[]}
-        savedHourMachines={[]}
+        savedMachines={[]}
       />,
     )
     expect(screen.getByText(/NAAC Contractor Rates/)).toBeInTheDocument()

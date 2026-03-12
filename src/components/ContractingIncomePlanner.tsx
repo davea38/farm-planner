@@ -17,16 +17,13 @@ import type {
   ContractingIncomeState,
   ContractingService,
   ChargeUnit,
-  SavedMachine,
-  CostPerHectareInputs,
-  CostPerHourInputs,
+  MachineProfile,
 } from "@/lib/types"
 
 interface ContractingIncomePlannerProps {
   initialState: ContractingIncomeState
   onChange: (state: ContractingIncomeState) => void
-  savedHectareMachines: SavedMachine<CostPerHectareInputs>[]
-  savedHourMachines: SavedMachine<CostPerHourInputs>[]
+  savedMachines: MachineProfile[]
 }
 
 const CHARGE_UNITS: { value: ChargeUnit; label: string }[] = [
@@ -85,8 +82,7 @@ function getSummaryBanner(marginPct: number): {
 export function ContractingIncomePlanner({
   initialState,
   onChange,
-  savedHectareMachines,
-  savedHourMachines,
+  savedMachines,
 }: ContractingIncomePlannerProps) {
   const { services } = initialState
   const [toast, setToast] = useState<string | null>(null)
@@ -150,23 +146,20 @@ export function ContractingIncomePlanner({
     serviceId: string,
     sourceKey: string,
   ) => {
-    const [tab, indexStr] = sourceKey.split(":")
-    const index = parseInt(indexStr, 10)
+    const index = parseInt(sourceKey, 10)
+    const machine = savedMachines[index]
+    if (!machine) return
 
-    if (tab === "hectare") {
-      const machine = savedHectareMachines[index]
-      if (!machine) return
-      const results = calcCostPerHectare(machine.inputs)
+    if (machine.costMode === "hectare") {
+      const results = calcCostPerHectare(machine.costPerHectare)
       updateService(serviceId, {
         ownCostPerUnit: Math.round(results.totalCostPerHa * 100) / 100,
         chargeUnit: "ha",
         linkedMachineSource: sourceKey,
       })
       showToast(`Pulled costs from "${machine.name}" — cost per hectare applied.`)
-    } else if (tab === "hour") {
-      const machine = savedHourMachines[index]
-      if (!machine) return
-      const results = calcCostPerHour(machine.inputs)
+    } else {
+      const results = calcCostPerHour(machine.costPerHour)
       updateService(serviceId, {
         ownCostPerUnit: Math.round(results.totalCostPerHr * 100) / 100,
         chargeUnit: "hr",
@@ -247,8 +240,7 @@ export function ContractingIncomePlanner({
                 </div>
 
                 {/* Pull from saved machine */}
-                {(savedHectareMachines.length > 0 ||
-                  savedHourMachines.length > 0) && (
+                {savedMachines.length > 0 && (
                   <div className="space-y-1">
                     <Label>Pull from saved machine</Label>
                     <select
@@ -261,30 +253,23 @@ export function ContractingIncomePlanner({
                       }}
                     >
                       <option value="">Select...</option>
-                      {savedHectareMachines.length > 0 && (
-                        <optgroup label="Cost / Hectare">
-                          {savedHectareMachines.map((m, i) => {
-                            const r = calcCostPerHectare(m.inputs)
-                            return (
-                              <option key={`hectare:${i}`} value={`hectare:${i}`}>
-                                {m.name} ({formatGBP(r.totalCostPerHa)}/ha)
-                              </option>
-                            )
-                          })}
-                        </optgroup>
-                      )}
-                      {savedHourMachines.length > 0 && (
-                        <optgroup label="Cost / Hour">
-                          {savedHourMachines.map((m, i) => {
-                            const r = calcCostPerHour(m.inputs)
-                            return (
-                              <option key={`hour:${i}`} value={`hour:${i}`}>
-                                {m.name} ({formatGBP(r.totalCostPerHr)}/hr)
-                              </option>
-                            )
-                          })}
-                        </optgroup>
-                      )}
+                      {savedMachines.map((m, i) => {
+                        if (m.costMode === "hectare") {
+                          const r = calcCostPerHectare(m.costPerHectare)
+                          return (
+                            <option key={i} value={String(i)}>
+                              {m.name} ({formatGBP(r.totalCostPerHa)}/ha)
+                            </option>
+                          )
+                        } else {
+                          const r = calcCostPerHour(m.costPerHour)
+                          return (
+                            <option key={i} value={String(i)}>
+                              {m.name} ({formatGBP(r.totalCostPerHr)}/hr)
+                            </option>
+                          )
+                        }
+                      })}
                     </select>
                   </div>
                 )}
@@ -349,9 +334,8 @@ export function ContractingIncomePlanner({
                       Your cost per {service.chargeUnit} (£)
                     </Label>
                     {service.linkedMachineSource && (() => {
-                      const [tab, idxStr] = service.linkedMachineSource.split(":")
-                      const idx = parseInt(idxStr, 10)
-                      const machine = tab === "hectare" ? savedHectareMachines[idx] : savedHourMachines[idx]
+                      const idx = parseInt(service.linkedMachineSource, 10)
+                      const machine = savedMachines[idx]
                       return machine ? <SourceBadge label={`Saved: ${machine.name}`} /> : null
                     })()}
                   </div>

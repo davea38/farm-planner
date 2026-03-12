@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import type { SavedMachine, CostPerHectareInputs, CostPerHourInputs, DepreciationCategory } from "@/lib/types"
+import type { MachineProfile, DepreciationCategory } from "@/lib/types"
 import type { MachineCategory } from "@/lib/depreciation-data"
 import { DEPRECIATION_PROFILES } from "@/lib/depreciation-data"
 import { Button } from "@/components/ui/button"
@@ -7,28 +7,18 @@ import { Input } from "@/components/ui/input"
 
 const MACHINE_TYPE_OPTIONS = Object.entries(DEPRECIATION_PROFILES) as [MachineCategory, (typeof DEPRECIATION_PROFILES)[MachineCategory]][]
 
-export type CostMode = "hectare" | "hour"
-
-export interface SelectedMachine {
-  costMode: CostMode
-  index: number
-}
-
 interface MachinesTabProps {
-  hectareMachines: SavedMachine<CostPerHectareInputs>[]
-  hourMachines: SavedMachine<CostPerHourInputs>[]
-  selectedMachine: SelectedMachine | null
-  onSelectMachine: (sel: SelectedMachine | null) => void
-  onSaveHectareMachine: (name: string, machineType: DepreciationCategory, selectedIndex: number | null) => void
-  onSaveHourMachine: (name: string, machineType: DepreciationCategory, selectedIndex: number | null) => void
-  onDeleteHectareMachine: (index: number) => void
-  onDeleteHourMachine: (index: number) => void
+  machines: MachineProfile[]
+  selectedMachineIndex: number | null
+  onSelectMachine: (index: number | null) => void
+  onSaveMachine: (name: string, machineType: DepreciationCategory, editIndex: number | null) => void
+  onDeleteMachine: (index: number) => void
 }
 
 interface MachineEntry {
   name: string
   machineType: DepreciationCategory
-  costMode: CostMode
+  costMode: string
   index: number
 }
 
@@ -156,14 +146,11 @@ function XIcon({ size = 16 }: { size?: number }) {
 }
 
 export function MachinesTab({
-  hectareMachines,
-  hourMachines,
-  selectedMachine,
+  machines,
+  selectedMachineIndex,
   onSelectMachine,
-  onSaveHectareMachine,
-  onSaveHourMachine,
-  onDeleteHectareMachine,
-  onDeleteHourMachine,
+  onSaveMachine,
+  onDeleteMachine,
 }: MachinesTabProps) {
   // Inline edit state (which machine card is being edited)
   const [editingKey, setEditingKey] = useState<string | null>(null)
@@ -190,10 +177,12 @@ export function MachinesTab({
   }
 
   // Build unified list
-  const allMachines: MachineEntry[] = [
-    ...hectareMachines.map((m, i) => ({ name: m.name, machineType: m.machineType, costMode: "hectare" as CostMode, index: i })),
-    ...hourMachines.map((m, i) => ({ name: m.name, machineType: m.machineType, costMode: "hour" as CostMode, index: i })),
-  ]
+  const allMachines: MachineEntry[] = machines.map((m, i) => ({
+    name: m.name,
+    machineType: m.machineType,
+    costMode: m.costMode,
+    index: i,
+  }))
 
   const hasMachines = allMachines.length > 0
 
@@ -204,7 +193,7 @@ export function MachinesTab({
   // Duplicate check for inline edit
   const trimmedEditName = editName.trim().toLowerCase()
   const editNameDuplicate = trimmedEditName !== "" && allMachines.some((m) => {
-    const key = `${m.costMode}-${m.index}`
+    const key = String(m.index)
     if (key === editingKey) return false
     return m.name.toLowerCase() === trimmedEditName
   })
@@ -214,10 +203,10 @@ export function MachinesTab({
     return found ? found[1].label : type
   }
 
-  const entryKey = (e: MachineEntry) => `${e.costMode}-${e.index}`
+  const entryKey = (e: MachineEntry) => String(e.index)
 
   const handleSelect = (entry: MachineEntry) => {
-    onSelectMachine({ costMode: entry.costMode, index: entry.index })
+    onSelectMachine(entry.index)
   }
 
   const startEditing = (entry: MachineEntry) => {
@@ -234,11 +223,7 @@ export function MachinesTab({
 
   const saveEdit = (entry: MachineEntry) => {
     if (!editName.trim() || !editType || editNameDuplicate) return
-    if (entry.costMode === "hectare") {
-      onSaveHectareMachine(editName.trim(), editType, entry.index)
-    } else {
-      onSaveHourMachine(editName.trim(), editType, entry.index)
-    }
+    onSaveMachine(editName.trim(), editType, entry.index)
     showToast(`Updated "${editName.trim()}" — changes will reflect in the "Worth It?" overview.`)
     setEditingKey(null)
   }
@@ -251,12 +236,8 @@ export function MachinesTab({
 
   const confirmDeleteAction = () => {
     if (!confirmDelete) return
-    if (confirmDelete.costMode === "hectare") {
-      onDeleteHectareMachine(confirmDelete.index)
-    } else {
-      onDeleteHourMachine(confirmDelete.index)
-    }
-    if (selectedMachine && selectedMachine.costMode === confirmDelete.costMode && selectedMachine.index === confirmDelete.index) {
+    onDeleteMachine(confirmDelete.index)
+    if (selectedMachineIndex === confirmDelete.index) {
       onSelectMachine(null)
     }
     if (editingKey === entryKey(confirmDelete)) {
@@ -268,9 +249,8 @@ export function MachinesTab({
 
   const handleSaveNew = () => {
     if (!newName.trim() || !newMachineType || newNameDuplicate) return
-    onSaveHectareMachine(newName.trim(), newMachineType, null)
-    const newIndex = hectareMachines.length
-    onSelectMachine({ costMode: "hectare", index: newIndex })
+    onSaveMachine(newName.trim(), newMachineType, null)
+    onSelectMachine(machines.length)
     showToast(`Saved "${newName.trim()}" — edit its costs on the other tabs. It'll feed into the "Worth It?" overview.`)
     setNewName("")
     setNewMachineType("")
@@ -287,7 +267,7 @@ export function MachinesTab({
       )}
 
       {/* Guidance banner — shown only when no machine is selected and machines exist */}
-      {hasMachines && !selectedMachine && (
+      {hasMachines && selectedMachineIndex === null && (
         <div className="rounded-lg border border-farm-amber/40 bg-farm-amber/8 px-4 py-3">
           <div className="flex items-center gap-2.5">
             <div className="shrink-0 text-farm-amber">
@@ -389,7 +369,7 @@ export function MachinesTab({
           <div className="divide-y divide-border/40">
             {allMachines.map((entry) => {
               const key = entryKey(entry)
-              const isSelected = selectedMachine?.costMode === entry.costMode && selectedMachine?.index === entry.index
+              const isSelected = selectedMachineIndex === entry.index
               const isBeingEdited = editingKey === key
 
               return (

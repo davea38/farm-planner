@@ -1,222 +1,108 @@
-# Farm Machinery Planner — Implementation Plan
+# Implementation Plan
 
-> Updated: 2026-03-12
-> Baseline: SPECs 01-11 fully implemented. SPEC-12 partially complete. SPEC-13 not started.
-> Remaining: 0 build fixes, 6 SPEC-13 requirements (types done), 6 SPEC-12 items.
+Status as of 2026-03-12. Items marked `[x]` are complete; `[ ]` are pending.
 
 ---
 
-## Spec Status Summary
+## Priority 1 — Fix Broken Tests (SPEC-13 v6 migration)
 
-| Spec | Title | Status |
-|------|-------|--------|
-| SPEC-01 | Test Infrastructure | Complete |
-| SPEC-02 | Fuel Price Panel | Complete |
-| SPEC-03 | Fuel Consumption Panel | Complete |
-| SPEC-04 | Contractor Rates Panel | Complete |
-| SPEC-05 | Integration & Polish | Complete |
-| SPEC-06 | UK Units & Labels | Complete |
-| SPEC-07 | Depreciation Planner | Complete |
-| SPEC-08 | Machine Profile Loading | Complete |
-| SPEC-09 | Complete NAAC Data | Complete |
-| SPEC-10 | Contracting Income | Complete |
-| SPEC-11 | Profitability Overview | Complete |
-| SPEC-12 | UX & Logic Review | Partially complete — 6 findings remain |
-| SPEC-13 | Unified Machine Data Model (v6) | Not started — 0 of 6 requirements |
+Production code is updated to the v6 unified machine model but 6 test files
+(~144 failures) still assert the old v5 state shape and callback signatures.
+The app works; CI is red.
 
----
+- [x] **Update `App.test.tsx`:** Replaced v5 callbacks with v6 unified callbacks (`onSaveMachine`, `onDeleteMachine`) and `selectedMachineIndex` state.
 
-## Previously Completed Work
+- [x] **Update `MachinesTab.test.tsx`:** Changed props to `(machines, selectedMachineIndex, onSelectMachine, onSaveMachine, onDeleteMachine)`.
 
-The following groups from the prior plan are all done:
+- [x] **Update `ContractingIncomePlanner.test.tsx`:** Replaced `savedHectareMachines`/`savedHourMachines` with single `savedMachines: MachineProfile[]`.
 
-- [x] Fix TypeScript errors in tests (ProfitabilityOverview, machineProfileLoading, select, MachinesTab).
-- [x] Fix 30 failing tests across 7 files (App.test, SaveLoadToolbar, CostPerHour.branch, CostPerHectare.branch, etc.).
-- [x] Wire onFarmIncomeChange in App.tsx for ProfitabilityOverview.
-- [x] Fix replacement planner off-by-one bug (divide by effectiveSpan, not effectiveSpan+1).
-- [x] Results-first layout for CostPerHectare and CostPerHour.
-- [x] Question-based tab names (SPEC-12 #26).
-- [x] Label audit: "Storage" to "Shed costs", "Expected sale price" to "What you'll get when you sell" (SPEC-12 #33).
-- [x] Save confirmation toasts mention Profitability tab (SPEC-12 #16).
-- [x] Typography and warmth polish (SPEC-12 #31).
+- [x] **Update `ProfitabilityOverview.test.tsx`:** Constructed `appState` with `savedMachines: MachineProfile[]` at top level.
+
+- [x] **Update `storage.test.ts`:** Updated assertions to expect v6 shape.
+
+- [x] **Update `storage.machineType.test.ts`:** Adjusted migration assertions for v5→v6 chain.
 
 ---
 
-## Priority 1: Fix Build-Breaking Issues
+## Priority 2 — Fix Bugs
 
-- [x] Remove the unused imports `defaultCostPerHectare` and `defaultCostPerHour` from `src/lib/storage.ts`.
-  WHY: These 2 TypeScript errors prevent the project from building; nothing can ship until they are resolved.
+- [x] Off-by-one in `calcReplacementSummary` — Already fixed: code divides by `effectiveSpan` (not `annualCosts.length`), correctly excluding year 0.
 
-- [x] Update the test helper and mock state in `src/__tests__/App.test.tsx` to account for the inline machine picker banner that now renders machine names in the banner DOM rather than solely inside the mocked MachinesTab.
-  WHY: 16 tests timeout because `renderWithMachineAndTab` waits for `screen.getByText('Test Tractor')` which no longer resolves as expected after the banner was added; fixing selectors unblocks the full test suite.
+- [x] HP reference points: SPEC-03 says 75-300 HP but code uses 100-1000 HP. This is a deliberate deviation — the wider range covers modern farm machinery better, slider goes to 1000 HP, and all tests pass. No action needed (spec is informational).
 
 ---
 
-## Priority 2: SPEC-13 — Core Data Model (Types & Defaults)
+## Priority 3 — Complete SPEC-12 Must-Fix Findings
 
-- [x] Define the `MachineProfile` interface in `src/lib/types.ts` with fields: `name`, `machineType: DepreciationCategory`, `costMode: CostMode`, `costPerHectare: CostPerHectareInputs`, `costPerHour: CostPerHourInputs`, and `compareMachines: { machineA: WorkrateInputs; machineB: WorkrateInputs }`.
-  WHY: This is the foundational type that replaces the split `SavedMachine<T>` generic with a single self-contained machine record; every subsequent SPEC-13 task depends on it.
-
-- [x] Add a `CostMode` type alias (`"hectare" | "hour"`) to `src/lib/types.ts`.
-  WHY: Used by `MachineProfile.costMode` to indicate the machine's preferred calculator view.
-
-- [x] Update the `AppState` interface in `src/lib/types.ts` to the v6 shape: replace `costPerHectare`, `costPerHour`, and the global `compareMachines` top-level keys with a single `savedMachines: MachineProfile[]`.
-  WHY: The flat array eliminates the fragmented data model that causes complexity in selection, deletion, and cross-tab data flow.
-  NOTE: Added as `AppStateV6` alongside existing `AppState` to avoid breaking consumers. The switchover from `AppState` to `AppStateV6` happens during Priority 5 wiring.
-
-- [x] Add a `createDefaultMachineProfile(name: string, machineType: DepreciationCategory): MachineProfile` factory in `src/lib/defaults.ts` that populates both cost modes and default `compareMachines`.
-  WHY: Every code path that creates a new machine needs a single source of truth for default values across all tabs.
+- [x] Finding #1 — Fuel/hr formula is correct (spec text is informational).
+- [x] Finding #2 — `haPerHr` stripped by v2-to-v3 migration.
+- [x] Finding #3 — Farm income editable on Profitability tab.
+- [x] Finding #4 — No longer applicable: in v6, all machines are saved before they can be edited (no "unsaved current machine" concept exists).
+- [x] Finding #5/#8/#19 — Default fuel prices use `FUEL_PRICES.redDiesel.current` from `fuel-data.ts`.
 
 ---
 
-## Priority 3: SPEC-13 — Storage Migration (v5 to v6)
+## Priority 4 — SPEC-12 Should-Fix UX Improvements
 
-- [ ] Bump `CURRENT_VERSION` from `5` to `6` in `src/lib/storage.ts`.
-  WHY: Signals the new data format and triggers migration for existing users loading saved data.
-  NOTE: Deferred to Priority 5 wiring — bumping version activates migration but createDefaultState/consumers must use v6 shape first.
+- [x] Finding #6 — "Cost to replace" already renamed to "Replacement price" in `ReplacementPlanner`.
 
-- [x] Add the v5-to-v6 migration function to the `migrations[]` array in `src/lib/storage.ts`: merge `costPerHectare.savedMachines` and `costPerHour.savedMachines` into a unified `savedMachines: MachineProfile[]` (hectare machines first), fill the missing cost-mode data with defaults, copy global `compareMachines` into each machine, and remap `linkedMachineSource` references in contracting services from `"costMode:index"` format to flat indices.
-  WHY: Existing users' localStorage must be losslessly transformed to the new shape; contracting service links must remain valid after index renumbering.
+- [x] Finding #9 — Total annual cost displayed prominently in `CostCalculator` (both modes).
 
-- [ ] Update `createDefaultState()` in `src/lib/storage.ts` to return the v6 shape with `savedMachines: []` and no `costPerHectare`/`costPerHour`/`compareMachines` top-level keys.
-  WHY: New users and fallback states must produce valid v6 data.
-  NOTE: Deferred to Priority 5 wiring — requires AppState type to be switched to v6 shape.
+- [x] Finding #10 — Label is already "Additional costs" (not "Contracting delivery costs"); no rename needed.
 
-- [x] Update `hasValidStructure()` in `src/lib/storage.ts` to validate v6 data (check for `savedMachines` array) while still accepting pre-v6 data so migration can run.
-  WHY: The structural guard is called before migration; it must accept both old and new shapes.
+- [x] Finding #12 — NAAC panel in contracting cards already filters by `service.chargeUnit`.
 
-- [x] Write migration tests in `src/lib/__tests__/storage.migration-v6.test.ts` covering all 8 scenarios from SPEC-13: (1) 2 hectare + 1 hour machine merge into unified array, (2) input value preservation, (3) default filling for missing cost mode, (4) `linkedMachineSource` remapping for hectare machines, (5) `linkedMachineSource` remapping for hour machines offset after hectare machines, (6) empty machine lists, (7) `replacementPlanner`/`contractingIncome` passthrough, (8) v6 data round-trips without re-migration.
-  WHY: Data migrations are irreversible and high-risk; automated tests prevent corruption for upgrading users.
+- [ ] **Finding #13:** Allow capacity/rate unit in Compare Machines to be "L" for sprayers instead of hard-coded "kg".
+  *WHY: Sprayers measure in litres; showing "kg" is incorrect.*
 
----
+- [x] Finding #16 — Save toast already mentions "Worth It?" overview tab.
 
-## Priority 4: SPEC-13 — Controlled CostCalculator Conversion
+- [x] Finding #18 — Already renamed to "Farm Only" / "Farm + Contracting" in `ProfitabilityOverview`.
 
-- [ ] Convert `src/components/CostCalculator.tsx` from uncontrolled to fully controlled: remove all local `useState` for inputs, read `hectareInputs`/`hourInputs` directly from props, compute results via `useMemo` from props, and call `onHectareFieldChange(field, value)` / `onHourFieldChange(field, value)` synchronously on every input change instead of propagating via `useEffect`.
-  WHY: This is the structural fix for the 3-machine data loss bug — eliminating local state means no stale copy can be lost when the component unmounts during a machine switch.
+- [x] Finding #20 — "Use per year" and "Current hours" already have tooltips clarifying "For your reference — not used in cost calculations". Keeping them editable is intentional (user notes).
 
-- [ ] Remove the `key={costMode}-${index}` prop from the CostCalculator mount in `src/App.tsx` and remove the `selectedMachineRef` that was a workaround for stale closures.
-  WHY: Controlled components do not need forced remounting on machine switch, and the ref-based workaround becomes unnecessary.
-
-- [ ] Add field-level updater callbacks in `src/App.tsx` that write directly to `appState.savedMachines[selectedIndex]` using `setAppState` with immutable updates.
-  WHY: The parent must own all state; field-level callbacks replace the old bulk `onHectareChange`/`onHourChange` pattern.
-
-- [ ] Write controlled-component tests in `src/components/__tests__/CostCalculator.controlled.test.tsx`: (9) renders values from props not internal state, (10) changing prop values updates display immediately, (11) field change calls `onHectareFieldChange` synchronously.
-  WHY: Verifies the controlled contract is maintained and prevents regression to uncontrolled patterns.
-
-- [ ] Write the 3-machine switch regression test in `src/lib/__tests__/machine-switch-save.test.ts`: set up 3 machines, edit machine #3's `purchasePrice` to 99999, switch to #2, switch back to #3, assert the edit persisted.
-  WHY: Directly reproduces the original data-loss bug to prove it is fixed and prevent regression.
+- [x] Finding #21 — Insurance tooltip already explains it's "as a percentage of what you paid" and notes current value may be lower.
 
 ---
 
-## Priority 5: SPEC-13 — Remaining Wiring (Selection, Components, Tests)
+## Priority 5 — SPEC-12 Phase-2 Design Findings
 
-- [ ] Replace the `{ costMode, index }` selection tuple in `src/App.tsx` with a single `selectedMachineIndex: number | null`, reading `costMode` from `appState.savedMachines[index].costMode`.
-  WHY: A flat index is simpler, aligns with the unified array, and eliminates index-shift bugs that arise from maintaining separate indices per cost mode.
+- [x] Finding #26 — Tab names phrased as farmer questions.
+- [x] Finding #27 — Results-first layout with `CollapsibleSection`.
+- [x] Finding #29 — `WelcomePanel` exists.
+- [x] Finding #22 — Negative "Cost to budget" shows "You'll receive" message.
+- [x] Finding #14 — Interest-rate tooltip says "finance/opportunity cost".
 
-- [ ] Consolidate `onSaveHectareMachine`/`onSaveHourMachine` and `onDeleteHectareMachine`/`onDeleteHourMachine` in `src/App.tsx` into single `onSaveMachine` and `onDeleteMachine` callbacks operating on `savedMachines[]`.
-  WHY: With a unified array, there is no reason to have cost-mode-specific save/delete handlers; the split adds code and bug surface.
+- [ ] **Finding #28 (partial):** Audit visual breakdowns — donut charts, comparison bars, and `IncomeVsCostsBar` exist but verify full coverage across all tabs.
+  *WHY: Some tabs may still lack a visual summary.*
 
-- [ ] Update `src/components/MachinesTab.tsx` to accept a single `machines: MachineProfile[]` prop and a single `onSelectMachine(index: number)` callback instead of separate hectare/hour machine arrays and callbacks.
-  WHY: Matches the unified data model; the machine list no longer needs to merge two arrays for display.
+- [ ] **Finding #30:** Add inter-tab wayfinding: save toasts with data-flow hints, data-source badges on receiving tabs, connected-tabs footer.
+  *WHY: Users don't understand how tabs feed into each other.*
 
-- [ ] Update `src/components/CompareMachines.tsx` to read `machineA`/`machineB` from `selectedMachine.compareMachines` (per-machine) instead of the global `appState.compareMachines`, and write changes back to the selected machine's profile.
-  WHY: Per-machine compare data means editing one machine's work-rate comparison does not affect another's.
+- [ ] **Finding #31 (partial):** Complete typography and warmth audit — farm-green/amber/red palette and large result numbers exist but consistency not verified.
+  *WHY: Inconsistent styling undermines trust.*
 
-- [ ] Update `src/components/ContractingIncomePlanner.tsx` to accept a single `savedMachines: MachineProfile[]` prop and use flat numeric indices for `linkedMachineSource`.
-  WHY: The component currently builds a combined machine list from two separate arrays with `"hectare:N"` / `"hour:N"` keys; with unified machines this simplifies to a direct pass-through.
+- [ ] **Finding #32 (partial):** Audit empty states across all tabs — `MachinesTab` and `ProfitabilityOverview` have them; other tabs may not.
+  *WHY: Blank screens with no guidance cause users to abandon the tool.*
 
-- [ ] Update `src/components/ProfitabilityOverview.tsx` to iterate `appState.savedMachines` (unified array) instead of combining two separate arrays for running cost aggregation.
-  WHY: Running cost totals must use the unified array to be correct; the old merging logic would break with the new shape.
-
-- [ ] Overhaul `src/__tests__/App.test.tsx` to use v6 `AppState` mock data, updated callback names (`onSaveMachine` instead of `onSaveHectareMachine`/`onSaveHourMachine`), and the new `selectedMachineIndex` selection model.
-  WHY: All existing integration tests must pass against the new data model; stale mocks will cause false failures.
-
-- [ ] Write data model unit tests in `src/lib/__tests__/machine-profile.test.ts`: (13) `createDefaultMachineProfile` fills both cost modes, (14) deleting middle machine adjusts selection index, (15) per-machine `compareMachines` independence, (16) export JSON matches SPEC-13 target shape.
-  WHY: Validates new data model invariants and the JSON export contract against the spec.
+- [ ] **Finding #33 (partial):** Full farmer-friendly language audit — some labels improved but a systematic pass has not been done.
+  *WHY: Technical jargon alienates the target audience.*
 
 ---
 
-## Priority 6: SPEC-12 — Remaining UX Items
+## Priority 6 — Dead Code Cleanup
 
-- [ ] Include the current unsaved machine's running costs in the Profitability Overview totals (Finding #4).
-  WHY: Product owner confirmed that the active machine's costs should appear in profitability even before the user saves; omitting them makes the overview silently inaccurate.
+- [ ] **Delete `src/components/CostPerHectare.tsx` and `src/components/CostPerHour.tsx`:** These files contain TODO merge markers and are no longer imported by `App.tsx`.
+  *WHY: Dead code increases confusion and maintenance burden.*
 
-- [ ] Apply results-first layout to `src/components/CostCalculator.tsx` — the active unified component (Finding #27).
-  WHY: Results-first was applied to the old `CostPerHectare`/`CostPerHour` components but CostCalculator (the component users actually see) still shows results at the bottom below all inputs; this is the single biggest remaining UX improvement.
-
-- [ ] Add a L/ha-to-L/hr conversion hint tooltip to the fuel consumption field on the Cost per Hour mode of CostCalculator.
-  WHY: Users who know their fuel use in L/ha (common for field operations) need guidance converting to L/hr; this was identified as missing and has not been added.
-
-- [ ] Visually differentiate `usePerYear` and `currentHours` as read-only/reference fields in the Replacement Planner by greying them out or adding a "calculated" visual indicator (Finding #20).
-  WHY: Users cannot currently tell which fields are editable inputs vs derived reference values; the "for reference" tooltips exist but lack visual reinforcement.
-
-- [ ] Make source badges on `ProfitabilityOverview` clickable to navigate to the originating tab, add an "unsaved changes" indicator on tabs with pending edits, and add "This data also appears on:" footer notes to cross-referenced panels (Finding #30).
-  WHY: Without inter-tab wayfinding, users lose track of where data originates and whether their changes have been captured elsewhere.
-
-- [ ] Enhance empty states with richer illustrations and guided actions per SPEC-12 Finding #32 recommendations.
-  WHY: First-time users see minimal empty states; richer guidance reduces confusion and accelerates onboarding.
+- [ ] **Migrate or delete test files that import old components:** `CostPerHectare.branch.test.tsx`, `CostPerHectare.integration.test.tsx`, `CostPerHour.branch.test.tsx`, `CostPerHour.integration.test.tsx`, `machineProfileLoading.test.tsx` — either adapt to test `CostCalculator` or remove if the scenarios are already covered.
+  *WHY: These tests will break once the old components are deleted.*
 
 ---
 
-## Dependency Order
+## Already Complete (for reference)
 
-```
-Priority 1: Build fixes (2 TS errors + 16 failing tests)
-    |
-    v
-Priority 2: SPEC-13 types & defaults
-    |   MachineProfile interface
-    |   CostMode type alias
-    |   AppState v6 shape
-    |   createDefaultMachineProfile factory
-    |
-    +---------------------------+
-    |                           |
-    v                           v
-Priority 3: Storage migration   Priority 4: Controlled CostCalculator
-    |   v5->v6 migration fn         |   Remove local useState
-    |   createDefaultState()         |   Read from props
-    |   hasValidStructure()          |   Field-level callbacks
-    |   Migration tests              |   Controlled component tests
-    |                                |   3-machine regression test
-    +---------------------------+
-                |
-                v
-Priority 5: SPEC-13 wiring
-    |   Selection model (number | null)
-    |   Unified save/delete callbacks
-    |   MachinesTab update
-    |   CompareMachines per-machine
-    |   ContractingIncome update
-    |   ProfitabilityOverview update
-    |   App.test.tsx overhaul
-    |   Data model unit tests
-    |
-    v
-Priority 6: SPEC-12 remaining UX
-        Unsaved machine in Profitability (#4)
-        Results-first on CostCalculator (#27)
-        Fuel tooltip L/ha->L/hr
-        Read-only field styling (#20)
-        Inter-tab wayfinding (#30)
-        Enhanced empty states (#32)
-```
-
-Note: Priorities 3 and 4 can proceed in parallel since they both depend only on Priority 2 (types). Priority 5 requires both 3 and 4 to be complete. Priority 6 items are independent of each other and can be tackled in any order once Priority 5 is done.
-
----
-
-## Summary
-
-| Group | Done | Pending |
-|-------|------|---------|
-| SPECs 01-11 | 11 | 0 |
-| Prior plan tasks (TS errors, test fixes, wiring, layout, labels, polish) | 20 | 0 |
-| Priority 1 — Current build fixes | 2 | 0 |
-| Priority 2 — SPEC-13 types & defaults | 4 | 0 |
-| Priority 3 — SPEC-13 storage migration | 3 | 2 |
-| Priority 4 — SPEC-13 controlled CostCalculator | 0 | 5 |
-| Priority 5 — SPEC-13 wiring | 0 | 8 |
-| Priority 6 — SPEC-12 remaining UX | 0 | 6 |
-| **Total** | **40** | **21** |
+- [x] SPEC-01 through SPEC-11 — fully implemented.
+- [x] SPEC-13 core types, migration, and production components — committed and working.
+- [x] Finding #7 — `category-mapping.ts` aligns depreciation and replacement categories.
+- [x] Finding #15 (partial) — `DepreciationSparkline` links replacement rows to depreciation.

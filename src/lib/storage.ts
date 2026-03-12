@@ -12,22 +12,13 @@ import {
 
 const STORAGE_KEY = "farmPlanner";
 const UNITS_STORAGE_KEY = "farmPlannerUnits";
-const CURRENT_VERSION = 5;
+const CURRENT_VERSION = 6;
 
 function createDefaultState(): AppState {
   return {
     version: CURRENT_VERSION,
     lastSaved: new Date().toISOString(),
-    costPerHectare: {
-      savedMachines: [],
-    },
-    costPerHour: {
-      savedMachines: [],
-    },
-    compareMachines: {
-      machineA: { ...defaultMachineA },
-      machineB: { ...defaultMachineB },
-    },
+    savedMachines: [],
     replacementPlanner: {
       machines: createDefaultReplacementMachines(),
       farmIncome: 350000,
@@ -57,10 +48,12 @@ function hasValidStructure(data: unknown): data is Record<string, unknown> {
 }
 
 function isValidState(data: unknown): data is AppState {
-  if (!hasValidStructure(data)) return false;
+  if (typeof data !== "object" || data === null) return false;
+  const obj = data as Record<string, unknown>;
   return (
-    typeof data.version === "number" &&
-    typeof data.lastSaved === "string"
+    typeof obj.version === "number" &&
+    typeof obj.lastSaved === "string" &&
+    Array.isArray(obj.savedMachines)
   );
 }
 

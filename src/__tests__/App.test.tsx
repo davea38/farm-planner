@@ -2,17 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
+import { defaultCostPerHectare, defaultCostPerHour, defaultMachineA, defaultMachineB } from '@/lib/defaults'
+import type { MachineProfile } from '@/lib/types'
 
 // ---------------------------------------------------------------------------
 // Captured callbacks from mocked child components
 // ---------------------------------------------------------------------------
-let capturedOnSelectMachine: ((sel: { costMode: string; index: number } | null) => void) | null = null
-let capturedOnSaveHectareMachine: ((...args: unknown[]) => void) | null = null
-let capturedOnSaveHourMachine: ((...args: unknown[]) => void) | null = null
-let capturedOnDeleteHectareMachine: ((index: number) => void) | null = null
-let capturedOnDeleteHourMachine: ((index: number) => void) | null = null
-let capturedCostPerHectareOnChange: ((inputs: Record<string, unknown>) => void) | null = null
-let capturedCostPerHourOnChange: ((inputs: Record<string, unknown>) => void) | null = null
+let capturedOnSelectMachine: ((index: number | null) => void) | null = null
+let capturedOnSaveMachine: ((...args: unknown[]) => void) | null = null
+let capturedOnDeleteMachine: ((index: number) => void) | null = null
+let capturedOnHectareFieldChange: ((field: string, value: number) => void) | null = null
+let capturedOnHourFieldChange: ((field: string, value: number) => void) | null = null
 let capturedCompareMachinesOnChange: ((a: unknown, b: unknown) => void) | null = null
 let capturedReplacementPlannerOnChange: ((state: unknown) => void) | null = null
 let capturedContractingIncomeOnChange: ((state: unknown) => void) | null = null
@@ -23,8 +23,8 @@ let capturedContractingIncomeOnChange: ((state: unknown) => void) | null = null
 
 vi.mock('@/components/CostCalculator', () => ({
   CostCalculator: (props: Record<string, unknown>) => {
-    capturedCostPerHectareOnChange = props.onHectareChange as typeof capturedCostPerHectareOnChange
-    capturedCostPerHourOnChange = props.onHourChange as typeof capturedCostPerHourOnChange
+    capturedOnHectareFieldChange = props.onHectareFieldChange as typeof capturedOnHectareFieldChange
+    capturedOnHourFieldChange = props.onHourFieldChange as typeof capturedOnHourFieldChange
     return <div data-testid="cost-calculator" />
   },
 }))
@@ -65,39 +65,29 @@ vi.mock('@/components/WelcomePanel', () => ({
 vi.mock('@/components/MachinesTab', () => ({
   MachinesTab: (props: Record<string, unknown>) => {
     capturedOnSelectMachine = props.onSelectMachine as typeof capturedOnSelectMachine
-    capturedOnSaveHectareMachine = props.onSaveHectareMachine as typeof capturedOnSaveHectareMachine
-    capturedOnSaveHourMachine = props.onSaveHourMachine as typeof capturedOnSaveHourMachine
-    capturedOnDeleteHectareMachine = props.onDeleteHectareMachine as typeof capturedOnDeleteHectareMachine
-    capturedOnDeleteHourMachine = props.onDeleteHourMachine as typeof capturedOnDeleteHourMachine
+    capturedOnSaveMachine = props.onSaveMachine as typeof capturedOnSaveMachine
+    capturedOnDeleteMachine = props.onDeleteMachine as typeof capturedOnDeleteMachine
     return <div data-testid="machines-tab" />
   },
   MachineIcon: ({ type }: { type: string }) => <span data-testid="machine-icon">{type}</span>,
 }))
 
-// Storage mock
+function makeTestMachine(name: string, costMode: "hectare" | "hour" = "hectare", machineType = "tractors_large"): MachineProfile {
+  return {
+    name,
+    machineType: machineType as any,
+    costMode,
+    costPerHectare: { ...defaultCostPerHectare },
+    costPerHour: { ...defaultCostPerHour },
+    compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
+  }
+}
+
+// Storage mock — v6 shape
 const mockDefaultState = {
-  version: 4,
+  version: 6,
   lastSaved: '2025-01-01T00:00:00.000Z',
-  costPerHectare: {
-    current: {
-      purchasePrice: 126000, yearsOwned: 8, salePrice: 34000, hectaresPerYear: 1200,
-      interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
-      labourCost: 14, fuelPrice: 0.65, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
-    },
-    savedMachines: [] as Array<{ name: string; machineType: string; inputs: Record<string, number> }>,
-  },
-  costPerHour: {
-    current: {
-      purchasePrice: 92751, yearsOwned: 7, salePrice: 40000, hoursPerYear: 700,
-      interestRate: 2, insuranceRate: 2, storageRate: 1, fuelConsumptionPerHr: 14,
-      fuelPrice: 0.65, repairsPct: 1, labourCost: 14, contractorCharge: 45,
-    },
-    savedMachines: [] as Array<{ name: string; machineType: string; inputs: Record<string, number> }>,
-  },
-  compareMachines: {
-    machineA: { name: 'Machine A', width: 4, capacity: 800, speed: 6, applicationRate: 180, transportTime: 5, fillingTime: 10, fieldEfficiency: 65 },
-    machineB: { name: 'Machine B', width: 30, capacity: 2000, speed: 12, applicationRate: 250, transportTime: 5, fillingTime: 10, fieldEfficiency: 75 },
-  },
+  savedMachines: [] as MachineProfile[],
   replacementPlanner: { machines: [], farmIncome: 350000 },
   contractingIncome: { services: [] },
 }
@@ -134,40 +124,36 @@ function renderApp() {
 
 function resetCaptured() {
   capturedOnSelectMachine = null
-  capturedOnSaveHectareMachine = null
-  capturedOnSaveHourMachine = null
-  capturedOnDeleteHectareMachine = null
-  capturedOnDeleteHourMachine = null
-  capturedCostPerHectareOnChange = null
-  capturedCostPerHourOnChange = null
+  capturedOnSaveMachine = null
+  capturedOnDeleteMachine = null
+  capturedOnHectareFieldChange = null
+  capturedOnHourFieldChange = null
   capturedCompareMachinesOnChange = null
   capturedReplacementPlannerOnChange = null
   capturedContractingIncomeOnChange = null
 }
 
 function addHectareMachine() {
-  mockDefaultState.costPerHectare.savedMachines = [
-    { name: 'Test Tractor', machineType: 'tractors_large', inputs: { ...mockDefaultState.costPerHectare.current } },
+  mockDefaultState.savedMachines = [
+    makeTestMachine('Test Tractor', 'hectare', 'tractors_large'),
   ]
 }
 
 function addHourMachine() {
-  mockDefaultState.costPerHour.savedMachines = [
-    { name: 'Hour Machine', machineType: 'combines', inputs: { ...mockDefaultState.costPerHour.current } },
+  mockDefaultState.savedMachines = [
+    makeTestMachine('Hour Machine', 'hour', 'combines'),
   ]
 }
 
 function removeSavedMachines() {
-  mockDefaultState.costPerHectare.savedMachines = []
-  mockDefaultState.costPerHour.savedMachines = []
+  mockDefaultState.savedMachines = []
 }
 
-// Helper: render app, select a hectare machine, and switch to a given tab.
-// The machine banner only renders on non-machines tabs, so we navigate first then verify.
+// Helper: render app, select a machine, and switch to a given tab.
 async function renderWithMachineAndTab(tab: string) {
   addHectareMachine()
   renderApp()
-  act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+  act(() => { capturedOnSelectMachine!(0) })
   if (tab !== 'machines') {
     const user = userEvent.setup()
     await user.click(screen.getByText(tab))
@@ -269,7 +255,7 @@ describe('App', () => {
   it('shows active machine banner with name, Change button, and profile label', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     // Banner only renders on non-machines tabs
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
@@ -281,7 +267,7 @@ describe('App', () => {
   it('shows active banner for cost-per-hour machine', async () => {
     addHourMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     // Banner only renders on non-machines tabs
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
@@ -292,7 +278,7 @@ describe('App', () => {
   it('enables non-machine tabs after selection', () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     const tab = screen.getByText('Cost/Ha').closest('button')!
     expect(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true').toBe(false)
   })
@@ -300,7 +286,7 @@ describe('App', () => {
   it('removes "No machine selected" when machine selected', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     await waitFor(() => { expect(screen.queryByText('No machine selected')).not.toBeInTheDocument() })
   })
 
@@ -308,7 +294,7 @@ describe('App', () => {
     addHectareMachine()
     renderApp()
     // Select index 99 which doesn't exist
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 99 }) })
+    act(() => { capturedOnSelectMachine!(99) })
     // Banner should not show machine name or Change button
     await waitFor(() => {
       expect(screen.queryByText('Change')).not.toBeInTheDocument()
@@ -320,7 +306,7 @@ describe('App', () => {
   it('shows "No machine selected" after deselecting', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     // Navigate to non-machines tab to see the banner
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
@@ -363,8 +349,8 @@ describe('App', () => {
 
   it('imports file and updates state', async () => {
     const newState = JSON.parse(JSON.stringify(mockDefaultState))
-    newState.costPerHectare.savedMachines = [
-      { name: 'Imported', machineType: 'tractors_large', inputs: newState.costPerHectare.current },
+    newState.savedMachines = [
+      makeTestMachine('Imported', 'hectare', 'tractors_large'),
     ]
     mockImportFromFile.mockResolvedValue(newState)
 
@@ -440,7 +426,7 @@ describe('App', () => {
   it('handleSelectMachine with hectare loads cost-per-hectare inputs', () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     // The state was updated internally — verify the app didn't crash
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
@@ -448,95 +434,65 @@ describe('App', () => {
   it('handleSelectMachine with hour loads cost-per-hour inputs', () => {
     addHourMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  it('handleSelectMachine with out-of-bounds hectare index returns prev state', async () => {
+  it('handleSelectMachine with out-of-bounds index returns prev state', async () => {
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 99 }) })
+    act(() => { capturedOnSelectMachine!(99) })
     // App should not crash
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  it('handleSelectMachine with out-of-bounds hour index returns prev state', async () => {
-    renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 99 }) })
-    expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
-  })
+  // --- Callback exercise: onSaveMachine ---
 
-  // --- Callback exercise: onSaveCostPerHectareMachine ---
-
-  it('onSaveCostPerHectareMachine adds a new machine', async () => {
+  it('onSaveMachine adds a new machine', async () => {
     renderApp()
-    act(() => { capturedOnSaveHectareMachine!('New Machine', 'tractors_large', null) })
+    act(() => { capturedOnSaveMachine!('New Machine', 'tractors_large', null) })
     // App should not crash and the state is updated
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  it('onSaveCostPerHectareMachine updates existing machine', async () => {
+  it('onSaveMachine updates existing machine', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSaveHectareMachine!('Updated', 'tractors_large', 0) })
+    act(() => { capturedOnSaveMachine!('Updated', 'tractors_large', 0) })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  // --- Callback exercise: onDeleteCostPerHectareMachine ---
+  // --- Callback exercise: onDeleteMachine ---
 
-  it('onDeleteCostPerHectareMachine removes machine', async () => {
+  it('onDeleteMachine removes machine', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnDeleteHectareMachine!(0) })
+    act(() => { capturedOnDeleteMachine!(0) })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  // --- Callback exercise: onSaveCostPerHourMachine ---
+  // --- Callback exercise: onHectareFieldChange ---
 
-  it('onSaveCostPerHourMachine adds a new machine', async () => {
-    renderApp()
-    act(() => { capturedOnSaveHourMachine!('New Hour', 'combines', null) })
-    expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
-  })
-
-  it('onSaveCostPerHourMachine updates existing machine', async () => {
-    addHourMachine()
-    renderApp()
-    act(() => { capturedOnSaveHourMachine!('Updated Hour', 'combines', 0) })
-    expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
-  })
-
-  // --- Callback exercise: onDeleteCostPerHourMachine ---
-
-  it('onDeleteCostPerHourMachine removes machine', async () => {
-    addHourMachine()
-    renderApp()
-    act(() => { capturedOnDeleteHourMachine!(0) })
-    expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
-  })
-
-  // --- Callback exercise: onCostPerHectareChange ---
-
-  it('onCostPerHectareChange updates current and saved machine if selected', async () => {
+  it('onHectareFieldChange updates selected machine hectare inputs', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
 
     // Switch to Cost tab to get the onChange callback
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
 
-    // Now invoke the onChange
+    // Now invoke the field change
     act(() => {
-      capturedCostPerHectareOnChange!({ ...mockDefaultState.costPerHectare.current, purchasePrice: 999 })
+      capturedOnHectareFieldChange!('purchasePrice', 999)
     })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  it('onCostPerHectareChange skips saved machine update if no machine selected', async () => {
+  it('onHectareFieldChange skips update if no machine selected', async () => {
     addHectareMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hectare', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
     const user = userEvent.setup()
     await user.click(screen.getByText('Cost/Ha'))
     await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
@@ -544,17 +500,17 @@ describe('App', () => {
     // Deselect, then call onChange
     act(() => { capturedOnSelectMachine!(null) })
     act(() => {
-      capturedCostPerHectareOnChange!({ ...mockDefaultState.costPerHectare.current, purchasePrice: 888 })
+      capturedOnHectareFieldChange!('purchasePrice', 888)
     })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
 
-  // --- Callback exercise: onCostPerHourChange ---
+  // --- Callback exercise: onHourFieldChange ---
 
-  it('onCostPerHourChange updates current and saved machine if selected', async () => {
+  it('onHourFieldChange updates selected machine hour inputs', async () => {
     addHourMachine()
     renderApp()
-    act(() => { capturedOnSelectMachine!({ costMode: 'hour', index: 0 }) })
+    act(() => { capturedOnSelectMachine!(0) })
 
     // Navigate to the cost tab
     const user = userEvent.setup()
@@ -562,7 +518,7 @@ describe('App', () => {
     await waitFor(() => { expect(screen.getByTestId('cost-calculator')).toBeInTheDocument() })
 
     act(() => {
-      capturedCostPerHourOnChange!({ ...mockDefaultState.costPerHour.current, purchasePrice: 777 })
+      capturedOnHourFieldChange!('purchasePrice', 777)
     })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()
   })
@@ -575,8 +531,8 @@ describe('App', () => {
 
     act(() => {
       capturedCompareMachinesOnChange!(
-        { ...mockDefaultState.compareMachines.machineA },
-        { ...mockDefaultState.compareMachines.machineB },
+        { ...defaultMachineA },
+        { ...defaultMachineB },
       )
     })
     expect(screen.getByText('Farm Machinery Planner')).toBeInTheDocument()

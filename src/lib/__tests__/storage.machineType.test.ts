@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { loadState, saveState, importFromFile } from "../storage"
 import type { AppState } from "../types"
+import { defaultCostPerHectare, defaultCostPerHour, defaultMachineA, defaultMachineB } from "../defaults"
 
 vi.stubGlobal("crypto", {
   randomUUID: () => "test-uuid-migration",
@@ -8,7 +9,7 @@ vi.stubGlobal("crypto", {
 
 /**
  * Builds a v3 state (pre-machineType) with optional saved machines.
- * This is what localStorage would contain before the v3→v4 migration.
+ * This is what localStorage would contain before the v3->v4 migration.
  */
 function createV3StateWithMachines() {
   return {
@@ -46,51 +47,67 @@ function createV3StateWithMachines() {
   }
 }
 
-function createV4State(): AppState {
+function createV6State(): AppState {
   return {
-    version: 5,
+    version: 6,
     lastSaved: "2026-01-01T00:00:00.000Z",
-    costPerHectare: {
-      savedMachines: [
-        { name: "Drill", machineType: "drills", inputs: { purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300, interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4, labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60 } },
-      ],
-    },
-    costPerHour: {
-      savedMachines: [
-        { name: "Telehandler", machineType: "miscellaneous", inputs: { purchasePrice: 60000, yearsOwned: 6, salePrice: 20000, hoursPerYear: 800, interestRate: 3, insuranceRate: 2, storageRate: 1, fuelConsumptionPerHr: 12, fuelPrice: 60, repairsPct: 2, labourCost: 14, contractorCharge: 50 } },
-      ],
-    },
-    compareMachines: {
-      machineA: { name: "A", width: 4, capacity: 800, speed: 6, applicationRate: 180, transportTime: 5, fillingTime: 10, fieldEfficiency: 65 },
-      machineB: { name: "B", width: 30, capacity: 2000, speed: 12, applicationRate: 250, transportTime: 5, fillingTime: 10, fieldEfficiency: 75 },
-    },
+    savedMachines: [
+      {
+        name: "Drill",
+        machineType: "drills",
+        costMode: "hectare",
+        costPerHectare: {
+          purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300,
+          interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
+          labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
+        },
+        costPerHour: { ...defaultCostPerHour },
+        compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
+      },
+      {
+        name: "Telehandler",
+        machineType: "miscellaneous" as any,
+        costMode: "hour",
+        costPerHectare: { ...defaultCostPerHectare },
+        costPerHour: {
+          purchasePrice: 60000, yearsOwned: 6, salePrice: 20000, hoursPerYear: 800,
+          interestRate: 3, insuranceRate: 2, storageRate: 1,
+          fuelConsumptionPerHr: 12, fuelPrice: 60, repairsPct: 2,
+          labourCost: 14, contractorCharge: 50,
+        },
+        compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
+      },
+    ],
     replacementPlanner: { machines: [], farmIncome: 350000 },
     contractingIncome: { services: [] },
   }
 }
 
-describe("v3 → v4 migration: machineType on saved machines", () => {
+describe("v3 -> v6 migration: machineType on saved machines", () => {
   beforeEach(() => {
     localStorage.clear()
   })
 
-  it("adds machineType 'miscellaneous' to every costPerHectare saved machine", () => {
+  it("adds machineType 'miscellaneous' to every hectare saved machine (now in savedMachines)", () => {
     const v3 = createV3StateWithMachines()
     localStorage.setItem("farmPlanner", JSON.stringify(v3))
 
     const state = loadState()
-    expect(state.version).toBe(5)
-    for (const m of state.costPerHectare.savedMachines) {
+    expect(state.version).toBe(6)
+    // The hectare machines are first in the unified savedMachines array
+    const hectareMachines = state.savedMachines.filter(m => m.costMode === "hectare")
+    for (const m of hectareMachines) {
       expect(m.machineType).toBe("miscellaneous")
     }
   })
 
-  it("adds machineType 'miscellaneous' to every costPerHour saved machine", () => {
+  it("adds machineType 'miscellaneous' to every hour saved machine (now in savedMachines)", () => {
     const v3 = createV3StateWithMachines()
     localStorage.setItem("farmPlanner", JSON.stringify(v3))
 
     const state = loadState()
-    for (const m of state.costPerHour.savedMachines) {
+    const hourMachines = state.savedMachines.filter(m => m.costMode === "hour")
+    for (const m of hourMachines) {
       expect(m.machineType).toBe("miscellaneous")
     }
   })
@@ -102,9 +119,8 @@ describe("v3 → v4 migration: machineType on saved machines", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(v3))
 
     const state = loadState()
-    expect(state.version).toBe(5)
-    expect(state.costPerHectare.savedMachines).toEqual([])
-    expect(state.costPerHour.savedMachines).toEqual([])
+    expect(state.version).toBe(6)
+    expect(state.savedMachines).toEqual([])
   })
 
   it("does not overwrite machineType if it already exists on v3 data", () => {
@@ -114,12 +130,13 @@ describe("v3 → v4 migration: machineType on saved machines", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(v3))
 
     const state = loadState()
-    expect(state.costPerHectare.savedMachines[0].machineType).toBe("sprayers")
+    const hectareMachines = state.savedMachines.filter(m => m.costMode === "hectare")
+    expect(hectareMachines[0].machineType).toBe("sprayers")
     // The second one should get the default
-    expect(state.costPerHectare.savedMachines[1].machineType).toBe("miscellaneous")
+    expect(hectareMachines[1].machineType).toBe("miscellaneous")
   })
 
-  it("migrates all the way from v0 to v4 including machineType", () => {
+  it("migrates all the way from v0 to v6 including machineType", () => {
     const v0 = {
       costPerHectare: {
         current: {},
@@ -132,8 +149,8 @@ describe("v3 → v4 migration: machineType on saved machines", () => {
     localStorage.setItem("farmPlanner", JSON.stringify(v0))
 
     const state = loadState()
-    expect(state.version).toBe(5)
-    expect(state.costPerHectare.savedMachines[0].machineType).toBe("miscellaneous")
+    expect(state.version).toBe(6)
+    expect(state.savedMachines[0].machineType).toBe("miscellaneous")
   })
 })
 
@@ -143,36 +160,39 @@ describe("machineType persistence (save / load round-trip)", () => {
   })
 
   it("preserves machineType through save and load", () => {
-    const state = createV4State()
+    const state = createV6State()
     saveState(state)
 
     const loaded = loadState()
-    expect(loaded.costPerHectare.savedMachines[0].machineType).toBe("drills")
-    expect(loaded.costPerHour.savedMachines[0].machineType).toBe("miscellaneous")
+    expect(loaded.savedMachines[0].machineType).toBe("drills")
+    expect(loaded.savedMachines[1].machineType).toBe("miscellaneous")
   })
 
   it("preserves machineType through export and import", async () => {
-    const state = createV4State()
-    const json = JSON.stringify({ ...state, version: 4, lastSaved: new Date().toISOString() })
+    const state = createV6State()
+    const json = JSON.stringify({ ...state, lastSaved: new Date().toISOString() })
     const blob = new Blob([json], { type: "application/json" })
     const file = new File([blob], "test.json", { type: "application/json" })
 
     const imported = await importFromFile(file)
-    expect(imported.costPerHectare.savedMachines[0].machineType).toBe("drills")
-    expect(imported.costPerHour.savedMachines[0].machineType).toBe("miscellaneous")
+    expect(imported.savedMachines[0].machineType).toBe("drills")
+    expect(imported.savedMachines[1].machineType).toBe("miscellaneous")
   })
 
   it("preserves different machineType values across multiple saved machines", () => {
-    const state = createV4State()
-    state.costPerHectare.savedMachines.push({
+    const state = createV6State()
+    state.savedMachines.push({
       name: "Sprayer",
       machineType: "sprayers",
-      inputs: state.costPerHectare.savedMachines[0].inputs,
+      costMode: "hectare",
+      costPerHectare: state.savedMachines[0].costPerHectare,
+      costPerHour: { ...defaultCostPerHour },
+      compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
     })
     saveState(state)
 
     const loaded = loadState()
-    expect(loaded.costPerHectare.savedMachines[0].machineType).toBe("drills")
-    expect(loaded.costPerHectare.savedMachines[1].machineType).toBe("sprayers")
+    expect(loaded.savedMachines[0].machineType).toBe("drills")
+    expect(loaded.savedMachines[2].machineType).toBe("sprayers")
   })
 })

@@ -43,9 +43,7 @@ function getTrafficLight(pct: number): {
 }
 
 export function ProfitabilityOverview({ appState, onFarmIncomeChange }: ProfitabilityOverviewProps) {
-  const hasMachines =
-    appState.costPerHectare.savedMachines.length > 0 ||
-    appState.costPerHour.savedMachines.length > 0;
+  const hasMachines = appState.savedMachines.length > 0;
   const hasServices = appState.contractingIncome.services.length > 0;
 
   const { results, runningCostsHa, runningCostsHr } = useMemo(() => {
@@ -56,21 +54,17 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
       6,
     );
 
-    const haRunning = appState.costPerHectare.savedMachines.reduce(
-      (sum, m) => {
-        const r = calcCostPerHectare(m.inputs);
-        return sum + r.totalCostPerHa * m.inputs.hectaresPerYear;
-      },
-      0,
-    );
-
-    const hrRunning = appState.costPerHour.savedMachines.reduce(
-      (sum, m) => {
-        const r = calcCostPerHour(m.inputs);
-        return sum + r.totalCostPerHr * m.inputs.hoursPerYear;
-      },
-      0,
-    );
+    let haRunning = 0;
+    let hrRunning = 0;
+    for (const m of appState.savedMachines) {
+      if (m.costMode === "hectare") {
+        const r = calcCostPerHectare(m.costPerHectare);
+        haRunning += r.totalCostPerHa * m.costPerHectare.hectaresPerYear;
+      } else {
+        const r = calcCostPerHour(m.costPerHour);
+        hrRunning += r.totalCostPerHr * m.costPerHour.hoursPerYear;
+      }
+    }
 
     let contractingGrossIncome = 0;
     let contractingCosts = 0;
@@ -102,8 +96,8 @@ export function ProfitabilityOverview({ appState, onFarmIncomeChange }: Profitab
   }, [appState]);
 
   const trafficLight = getTrafficLight(results.machineryCostPctOfFarmIncome);
-  const haCountLabel = appState.costPerHectare.savedMachines.length;
-  const hrCountLabel = appState.costPerHour.savedMachines.length;
+  const haCountLabel = appState.savedMachines.filter(m => m.costMode === "hectare").length;
+  const hrCountLabel = appState.savedMachines.filter(m => m.costMode === "hour").length;
 
   return (
     <Card>

@@ -2,40 +2,30 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ProfitabilityOverview } from "@/components/ProfitabilityOverview";
 import { UnitContext } from "@/lib/UnitContext";
-import type { AppState } from "@/lib/types";
+import type { AppState, MachineProfile } from "@/lib/types";
+import { defaultCostPerHectare, defaultCostPerHour, defaultMachineA, defaultMachineB } from "@/lib/defaults";
+
+function makeMachineProfile(
+  name: string,
+  costMode: "hectare" | "hour",
+  overrides?: Partial<MachineProfile>,
+): MachineProfile {
+  return {
+    name,
+    machineType: "miscellaneous" as any,
+    costMode,
+    costPerHectare: { ...defaultCostPerHectare },
+    costPerHour: { ...defaultCostPerHour },
+    compareMachines: { machineA: { ...defaultMachineA }, machineB: { ...defaultMachineB } },
+    ...overrides,
+  };
+}
 
 function createTestState(overrides?: Partial<AppState>): AppState {
   return {
-    version: 5,
+    version: 6,
     lastSaved: new Date().toISOString(),
-    costPerHectare: {
-      savedMachines: [],
-    },
-    costPerHour: {
-      savedMachines: [],
-    },
-    compareMachines: {
-      machineA: {
-        name: "A",
-        width: 0,
-        capacity: 0,
-        speed: 0,
-        applicationRate: 0,
-        transportTime: 0,
-        fillingTime: 0,
-        fieldEfficiency: 0,
-      },
-      machineB: {
-        name: "B",
-        width: 0,
-        capacity: 0,
-        speed: 0,
-        applicationRate: 0,
-        transportTime: 0,
-        fillingTime: 0,
-        fieldEfficiency: 0,
-      },
-    },
+    savedMachines: [],
     replacementPlanner: {
       machines: [],
       farmIncome: 350000,
@@ -158,20 +148,17 @@ describe("ProfitabilityOverview", () => {
   // ---------- NEW TESTS ----------
 
   it("shows amber traffic light when machinery costs are 20-35% of farm income", () => {
-    // Machine produces 22500/year in costs. With farmIncome=100000, that's 22.5% => amber.
     const state = createTestState({
       replacementPlanner: { machines: [], farmIncome: 100000 },
-      costPerHectare: {
-        savedMachines: [{
-          name: "Drill",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("Drill", "hectare", {
+          costPerHectare: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 0, hectaresPerYear: 500,
             interestRate: 5, insuranceRate: 2, storageRate: 1, workRate: 4,
             labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
           },
-        }],
-      },
+        }),
+      ],
     });
     const { container } = renderWithUnits(
       <ProfitabilityOverview appState={state} />,
@@ -182,20 +169,17 @@ describe("ProfitabilityOverview", () => {
   });
 
   it("shows red traffic light when machinery costs exceed 35% of farm income", () => {
-    // farmIncome = 30000, machine costs ~15700 => ~52% => red
     const state = createTestState({
       replacementPlanner: { machines: [], farmIncome: 30000 },
-      costPerHectare: {
-        savedMachines: [{
-          name: "Drill",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("Drill", "hectare", {
+          costPerHectare: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 0, hectaresPerYear: 500,
             interestRate: 5, insuranceRate: 2, storageRate: 1, workRate: 4,
             labourCost: 14, fuelPrice: 70, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
           },
-        }],
-      },
+        }),
+      ],
     });
     const { container } = renderWithUnits(
       <ProfitabilityOverview appState={state} />,
@@ -209,17 +193,15 @@ describe("ProfitabilityOverview", () => {
 
   it("shows running costs from saved per-ha machines", () => {
     const state = createTestState({
-      costPerHectare: {
-        savedMachines: [{
-          name: "6m Drill",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("6m Drill", "hectare", {
+          costPerHectare: {
             purchasePrice: 126000, yearsOwned: 8, salePrice: 34000, hectaresPerYear: 1200,
             interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
             labourCost: 14, fuelPrice: 53, fuelUse: 20, repairsPct: 2, contractorCharge: 76,
           },
-        }],
-      },
+        }),
+      ],
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     // Should show "1 saved machine" badge and non-zero running costs
@@ -230,18 +212,16 @@ describe("ProfitabilityOverview", () => {
 
   it("shows running costs from saved per-hr machines", () => {
     const state = createTestState({
-      costPerHour: {
-        savedMachines: [{
-          name: "Telehandler",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("Telehandler", "hour", {
+          costPerHour: {
             purchasePrice: 80000, yearsOwned: 6, salePrice: 20000, hoursPerYear: 800,
             interestRate: 3, insuranceRate: 2, storageRate: 1,
             fuelConsumptionPerHr: 12, fuelPrice: 60, repairsPct: 2,
             labourCost: 14, contractorCharge: 50,
           },
-        }],
-      },
+        }),
+      ],
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     expect(screen.getByText(/1 saved machine(?!s)/)).toBeInTheDocument();
@@ -267,19 +247,16 @@ describe("ProfitabilityOverview", () => {
   });
 
   it("renders charts when there are costs", () => {
-    // Add saved machine to produce costs, which means totalCosts > 0
     const state = createTestState({
-      costPerHectare: {
-        savedMachines: [{
-          name: "Sprayer",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("Sprayer", "hectare", {
+          costPerHectare: {
             purchasePrice: 100000, yearsOwned: 5, salePrice: 20000, hectaresPerYear: 800,
             interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 6,
             labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 50,
           },
-        }],
-      },
+        }),
+      ],
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     // Donut chart heading should appear when totalCosts > 0
@@ -318,20 +295,17 @@ describe("ProfitabilityOverview", () => {
   });
 
   it("shows negative net position with red styling when costs exceed income", () => {
-    // farmIncome = 0 but with machine costs => negative net
     const state = createTestState({
       replacementPlanner: { machines: [], farmIncome: 0 },
-      costPerHectare: {
-        savedMachines: [{
-          name: "Combine",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("Combine", "hectare", {
+          costPerHectare: {
             purchasePrice: 200000, yearsOwned: 10, salePrice: 50000, hectaresPerYear: 400,
             interestRate: 3, insuranceRate: 2, storageRate: 1, workRate: 4,
             labourCost: 14, fuelPrice: 70, fuelUse: 25, repairsPct: 2, contractorCharge: 100,
           },
-        }],
-      },
+        }),
+      ],
     });
     const { container } = renderWithUnits(
       <ProfitabilityOverview appState={state} />,
@@ -342,17 +316,15 @@ describe("ProfitabilityOverview", () => {
 
   it("does not show empty state message when saved machines exist", () => {
     const state = createTestState({
-      costPerHectare: {
-        savedMachines: [{
-          name: "Drill",
-          machineType: "miscellaneous" as const,
-          inputs: {
+      savedMachines: [
+        makeMachineProfile("Drill", "hectare", {
+          costPerHectare: {
             purchasePrice: 50000, yearsOwned: 5, salePrice: 10000, hectaresPerYear: 300,
             interestRate: 2, insuranceRate: 2, storageRate: 1, workRate: 4,
             labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
           },
-        }],
-      },
+        }),
+      ],
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     expect(screen.queryByText(/No machines or services yet/)).not.toBeInTheDocument();
@@ -396,12 +368,10 @@ describe("ProfitabilityOverview", () => {
       labourCost: 14, fuelPrice: 60, fuelUse: 15, repairsPct: 2, contractorCharge: 60,
     };
     const state = createTestState({
-      costPerHectare: {
-        savedMachines: [
-          { name: "Drill A", machineType: "miscellaneous", inputs: machineInputs },
-          { name: "Drill B", machineType: "miscellaneous", inputs: machineInputs },
-        ],
-      },
+      savedMachines: [
+        makeMachineProfile("Drill A", "hectare", { costPerHectare: machineInputs }),
+        makeMachineProfile("Drill B", "hectare", { costPerHectare: machineInputs }),
+      ],
     });
     renderWithUnits(<ProfitabilityOverview appState={state} />);
     // Should say "2 saved machines" (plural)
