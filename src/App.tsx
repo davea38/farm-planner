@@ -25,8 +25,12 @@ function App() {
   const [appState, setAppState] = useState<AppState>(loadState)
   const [unitPrefs, setUnitPrefs] = useState<UnitPreferences>(loadUnitPreferences)
   const [selectedMachine, setSelectedMachine] = useState<SelectedMachine | null>(null)
+  const selectedMachineRef = useRef<SelectedMachine | null>(null)
   const [machinePickerOpen, setMachinePickerOpen] = useState(false)
   const { activeTab, setActiveTab } = useHashRoute()
+
+  // Keep ref in sync so stable callbacks can read current selection
+  selectedMachineRef.current = selectedMachine
 
   useAutoSave(appState)
 
@@ -74,17 +78,15 @@ function App() {
 
   // Cost changes update the selected saved machine directly
   const onCostPerHectareChange = useCallback((inputs: CostPerHectareInputs) => {
-    setSelectedMachine((sel) => {
-      if (sel?.costMode === "hectare") {
-        setAppState((prev) => {
-          const machines = prev.costPerHectare.savedMachines.map((m, i) =>
-            i === sel.index ? { ...m, inputs } : m
-          )
-          return { ...prev, costPerHectare: { savedMachines: machines } }
-        })
-      }
-      return sel
-    })
+    const sel = selectedMachineRef.current
+    if (sel?.costMode === "hectare") {
+      setAppState((prev) => {
+        const machines = prev.costPerHectare.savedMachines.map((m, i) =>
+          i === sel.index ? { ...m, inputs } : m
+        )
+        return { ...prev, costPerHectare: { savedMachines: machines } }
+      })
+    }
   }, [])
 
   const onSaveCostPerHectareMachine = useCallback((name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
@@ -115,17 +117,15 @@ function App() {
   }, [])
 
   const onCostPerHourChange = useCallback((inputs: CostPerHourInputs) => {
-    setSelectedMachine((sel) => {
-      if (sel?.costMode === "hour") {
-        setAppState((prev) => {
-          const machines = prev.costPerHour.savedMachines.map((m, i) =>
-            i === sel.index ? { ...m, inputs } : m
-          )
-          return { ...prev, costPerHour: { savedMachines: machines } }
-        })
-      }
-      return sel
-    })
+    const sel = selectedMachineRef.current
+    if (sel?.costMode === "hour") {
+      setAppState((prev) => {
+        const machines = prev.costPerHour.savedMachines.map((m, i) =>
+          i === sel.index ? { ...m, inputs } : m
+        )
+        return { ...prev, costPerHour: { savedMachines: machines } }
+      })
+    }
   }, [])
 
   const onSaveCostPerHourMachine = useCallback((name: string, machineType: DepreciationCategory, selectedIndex: number | null) => {
