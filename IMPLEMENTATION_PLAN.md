@@ -1,6 +1,6 @@
 # Implementation Plan
 
-Status as of 2026-03-12. Items marked `[x]` are complete; `[ ]` are pending.
+Status as of 2026-03-13. Items marked `[x]` are complete; `[ ]` are pending.
 
 ---
 
@@ -99,9 +99,16 @@ The app works; CI is red.
 
 ---
 
+## Priority 8 — SPEC-14 Banner Visibility
+
+- [x] **Hide machine banner on independent tabs (SPEC-14):** Banner restricted to cost-calculator and depreciation tabs only. Compare, Replace, Contract, and Worth It tabs accessible without machine selection. 17 dedicated tests in `hide-machine-banner.test.tsx`.
+
+---
+
 ## Already Complete (for reference)
 
 - [x] SPEC-01 through SPEC-11 — fully implemented.
 - [x] SPEC-13 core types, migration, and production components — committed and working.
+- [x] SPEC-14 — banner visibility scoped to per-machine tabs.
 - [x] Finding #7 — `category-mapping.ts` aligns depreciation and replacement categories.
 - [x] Finding #15 (partial) — `DepreciationSparkline` links replacement rows to depreciation.
