@@ -85,7 +85,13 @@ The app works; CI is red.
 
 ---
 
-## Priority 6 — Dead Code Cleanup
+## Priority 6 — Tab Navigation for Empty States
+
+- [x] **Enable empty-state tabs without machine selection:** Compare, Replace, Contract, and Worth It tabs are now accessible without a selected machine so users can see empty states. Only Cost/Ha and Depreciation still require a machine. App.test.tsx updated to match new tab gate logic and banner visibility.
+
+---
+
+## Priority 7 — Dead Code Cleanup
 
 - [x] **Delete `src/components/CostPerHectare.tsx` and `src/components/CostPerHour.tsx`:** Deleted — these contained TODO merge markers and were superseded by `CostCalculator.tsx`. No production code imported them.
 

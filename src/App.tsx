@@ -208,7 +208,8 @@ function App() {
           <WelcomePanel />
 
           <Tabs value={tabsValue} onValueChange={(v) => {
-            if (v !== "machines" && !hasMachineSelected) return
+            const machineIndependentTabs = ["machines", "compare-machines", "replacement-planner", "contracting-income", "profitability"]
+            if (!machineIndependentTabs.includes(v) && !hasMachineSelected) return
             setMachinePickerOpen(false)
             if (v === "cost-calculator") {
               setActiveTab(costMode === "hour" ? "cost-per-hour" : "cost-per-hectare")
@@ -236,36 +237,32 @@ function App() {
               </TabsTrigger>
               <TabsTrigger
                 value="compare-machines"
-                disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Compare</span>
                 <span className="hidden sm:inline">Which is better</span>
               </TabsTrigger>
               <TabsTrigger
                 value="replacement-planner"
-                disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Replace</span>
                 <span className="hidden sm:inline">When to replace</span>
               </TabsTrigger>
               <TabsTrigger
                 value="contracting-income"
-                disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Contract</span>
                 <span className="hidden sm:inline">Contracting pay</span>
               </TabsTrigger>
               <TabsTrigger
                 value="profitability"
-                disabled={!hasMachineSelected}
               >
                 <span className="sm:hidden">Worth It</span>
                 <span className="hidden sm:inline">Is it worth it</span>
               </TabsTrigger>
             </TabsList>
 
-            {/* Selected machine banner — shown on all tabs except the Machines tab itself */}
-            {activeTab !== "machines" && (() => {
+            {/* Selected machine banner — shown only on cost-calculator and depreciation tabs */}
+            {!["machines", "compare-machines", "replacement-planner", "contracting-income", "profitability"].includes(activeTab) && (() => {
               const allPickerMachines = appState.savedMachines.map((m, i) => ({
                 name: m.name, machineType: m.machineType, costMode: m.costMode, index: i,
               }))

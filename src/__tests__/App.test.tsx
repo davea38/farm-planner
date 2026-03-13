@@ -150,6 +150,7 @@ function removeSavedMachines() {
 }
 
 // Helper: render app, select a machine, and switch to a given tab.
+// Machine banner only appears on Cost/Ha and Depreciation tabs.
 async function renderWithMachineAndTab(tab: string) {
   addHectareMachine()
   renderApp()
@@ -157,7 +158,11 @@ async function renderWithMachineAndTab(tab: string) {
   if (tab !== 'machines') {
     const user = userEvent.setup()
     await user.click(screen.getByText(tab))
-    await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
+    // Machine banner only shows on cost-calculator/depreciation tabs
+    const bannerTabs = ['Cost/Ha', 'Depreciation']
+    if (bannerTabs.includes(tab)) {
+      await waitFor(() => { expect(screen.getByText('Test Tractor')).toBeInTheDocument() })
+    }
   }
 }
 
@@ -214,12 +219,19 @@ describe('App', () => {
 
   // --- Disabled tabs ---
 
-  it('disables non-machine tabs when no machine selected', () => {
+  it('disables machine-dependent tabs when no machine selected', () => {
     renderApp()
-    for (const label of ['Cost/Ha', 'Depreciation', 'Compare', 'Replace', 'Contract', 'Worth It']) {
+    // Only Cost/Ha and Depreciation require a selected machine
+    for (const label of ['Cost/Ha', 'Depreciation']) {
       const matches = screen.getAllByText(label)
       const tab = matches[0].closest('button')!
       expect(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true').toBe(true)
+    }
+    // Compare, Replace, Contract, Worth It are accessible without a machine (show empty states)
+    for (const label of ['Compare', 'Replace', 'Contract', 'Worth It']) {
+      const matches = screen.getAllByText(label)
+      const tab = matches[0].closest('button')!
+      expect(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true').toBe(false)
     }
   })
 
