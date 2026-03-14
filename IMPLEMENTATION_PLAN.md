@@ -105,6 +105,12 @@ The app works; CI is red.
 
 ---
 
+## Priority 9 — ESLint Cleanup
+
+- [x] **Fix all 18 ESLint errors:** Replaced `as any` casts with proper types (`DepreciationCategory`/`MachineCategory`), added eslint-disable comments for intentional patterns (destructuring-to-omit, setState-in-effect for prop sync, react-refresh co-exports), wrapped ref assignments in `useEffect` to fix `react-hooks/refs`, replaced mutable accumulator in `CostDonutChart` with pure `.slice().reduce()`, removed unnecessary `useMemo` in `DepreciationPanel`. All 648 tests pass, 0 lint errors.
+
+---
+
 ## Already Complete (for reference)
 
 - [x] SPEC-01 through SPEC-11 — fully implemented.

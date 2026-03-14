@@ -6,6 +6,7 @@ import {
   getAnnualDepreciation,
   findSweetSpot,
 } from "@/lib/depreciation-data"
+import type { MachineCategory } from "@/lib/depreciation-data"
 
 describe("DEPRECIATION_PROFILES", () => {
   it("has 8 machine categories", () => {
@@ -96,7 +97,7 @@ describe("getAnnualDepreciation", () => {
 describe("findSweetSpot", () => {
   it("returns a year between 2 and 12", () => {
     for (const key of Object.keys(DEPRECIATION_PROFILES)) {
-      const yr = findSweetSpot(key as any)
+      const yr = findSweetSpot(key as MachineCategory)
       expect(yr).toBeGreaterThanOrEqual(2)
       expect(yr).toBeLessThanOrEqual(12)
     }

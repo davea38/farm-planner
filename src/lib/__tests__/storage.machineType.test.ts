@@ -66,7 +66,7 @@ function createV6State(): AppState {
       },
       {
         name: "Telehandler",
-        machineType: "miscellaneous" as any,
+        machineType: "miscellaneous",
         costMode: "hour",
         costPerHectare: { ...defaultCostPerHectare },
         costPerHour: {

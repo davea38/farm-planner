@@ -38,7 +38,7 @@ export function CompareMachines({
   }
 
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+  useEffect(() => { onChangeRef.current = onChange })
   const prevA = useRef(machineA)
   const prevB = useRef(machineB)
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useEffect } from "react"
 import type { MachineCategory } from "@/lib/depreciation-data"
 import {
   DEPRECIATION_PROFILES,
@@ -52,6 +52,7 @@ export function DepreciationPanel({
   // Sync internal price when the selected machine changes
   useEffect(() => {
     if (propPurchasePrice !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInternalPurchasePrice(propPurchasePrice)
     }
   }, [propPurchasePrice])
@@ -68,7 +69,7 @@ export function DepreciationPanel({
   }
 
   const profile = DEPRECIATION_PROFILES[category]
-  const sweetSpot = useMemo(() => findSweetSpot(category), [category])
+  const sweetSpot = findSweetSpot(category)
 
   const pctRemaining = getRemainingValuePct(category, years)
   const pctLost = 100 - pctRemaining

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import { defaultCostPerHectare, defaultCostPerHour, defaultMachineA, defaultMachineB } from '@/lib/defaults'
 import type { MachineProfile } from '@/lib/types'
+import type { DepreciationCategory } from '@/lib/types'
 
 // ---------------------------------------------------------------------------
 // Captured callbacks from mocked child components
@@ -75,7 +76,7 @@ vi.mock('@/components/MachinesTab', () => ({
 function makeTestMachine(name: string, costMode: "hectare" | "hour" = "hectare", machineType = "tractors_large"): MachineProfile {
   return {
     name,
-    machineType: machineType as any,
+    machineType: machineType as DepreciationCategory,
     costMode,
     costPerHectare: { ...defaultCostPerHectare },
     costPerHour: { ...defaultCostPerHour },

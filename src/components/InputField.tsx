@@ -58,6 +58,7 @@ export function InputField({
   // Sync from prop when not focused (external updates, unit switches, load)
   useEffect(() => {
     if (!focused.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInputStr(String(displayValue))
     }
   }, [displayValue])

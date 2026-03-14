@@ -360,7 +360,7 @@ export function ReplacementPlanner({
   }
 
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+  useEffect(() => { onChangeRef.current = onChange })
   const prevState = useRef(state)
   useEffect(() => {
     if (prevState.current === state) return

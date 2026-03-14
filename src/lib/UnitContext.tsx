@@ -12,6 +12,7 @@ const UnitContext = createContext<UnitContextValue>({
   setUnits: () => {},
 })
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useUnits(): UnitContextValue {
   return useContext(UnitContext)
 }

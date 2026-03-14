@@ -25,19 +25,19 @@ export function CostDonutChart({ segments, centerLabel, centerValue }: CostDonut
   const activeSegments = segments.filter((s) => s.value > 0)
 
   // Build stroke-dasharray offsets
-  let offset = 0
-  const arcs = activeSegments.map((seg) => {
+  const arcs = activeSegments.map((seg, i) => {
     const fraction = seg.value / total
     const dashLength = fraction * CIRCUMFERENCE
     const gapLength = CIRCUMFERENCE - dashLength
-    const arc = {
+    const offset = activeSegments
+      .slice(0, i)
+      .reduce((sum, s) => sum + (s.value / total) * CIRCUMFERENCE, 0)
+    return {
       ...seg,
       fraction,
       dashArray: `${dashLength} ${gapLength}`,
       dashOffset: -offset,
     }
-    offset += dashLength
-    return arc
   })
 
   return (

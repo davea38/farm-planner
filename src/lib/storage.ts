@@ -112,6 +112,7 @@ export function migrateV5toV6(state: Record<string, unknown>): Record<string, un
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { costPerHectare: _, costPerHour: __, compareMachines: ___, ...rest } = state;
   return { ...rest, version: 6, savedMachines: unified };
 }

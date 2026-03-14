@@ -12,7 +12,7 @@ function makeMachineProfile(
 ): MachineProfile {
   return {
     name,
-    machineType: "miscellaneous" as any,
+    machineType: "miscellaneous",
     costMode,
     costPerHectare: { ...defaultCostPerHectare },
     costPerHour: { ...defaultCostPerHour },

@@ -47,6 +47,7 @@ function App() {
 
   // Sync costMode when navigating via back/forward to a cost route
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (activeTab === "cost-per-hour") setCostMode("hour")
     else if (activeTab === "cost-per-hectare") setCostMode("hectare")
   }, [activeTab])

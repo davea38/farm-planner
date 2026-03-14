@@ -53,7 +53,7 @@ vi.mock('@/components/MachinesTab', () => ({
 function makeTestMachine(name: string): MachineProfile {
   return {
     name,
-    machineType: 'tractors_large' as any,
+    machineType: 'tractors_large',
     costMode: 'hectare',
     costPerHectare: { ...defaultCostPerHectare },
     costPerHour: { ...defaultCostPerHour },
